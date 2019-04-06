@@ -283,7 +283,6 @@ figure figcaption {
 @media screen and (max-width: 768px) {
   #colorlib-main {
     width: 100%;
-    padding: 0 1em;
   }
 }
 
@@ -520,8 +519,7 @@ body.offcanvas .colorlib-nav-toggle {
   .colorlib-about,
   .colorlib-services,
   .colorlib-contact {
-    padding-top: 5em;
-    padding-bottom: 8em;
+    padding: 0em 1em 8em 1em;
   }
 }
 
