@@ -139,6 +139,7 @@ figure figcaption {
   margin-bottom: .5em;
   display: block;
   width: 100%;
+  font-family: "Quicksand", Arial, sans-serif;
 }
 
 #colorlib-aside #colorlib-logo a {
@@ -476,6 +477,13 @@ body.offcanvas .colorlib-nav-toggle {
 
 .colorlib-narrow-content {
   padding: 0 2.5em;
+}
+
+.colorlib-narrow-content .colorlib-skills-heading {
+  font-family: "Quicksand", Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  padding-top: 3rem;
 }
 
 @media screen and (max-width: 768px) {
@@ -1090,11 +1098,11 @@ body.offcanvas .colorlib-nav-toggle {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100px;
-  height: 100px;
+  width: 60px;
+  height: 117px;
   display: table;
   text-align: center;
-  background: #f2f3f7;
+  background: #2c98f0;
   border-radius: 2px;
 }
 
@@ -1133,11 +1141,21 @@ body.offcanvas .colorlib-nav-toggle {
 }
 
 .colorlib-feature.colorlib-feature-sm .colorlib-text {
-  margin-top: 30px;
+  height: 117px;
+  display: table;
+  text-align: center;
+  background: #f2f3f7;
+  border-radius: 2px;
+  padding: 0px 0px 0px 65px;
+}
+
+.colorlib-feature.colorlib-feature-sm .colorlib-text .feature-text {
+  display: table-cell;
+  vertical-align: middle;
 }
 
 .colorlib-feature.colorlib-feature-sm .colorlib-icon i {
-  color: #2c98f0;
+  color: #fff;
   font-size: 40px;
 }
 

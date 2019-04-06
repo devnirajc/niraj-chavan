@@ -242,6 +242,7 @@ figure {
 		margin-bottom: .5em;
 		display: block;
 		width: 100%;
+		font-family: $font-primary;
 
 		a {
 			display: block;
@@ -581,6 +582,13 @@ body {
 
 .colorlib-narrow-content {
 	padding: 0 2.5em;
+
+	.colorlib-skills-heading {
+		font-family: $font-primary;
+		font-size: 18px;
+		font-weight: 500;
+		padding-top: 3rem;
+	}
 
 	@media screen and(max-width: $screen-sm) {
 		padding: 0;
@@ -1220,11 +1228,11 @@ body {
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100px;
-		height: 100px;
+		width: 60px;
+		height: 117px;
 		display: table;
 		text-align: center;
-		background: $brand-gray;
+		background: $brand-primary;
 		@include border-radius(2px);
 
 		i {
@@ -1262,12 +1270,22 @@ body {
 
 	&.colorlib-feature-sm {
 		.colorlib-text {
-			margin-top: 30px;
+			height: 117px;
+			display: table;
+			text-align: center;
+			background: #f2f3f7;
+			border-radius: 2px;
+			padding: 0px 0px 0px 65px;
+
+			.feature-text {
+				display: table-cell;
+				vertical-align: middle;
+			}
 		}
 
 		.colorlib-icon {
 			i {
-				color: $brand-primary;
+				color: $brand-white;
 				font-size: 40px;
 
 				@media screen and (max-width: $screen-lg) {
