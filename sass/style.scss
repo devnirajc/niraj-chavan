@@ -478,6 +478,8 @@ figure {
 
                 @media screen and (max-width: $screen-sm) {
                     text-align: center;
+                    display: block;
+                    padding-top: 70%;
                 }
 
                 h1,
