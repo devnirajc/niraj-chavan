@@ -124,7 +124,7 @@
 /* Light background for mobile in light theme */
 @media (max-width: 1024px) {
   :root:not([data-theme="dark"]) .app-sidebar {
-    background: var(--bg-secondary);
+    background: var(--bg-tertiary);
   }
 }
 
@@ -179,7 +179,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--transition-base);
