@@ -1,0 +1,24 @@
+{
+  "heading": "Education",
+  "subheading": "Education",
+  "items": [
+    {
+      "degree": "Bachelor Degree of Computer Engineering",
+      "institution": "Dr. D. Y. Patil Institute of Engineering & Technology, Pune University",
+      "duration": "August 2011 - July 2014",
+      "icon": "graduation-cap"
+    },
+    {
+      "degree": "Diploma in Computer Engineering",
+      "institution": "Y. B. Patil Polytechnic, Akurdi, Pune, Maharashtra State Board of Technical Education",
+      "duration": "July 2008 - July 2011",
+      "icon": "graduation-cap"
+    },
+    {
+      "degree": "Secondary School Education",
+      "institution": "Sharada Vidyamandir, Maharashtra Board",
+      "duration": "June 2007 - July 2008",
+      "icon": "school"
+    }
+  ]
+}
