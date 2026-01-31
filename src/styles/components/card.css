@@ -10,3 +10,21 @@
   transform: translateY(-4px);
   box-shadow: var(--shadow-xl);
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: var(--space-4);
+  }
+
+  /* Disable hover effects on mobile for better performance */
+  .card:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: var(--space-3);
+  }
+}

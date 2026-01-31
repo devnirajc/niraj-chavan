@@ -65,3 +65,29 @@
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .portfolio-item {
+    aspect-ratio: 16/9;
+  }
+
+  .portfolio-content h3 {
+    font-size: var(--text-xl);
+  }
+
+  .portfolio-content {
+    padding: var(--space-4);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -52,3 +52,45 @@
 .color-2 { border-left: 4px solid #ec5453; }
 .color-3 { border-left: 4px solid #f9bf3f; }
 .color-4 { border-left: 4px solid #a84cb8; }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .about-section, .skills-section, .education-section, .experience-section, .portfolio-section, .contact-section {
+    padding: var(--space-16) var(--space-4);
+  }
+
+  .section-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .section-title {
+    font-size: var(--text-3xl);
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .service-card {
+    padding: var(--space-6);
+  }
+
+  .service-icon {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .about-section, .skills-section, .education-section, .experience-section, .portfolio-section, .contact-section {
+    padding: var(--space-12) var(--space-3);
+  }
+
+  .section-title {
+    font-size: var(--text-2xl);
+  }
+
+  .service-card {
+    padding: var(--space-4);
+  }
+}

@@ -113,4 +113,74 @@
   .sidebar-toggle {
     display: flex;
   }
+
+  .sidebar-nav a {
+    min-height: 44px; /* Touch-friendly target size */
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    width: 280px;
+  }
+
+  .sidebar-content {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .profile-image {
+    width: 100px;
+    height: 100px;
+    border-width: 3px;
+  }
+
+  .sidebar-title a {
+    font-size: var(--text-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .app-sidebar {
+    width: 260px;
+  }
+
+  .sidebar-toggle {
+    width: 44px;
+    height: 44px;
+    top: var(--space-3);
+    left: var(--space-3);
+  }
+
+  .profile-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .sidebar-header {
+    margin-bottom: var(--space-6);
+  }
+}
+
+/* Overlay for sidebar on mobile */
+@media (max-width: 1024px) {
+  .app-sidebar::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-base);
+    z-index: -1;
+  }
+
+  .app-sidebar.open::before {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }

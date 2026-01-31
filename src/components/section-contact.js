@@ -1,7 +1,6 @@
 class Sectioncontact extends HTMLElement {
   connectedCallback() {
     this.render();
-    this.attachEvents();
   }
 
   render() {

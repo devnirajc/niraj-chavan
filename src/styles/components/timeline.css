@@ -29,12 +29,32 @@
 .timeline-content h3 {
   font-size: var(--text-xl);
   margin-bottom: var(--space-2);
+  color: var(--text-primary);
+}
+
+.timeline-content h4 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-2);
+  color: var(--text-secondary);
+  font-weight: var(--font-semibold);
+}
+
+.timeline-institution {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
 }
 
 .timeline-duration {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: var(--text-sm);
   margin-bottom: var(--space-3);
+  font-weight: var(--font-medium);
+}
+
+.timeline-content p {
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
 }
 
 .timeline-content ul {
@@ -45,4 +65,144 @@
 .timeline-content li {
   margin-bottom: var(--space-2);
   color: var(--text-secondary);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .timeline-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3);
+    padding: var(--space-6) var(--space-4);
+    margin-bottom: var(--space-6);
+    border-left: none;
+    border-top: 4px solid var(--primary-600);
+    position: relative;
+  }
+
+  .timeline-icon {
+    width: 56px;
+    height: 56px;
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+    box-shadow: var(--shadow-md);
+  }
+
+  .timeline-content {
+    width: 100%;
+  }
+
+  .timeline-content h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .timeline-content h4 {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+  }
+
+  .timeline-institution {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+  }
+
+  .timeline-duration {
+    font-size: var(--text-sm);
+    color: var(--primary-600);
+    font-weight: var(--font-medium);
+    margin-bottom: var(--space-3);
+  }
+
+  .timeline-content p {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-3);
+    text-align: left;
+  }
+
+  .timeline-content ul {
+    padding-left: var(--space-4);
+    text-align: left;
+    margin-bottom: 0;
+  }
+
+  .timeline-content li {
+    font-size: var(--text-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .timeline-item {
+    padding: var(--space-5) var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .timeline-icon {
+    width: 48px;
+    height: 48px;
+    font-size: var(--text-xl);
+  }
+
+  .timeline-content h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+  }
+
+  .timeline-content h4 {
+    font-size: var(--text-sm);
+  }
+
+  .timeline-institution {
+    font-size: var(--text-xs);
+  }
+
+  .timeline-duration {
+    font-size: var(--text-xs);
+  }
+
+  .timeline-content p {
+    font-size: var(--text-xs);
+  }
+
+  .timeline-content li {
+    font-size: var(--text-xs);
+  }
+}
+
+/* Section-specific mobile styles */
+@media (max-width: 768px) {
+  /* Education Section - Keep everything centered */
+  .education-section .timeline-item {
+    text-align: center;
+  }
+
+  .education-section .timeline-content h3,
+  .education-section .timeline-institution,
+  .education-section .timeline-duration {
+    text-align: center;
+  }
+
+  /* Experience Section - Center first 3 lines, left-align rest */
+  .experience-section .timeline-item {
+    text-align: center;
+  }
+
+  /* Center the first 3 lines: title, company, duration */
+  .experience-section .timeline-content h3,
+  .experience-section .timeline-content h4,
+  .experience-section .timeline-duration {
+    text-align: center;
+  }
+
+  /* Left-align description paragraphs (not duration) */
+  .experience-section .timeline-content > p:not(.timeline-duration) {
+    text-align: left;
+  }
+
+  /* Left-align list items */
+  .experience-section .timeline-content ul {
+    text-align: left;
+  }
 }

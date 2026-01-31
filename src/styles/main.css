@@ -67,6 +67,19 @@ section {
   }
 }
 
+@media (max-width: 480px) {
+  section {
+    padding: var(--space-12) var(--space-3);
+    min-height: auto;
+  }
+}
+
+@media (max-width: 320px) {
+  section {
+    padding: var(--space-10) var(--space-2);
+  }
+}
+
 /* ============================================
    LOADING STATE
    ============================================ */
