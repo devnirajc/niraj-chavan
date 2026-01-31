@@ -1,0 +1,13 @@
+/**
+ * Dark Theme
+ * Dark mode specific styles
+ */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Image adjustments for dark mode */
+[data-theme="dark"] img:not([data-no-filter]) {
+  filter: brightness(0.9);
+}
