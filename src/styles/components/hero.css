@@ -31,7 +31,7 @@
   position: relative;
   z-index: 2;
   text-align: center;
-  color: white;
+  color: var(--hero-text-primary);
   max-width: 800px;
   padding: var(--space-6);
 }
@@ -45,16 +45,17 @@
 .hero-subtitle {
   font-size: var(--text-xl);
   margin-bottom: var(--space-8);
+  color: var(--hero-text-secondary);
   opacity: 1;
 }
 
-/* Override text-gradient for hero section - solid white for maximum contrast */
+/* Override text-gradient for hero section - theme-aware color */
 .hero-section .text-gradient {
   background: none;
   -webkit-background-clip: unset;
   background-clip: unset;
-  -webkit-text-fill-color: white;
-  color: white;
+  -webkit-text-fill-color: var(--hero-name-color);
+  color: var(--hero-name-color);
   font-weight: var(--font-bold);
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
@@ -74,7 +75,7 @@
 .scroll-arrow {
   width: 30px;
   height: 50px;
-  border: 2px solid white;
+  border: 2px solid var(--hero-text-primary);
   border-radius: 25px;
   position: relative;
 }
@@ -87,7 +88,7 @@
   transform: translateX(-50%);
   width: 6px;
   height: 6px;
-  background: white;
+  background: var(--hero-text-primary);
   border-radius: 50%;
   animation: scroll-down 2s infinite;
 }
