@@ -23,6 +23,7 @@ build/
 *.sln
 *.sw?
 .DS_Store
+.claude
 
 # Testing
 /test-results/

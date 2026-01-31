@@ -17,13 +17,13 @@ class AppSidebar extends HTMLElement {
 
   render() {
     this.innerHTML = `
-      <aside class="app-sidebar" role="navigation" aria-label="Main navigation">
-        <button class="sidebar-toggle" aria-label="Toggle navigation menu" aria-expanded="${this.isOpen}">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+      <button class="sidebar-toggle" aria-label="Toggle navigation menu" aria-expanded="${this.isOpen}">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
+      <aside class="app-sidebar" role="navigation" aria-label="Main navigation">
         <div class="sidebar-content">
           <div class="sidebar-header">
             <div class="profile-image">
@@ -57,8 +57,10 @@ class AppSidebar extends HTMLElement {
     toggle?.addEventListener('click', () => this.toggleSidebar());
 
     // Close on outside click
+    const sidebar = this.querySelector('.app-sidebar');
     document.addEventListener('click', (e) => {
-      if (this.isOpen && !this.contains(e.target)) {
+      const toggle = this.querySelector('.sidebar-toggle');
+      if (this.isOpen && !sidebar?.contains(e.target) && !toggle?.contains(e.target)) {
         this.closeSidebar();
       }
     });
@@ -79,7 +81,8 @@ class AppSidebar extends HTMLElement {
 
   toggleSidebar() {
     this.isOpen = !this.isOpen;
-    this.classList.toggle('open', this.isOpen);
+    const sidebar = this.querySelector('.app-sidebar');
+    sidebar?.classList.toggle('open', this.isOpen);
     const toggle = this.querySelector('.sidebar-toggle');
     toggle?.setAttribute('aria-expanded', this.isOpen);
     document.body.style.overflow = this.isOpen ? 'hidden' : '';
@@ -87,7 +90,8 @@ class AppSidebar extends HTMLElement {
 
   closeSidebar() {
     this.isOpen = false;
-    this.classList.remove('open');
+    const sidebar = this.querySelector('.app-sidebar');
+    sidebar?.classList.remove('open');
     const toggle = this.querySelector('.sidebar-toggle');
     toggle?.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';

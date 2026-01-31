@@ -28,3 +28,19 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .btn {
+    padding: var(--space-4) var(--space-6);
+    font-size: var(--text-base);
+    min-height: 44px; /* Minimum touch target size for accessibility */
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

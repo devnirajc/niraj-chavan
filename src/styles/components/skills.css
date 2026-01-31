@@ -63,3 +63,35 @@
 .skill-progress.color-4 { background: linear-gradient(90deg, #a84cb8, #c084fc); }
 .skill-progress.color-5 { background: linear-gradient(90deg, #2fa499, #5eead4); }
 .skill-progress.color-6 { background: linear-gradient(90deg, #4054b2, #818cf8); }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .category-title {
+    font-size: var(--text-xl);
+    text-align: center;
+  }
+
+  .skills-description {
+    font-size: var(--text-sm);
+    padding: 0 var(--space-2);
+  }
+}
+
+@media (max-width: 480px) {
+  .skill-item {
+    padding: var(--space-3);
+  }
+
+  .skill-name {
+    font-size: var(--text-sm);
+  }
+
+  .skill-level {
+    font-size: var(--text-xs);
+  }
+}
