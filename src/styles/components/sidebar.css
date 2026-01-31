@@ -121,6 +121,13 @@
   }
 }
 
+/* Light background for mobile in light theme */
+@media (max-width: 1024px) {
+  :root:not([data-theme="dark"]) .app-sidebar {
+    background: var(--bg-secondary);
+  }
+}
+
 @media (max-width: 768px) {
   .app-sidebar {
     width: 280px;
