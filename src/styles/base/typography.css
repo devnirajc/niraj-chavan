@@ -1,0 +1,379 @@
+/**
+ * Typography Styles
+ * Inter (Headings) + Space Grotesk (Body)
+ */
+
+/* ============================================
+   FONT IMPORTS
+   ============================================ */
+/* Fonts are loaded via Google Fonts link in HTML */
+
+/* ============================================
+   BASE TYPOGRAPHY
+   ============================================ */
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* ============================================
+   HEADINGS
+   ============================================ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(var(--text-3xl), 6vw, var(--text-5xl));
+  margin-bottom: var(--space-6);
+}
+
+h2 {
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+  margin-bottom: var(--space-5);
+}
+
+h3 {
+  font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
+  margin-bottom: var(--space-4);
+}
+
+h4 {
+  font-size: clamp(var(--text-lg), 2vw, var(--text-2xl));
+  margin-bottom: var(--space-4);
+}
+
+h5 {
+  font-size: clamp(var(--text-base), 1.5vw, var(--text-xl));
+  margin-bottom: var(--space-3);
+}
+
+h6 {
+  font-size: clamp(var(--text-sm), 1vw, var(--text-lg));
+  margin-bottom: var(--space-3);
+}
+
+/* ============================================
+   PARAGRAPHS & TEXT
+   ============================================ */
+p {
+  margin-bottom: var(--space-4);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+.lead {
+  font-size: var(--text-xl);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+}
+
+.text-small {
+  font-size: var(--text-sm);
+}
+
+.text-tiny {
+  font-size: var(--text-xs);
+}
+
+/* ============================================
+   INLINE ELEMENTS
+   ============================================ */
+strong,
+b {
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+mark {
+  background-color: var(--accent-amber);
+  color: var(--gray-900);
+  padding: 0.125rem 0.25rem;
+  border-radius: var(--radius-sm);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background-color: var(--bg-secondary);
+  color: var(--primary-600);
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--radius-sm);
+}
+
+pre code {
+  display: block;
+  padding: var(--space-4);
+  overflow-x: auto;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  position: relative;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+a.underline {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Animated underline effect */
+a.link-animated::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--link-color);
+  transition: width var(--transition-base);
+}
+
+a.link-animated:hover::after {
+  width: 100%;
+}
+
+/* ============================================
+   LISTS
+   ============================================ */
+ul,
+ol {
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-6);
+}
+
+ul li,
+ol li {
+  margin-bottom: var(--space-2);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ul ul {
+  list-style-type: circle;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+.list-none {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* ============================================
+   BLOCKQUOTES
+   ============================================ */
+blockquote {
+  margin: var(--space-8) 0;
+  padding-left: var(--space-6);
+  border-left: 4px solid var(--primary-600);
+  font-style: italic;
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+}
+
+blockquote cite {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  font-style: normal;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   TEXT UTILITIES
+   ============================================ */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.text-lowercase {
+  text-transform: lowercase;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+/* Font weights */
+.font-normal {
+  font-weight: var(--font-normal);
+}
+
+.font-medium {
+  font-weight: var(--font-medium);
+}
+
+.font-semibold {
+  font-weight: var(--font-semibold);
+}
+
+.font-bold {
+  font-weight: var(--font-bold);
+}
+
+/* Text colors */
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-brand {
+  color: var(--primary-600);
+}
+
+.text-accent-cyan {
+  color: var(--accent-cyan);
+}
+
+.text-accent-amber {
+  color: var(--accent-amber);
+}
+
+.text-accent-emerald {
+  color: var(--accent-emerald);
+}
+
+/* ============================================
+   GRADIENT TEXT
+   ============================================ */
+.text-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--primary-600) 0%,
+    var(--accent-cyan) 50%,
+    var(--primary-500) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ============================================
+   SELECTION
+   ============================================ */
+::selection {
+  background-color: var(--primary-600);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--primary-600);
+  color: white;
+}
+
+/* ============================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================ */
+@media (max-width: 768px) {
+  body {
+    font-size: var(--text-sm);
+  }
+
+  .lead {
+    font-size: var(--text-lg);
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  body {
+    font-size: 12pt;
+    color: #000;
+    background: #fff;
+  }
+
+  h1 {
+    font-size: 24pt;
+  }
+
+  h2 {
+    font-size: 18pt;
+  }
+
+  h3 {
+    font-size: 14pt;
+  }
+
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  .text-gradient {
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+}

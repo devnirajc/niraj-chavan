@@ -1,0 +1,37 @@
+{
+  "heading": "Who Am I?",
+  "subheading": "About Us",
+  "intro": "Hi I'm Niraj Chavan",
+  "description": [
+    "Senior UI Developer with {years} of experience crafting high-performance web applications and scalable e-commerce platforms. Specialized in transforming complex business requirements into intuitive, responsive user interfaces that drive engagement and revenue growth.",
+    "Full-stack proficiency across modern technologies including React, Angular, Node.js, and Python, complemented by expertise in HTML5, CSS3, and JavaScript ES6+. Successfully architected and delivered 10+ enterprise-grade applications, including robust authentication systems, reusable component libraries, and order management solutions serving thousands of users daily.",
+    "Proven track record in leading technical implementations, optimizing application performance, and establishing development best practices. Passionate about creating seamless user experiences through clean code, accessibility standards, and innovative problem-solving."
+  ],
+  "experienceStartDate": "2014-07-01",
+  "services": [
+    {
+      "title": "Web Design",
+      "description": "Create a clean, appealing design",
+      "icon": "lightbulb",
+      "color": "color-1"
+    },
+    {
+      "title": "Intuitive",
+      "description": "Strong preference for intuitive UX/UI",
+      "icon": "globe",
+      "color": "color-2"
+    },
+    {
+      "title": "Dynamic",
+      "description": "Websites don't have to be static",
+      "icon": "code",
+      "color": "color-3"
+    },
+    {
+      "title": "Responsive",
+      "description": "Always work on any device, big or small",
+      "icon": "devices",
+      "color": "color-4"
+    }
+  ]
+}

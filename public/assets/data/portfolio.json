@@ -1,0 +1,76 @@
+{
+  "heading": "Recent Work",
+  "subheading": "My Work",
+  "projects": [
+    {
+      "title": "FLM - Field Logistic Module",
+      "category": "Transport and Logistic Application",
+      "image": "flm.png",
+      "link": "https://www.slb.com/",
+      "description": "Transport and Logistic Application for field operations management"
+    },
+    {
+      "title": "K7 Security",
+      "category": "Security and Antivirus Application",
+      "image": "k7.png",
+      "link": "https://www.k7computing.com/in/",
+      "description": "Security and Antivirus Application for comprehensive threat protection"
+    },
+    {
+      "title": "Scoperetail",
+      "category": "Retail Application",
+      "image": "scope.png",
+      "link": null,
+      "description": "Comprehensive retail application for inventory and sales management"
+    },
+    {
+      "title": "Videotier",
+      "category": "E-commerce Application",
+      "image": "videotier.png",
+      "link": "https://www.videotier.com/",
+      "description": "E-commerce platform for video content and digital products"
+    },
+    {
+      "title": "Holland America Cruise",
+      "category": "E-commerce Application",
+      "image": "holland.png",
+      "link": "https://www.hollandamerica.com/en_US.html",
+      "description": "E-commerce application for cruise bookings and travel experiences"
+    },
+    {
+      "title": "Certaslim",
+      "category": "E-commerce Application",
+      "image": "certaslim.png",
+      "link": "https://www.certaslim.com/home",
+      "description": "E-commerce application for health and fitness products"
+    },
+    {
+      "title": "Uitbieden",
+      "category": "E-commerce Application",
+      "image": "uitbieden.png",
+      "link": "https://www.uitbieden.nl/",
+      "description": "E-commerce auction platform"
+    },
+    {
+      "title": "Flask",
+      "category": "Web Application",
+      "image": "flask.png",
+      "link": "https://flask-pblogs.herokuapp.com/index",
+      "description": "Web application built with Flask framework"
+    },
+    {
+      "title": "VDC",
+      "category": "Website",
+      "image": "vdc.png",
+      "link": "http://ddca.net.in/",
+      "description": "Corporate website for VDC organization"
+    },
+    {
+      "title": "Sai Sukamal Developer",
+      "category": "Website",
+      "image": "saisukamal.png",
+      "link": "http://www.saisukamal.com/",
+      "description": "Real estate developer website showcasing projects and properties"
+    }
+  ]
+}

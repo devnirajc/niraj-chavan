@@ -1,0 +1,69 @@
+{
+  "heading": "My Skills",
+  "subheading": "My Specialty",
+  "description": "When you learn to keep fighting in the face of potential failure, it gives you a larger skill set to do what you want to do in life. It gives you vision but you can't acquire it if you're afraid of keeping score - By Pat Summitt",
+  "categories": [
+    {
+      "name": "Web Technologies",
+      "color": "color-1",
+      "skills": [
+        { "name": "HTML", "level": 95 },
+        { "name": "CSS", "level": 95 },
+        { "name": "SASS", "level": 95 },
+        { "name": "Bootstrap", "level": 90 },
+        { "name": "Angular", "level": 90 },
+        { "name": "React JS", "level": 75 },
+        { "name": "jQuery", "level": 75 },
+        { "name": "JavaScript", "level": 85 },
+        { "name": "Node JS", "level": 65 },
+        { "name": "Express JS", "level": 60 },
+        { "name": "WordPress", "level": 70 },
+        { "name": "SEO", "level": 55 }
+      ]
+    },
+    {
+      "name": "Databases",
+      "color": "color-2",
+      "skills": [
+        { "name": "MongoDB", "level": 65 },
+        { "name": "MySQL", "level": 55 }
+      ]
+    },
+    {
+      "name": "Project Tracking Tools",
+      "color": "color-3",
+      "skills": [
+        { "name": "Jira", "level": 82 },
+        { "name": "Trello", "level": 75 },
+        { "name": "Slack", "level": 80 },
+        { "name": "Confluence", "level": 70 },
+        { "name": "MS Teams", "level": 80 }
+      ]
+    },
+    {
+      "name": "Build Tools",
+      "color": "color-4",
+      "skills": [
+        { "name": "Webpack", "level": 70 },
+        { "name": "Grunt", "level": 65 },
+        { "name": "Gulp", "level": 60 }
+      ]
+    },
+    {
+      "name": "Version Control Tools",
+      "color": "color-5",
+      "skills": [
+        { "name": "Git", "level": 90 },
+        { "name": "GitHub", "level": 85 }
+      ]
+    },
+    {
+      "name": "Other Tools",
+      "color": "color-6",
+      "skills": [
+        { "name": "Postman", "level": 85 },
+        { "name": "VS Code", "level": 95 }
+      ]
+    }
+  ]
+}
