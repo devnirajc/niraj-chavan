@@ -11,6 +11,7 @@
   background: var(--bg-tertiary);
   border-radius: var(--radius-lg);
   border-left: 4px solid var(--primary-600);
+  box-shadow: var(--shadow-sm);
 }
 
 .timeline-icon {

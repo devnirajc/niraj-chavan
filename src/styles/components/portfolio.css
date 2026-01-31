@@ -10,6 +10,12 @@
   overflow: hidden;
   aspect-ratio: 4/3;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base);
+}
+
+.portfolio-item:hover {
+  box-shadow: var(--shadow-lg);
 }
 
 .portfolio-image {
