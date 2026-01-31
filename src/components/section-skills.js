@@ -23,10 +23,7 @@ class Sectionskills extends HTMLElement {
                   <div class="skill-item">
                     <div class="skill-header">
                       <span class="skill-name">${skill.name}</span>
-                      <span class="skill-level">${skill.level}%</span>
-                    </div>
-                    <div class="skill-bar">
-                      <div class="skill-progress ${cat.color}" style="width: ${skill.level}%"></div>
+                      <span class="skill-badge skill-badge-${skill.proficiency.toLowerCase()}">${skill.proficiency}</span>
                     </div>
                   </div>
                 `).join('')}

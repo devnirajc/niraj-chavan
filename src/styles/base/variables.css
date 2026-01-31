@@ -166,6 +166,13 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
+
+  /* ============================================
+     HERO SECTION COLORS
+     ============================================ */
+  --hero-text-primary: #FFFFFF;        /* White for light mode */
+  --hero-text-secondary: rgba(255, 255, 255, 0.95);  /* Slightly transparent white */
+  --hero-name-color: #FFFFFF;          /* Name color */
 }
 
 /* ============================================
@@ -201,6 +208,11 @@
   /* Glassmorphism */
   --glass-bg: rgba(30, 41, 59, 0.7);
   --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* Hero section colors for dark mode */
+  --hero-text-primary: #E0F2FE;        /* Light cyan tint for dark mode */
+  --hero-text-secondary: #BAE6FD;      /* Brighter cyan for subtitle */
+  --hero-name-color: #A5F3FC;          /* Bright cyan for name */
 }
 
 /* ============================================

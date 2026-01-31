@@ -30,7 +30,7 @@
 .skill-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: var(--space-2);
+  align-items: center;
 }
 
 .skill-name {
@@ -38,31 +38,29 @@
   color: var(--text-primary);
 }
 
-.skill-level {
-  color: var(--text-secondary);
-  font-size: var(--text-sm);
-}
-
-.skill-bar {
-  height: 8px;
-  background: var(--bg-secondary);
+.skill-badge {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  padding: 4px 12px;
   border-radius: var(--radius-full);
-  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.skill-progress {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary-600), var(--accent-cyan));
-  border-radius: var(--radius-full);
-  transition: width 1s ease-out;
+.skill-badge-expert {
+  background: linear-gradient(135deg, #2c98f0, #5ba4f5);
+  color: white;
 }
 
-.skill-progress.color-1 { background: linear-gradient(90deg, #2c98f0, #5ba4f5); }
-.skill-progress.color-2 { background: linear-gradient(90deg, #ec5453, #f97171); }
-.skill-progress.color-3 { background: linear-gradient(90deg, #f9bf3f, #fcd34d); }
-.skill-progress.color-4 { background: linear-gradient(90deg, #a84cb8, #c084fc); }
-.skill-progress.color-5 { background: linear-gradient(90deg, #2fa499, #5eead4); }
-.skill-progress.color-6 { background: linear-gradient(90deg, #4054b2, #818cf8); }
+.skill-badge-advanced {
+  background: linear-gradient(135deg, #2fa499, #5eead4);
+  color: white;
+}
+
+.skill-badge-intermediate {
+  background: linear-gradient(135deg, #f9bf3f, #fcd34d);
+  color: #1f2937;
+}
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
@@ -91,7 +89,8 @@
     font-size: var(--text-sm);
   }
 
-  .skill-level {
-    font-size: var(--text-xs);
+  .skill-badge {
+    font-size: 10px;
+    padding: 3px 8px;
   }
 }
