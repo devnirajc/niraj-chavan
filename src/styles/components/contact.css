@@ -11,6 +11,7 @@
   background: var(--bg-tertiary);
   border-radius: var(--radius-lg);
   text-align: center;
+  box-shadow: var(--shadow-sm);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   border: 2px solid transparent;
 }

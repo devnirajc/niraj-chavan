@@ -34,7 +34,8 @@
   background: var(--bg-tertiary);
   border-radius: var(--radius-lg);
   text-align: center;
-  transition: transform var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .service-card:hover {

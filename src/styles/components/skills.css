@@ -25,6 +25,12 @@
   background: var(--bg-tertiary);
   padding: var(--space-4);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base);
+}
+
+.skill-item:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .skill-header {
