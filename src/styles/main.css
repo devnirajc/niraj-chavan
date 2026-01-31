@@ -1,0 +1,89 @@
+/**
+ * Main CSS Entry Point
+ * Portfolio - Niraj Chavan
+ */
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+@import './base/variables.css';
+@import './base/reset.css';
+@import './base/typography.css';
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+@import './utilities/animations.css';
+@import './utilities/spacing.css';
+@import './utilities/accessibility.css';
+
+/* ============================================
+   COMPONENTS
+   ============================================ */
+@import './components/scroll-indicator.css';
+@import './components/theme-toggle.css';
+@import './components/sidebar.css';
+@import './components/hero.css';
+@import './components/about.css';
+@import './components/skills.css';
+@import './components/education.css';
+@import './components/experience.css';
+@import './components/portfolio.css';
+@import './components/contact.css';
+@import './components/buttons.css';
+@import './components/card.css';
+@import './components/timeline.css';
+
+/* ============================================
+   THEMES
+   ============================================ */
+@import './themes/light.css';
+@import './themes/dark.css';
+
+/* ============================================
+   GLOBAL LAYOUT
+   ============================================ */
+main {
+  margin-left: 0;
+  min-height: 100vh;
+  transition: margin-left var(--transition-base);
+}
+
+@media (min-width: 1024px) {
+  main {
+    margin-left: var(--sidebar-width);
+  }
+}
+
+section {
+  min-height: 100vh;
+  padding: var(--space-20) var(--space-6);
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  section {
+    padding: var(--space-16) var(--space-4);
+  }
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+body.loading {
+  overflow: hidden;
+}
+
+body.loading::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-primary);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
