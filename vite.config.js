@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   root: './src',
-  base: '/niraj-chavan/', // GitHub Pages subdirectory
+  base: '/niraj-chavan/',
   publicDir: '../public',
 
   plugins: [
