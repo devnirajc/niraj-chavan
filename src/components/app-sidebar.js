@@ -46,6 +46,20 @@ class AppSidebar extends HTMLElement {
               <li><a href="#contact" data-nav-section="contact">Contact</a></li>
             </ul>
           </nav>
+
+          <div class="sidebar-footer">
+            <div class="sidebar-social">
+              <a href="https://www.linkedin.com/in/niraj-chavan-8267bb98/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
+                <i class="fab fa-linkedin"></i>
+              </a>
+              <a href="https://github.com/devnirajc" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
+                <i class="fab fa-github"></i>
+              </a>
+              <a href="https://medium.com/@nirajd327" target="_blank" rel="noopener noreferrer" aria-label="Medium Blog">
+                <i class="fab fa-medium"></i>
+              </a>
+            </div>
+          </div>
         </div>
       </aside>
     `;
