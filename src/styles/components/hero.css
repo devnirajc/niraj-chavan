@@ -64,6 +64,36 @@
   margin-top: var(--space-8);
 }
 
+.hero-social {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.hero-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: var(--hero-text-primary);
+  font-size: var(--text-xl);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.hero-social a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
 .hero-scroll-indicator {
   position: absolute;
   bottom: var(--space-8);
@@ -117,6 +147,12 @@
 
   .hero-cta {
     margin-top: var(--space-6);
+  }
+
+  .hero-social a {
+    width: 44px;
+    height: 44px;
+    font-size: var(--text-lg);
   }
 
   .hero-scroll-indicator {

@@ -28,6 +28,23 @@ class Sectioncontact extends HTMLElement {
               <p><a href="tel:+919607195436">+91 9607195436</a></p>
             </div>
           </div>
+          <div class="contact-social" data-animate="fade-in-up" data-animate-delay="300">
+            <h3>Connect With Me</h3>
+            <div class="social-links">
+              <a href="https://www.linkedin.com/in/niraj-chavan-8267bb98/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" class="social-link">
+                <i class="fab fa-linkedin"></i>
+                <span>LinkedIn</span>
+              </a>
+              <a href="https://github.com/devnirajc" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" class="social-link">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+              </a>
+              <a href="https://medium.com/@nirajd327" target="_blank" rel="noopener noreferrer" aria-label="Medium Blog" class="social-link">
+                <i class="fab fa-medium"></i>
+                <span>Medium</span>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     `;

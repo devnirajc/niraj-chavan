@@ -30,6 +30,17 @@ class Sectionhero extends HTMLElement {
               Download CV
             </a>
           </div>
+          <div class="hero-social">
+            <a href="https://www.linkedin.com/in/niraj-chavan-8267bb98/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://github.com/devnirajc" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="https://medium.com/@nirajd327" target="_blank" rel="noopener noreferrer" aria-label="Medium Blog">
+              <i class="fab fa-medium"></i>
+            </a>
+          </div>
         </div>
         <div class="hero-scroll-indicator">
           <div class="scroll-arrow"></div>

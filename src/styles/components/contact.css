@@ -58,6 +58,59 @@
   text-decoration: underline;
 }
 
+.contact-social {
+  text-align: center;
+  margin-top: var(--space-8);
+  padding-top: var(--space-8);
+  border-top: 2px solid var(--border-color);
+}
+
+.contact-social h3 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-6);
+  color: var(--text-primary);
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-6);
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: var(--font-medium);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.social-link i {
+  font-size: var(--text-2xl);
+  transition: transform var(--transition-fast);
+}
+
+.social-link:hover {
+  background: var(--primary-600);
+  color: white;
+  border-color: var(--primary-600);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.social-link:hover i {
+  transform: scale(1.2);
+}
+
 @media (max-width: 768px) {
   .contact-content {
     grid-template-columns: 1fr;
@@ -70,5 +123,17 @@
 
   .contact-icon {
     font-size: 3rem;
+  }
+
+  .social-links {
+    gap: var(--space-4);
+  }
+
+  .social-link {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .social-link i {
+    font-size: var(--text-xl);
   }
 }
