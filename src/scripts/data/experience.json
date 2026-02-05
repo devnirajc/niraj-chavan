@@ -6,10 +6,10 @@
       "title": "Software Engineer",
       "company": "JP Morgan Chase & Co.",
       "duration": "December 2021 - Present",
-      "description": "Engineering scalable web applications and services for enterprise financial platforms, delivering high-impact features that enhance user experience and business outcomes.",
+      "description": "Engineering scalable web applications and services for enterprise travel platforms, delivering high-impact features that enhance user experience and business outcomes.",
       "responsibilities": [
-        "Architected and delivered modern web applications using React, TypeScript, and Node.js within Agile sprint cycles, consistently meeting delivery timelines",
-        "Implemented robust A/B testing frameworks and comprehensive unit test suites, improving code coverage and reducing production defects",
+        "Architected and delivered modern web applications using Angular, React, and TypeScript within Agile sprint cycles, consistently meeting delivery timelines",
+        "Implemented robust testing frameworks and comprehensive unit test suites, improving code coverage and reducing production defects",
         "Drove performance optimization initiatives resulting in faster load times and enhanced application reliability across the platform",
         "Collaborated with cross-functional teams on platform architecture decisions, contributing to design patterns and technical standards",
         "Developed reusable component libraries and design systems that accelerated feature development across multiple teams"

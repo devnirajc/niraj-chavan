@@ -16,7 +16,8 @@
         { "name": "SASS/SCSS", "proficiency": "Expert" },
         { "name": "Bootstrap", "proficiency": "Expert" },
         { "name": "Material UI", "proficiency": "Advanced" },
-        { "name": "Tailwind CSS", "proficiency": "Advanced" }
+        { "name": "Tailwind CSS", "proficiency": "Advanced" },
+        { "name": "Chart JS", "proficiency": "Intermediate" }
       ]
     },
     {
@@ -38,8 +39,7 @@
         { "name": "MongoDB", "proficiency": "Expert" },
         { "name": "MySQL", "proficiency": "Advanced" },
         { "name": "PostgreSQL", "proficiency": "Intermediate" },
-        { "name": "Redis", "proficiency": "Intermediate" },
-        { "name": "Mongoose", "proficiency": "Advanced" }
+        { "name": "Redis", "proficiency": "Intermediate" }
       ]
     },
     {
@@ -60,18 +60,18 @@
         { "name": "Jasmine", "proficiency": "Expert" },
         { "name": "Karma", "proficiency": "Advanced" },
         { "name": "Cypress", "proficiency": "Advanced" },
-        { "name": "Testing Library", "proficiency": "Advanced" },
         { "name": "Unit Testing", "proficiency": "Expert" },
-        { "name": "E2E Testing", "proficiency": "Advanced" }
+        { "name": "E2E Testing", "proficiency": "Advanced" },
+        { "name": "Accessibility Testing", "proficiency": "Expert" }
       ]
     },
     {
       "name": "Cloud & DevOps",
       "color": "color-6",
       "skills": [
-        { "name": "AWS", "proficiency": "Advanced" },
+        { "name": "AWS", "proficiency": "Intermediate" },
         { "name": "Azure", "proficiency": "Intermediate" },
-        { "name": "Docker", "proficiency": "Advanced" },
+        { "name": "Docker", "proficiency": "Intermediate" },
         { "name": "Kubernetes", "proficiency": "Intermediate" },
         { "name": "CI/CD", "proficiency": "Advanced" },
         { "name": "GitHub Actions", "proficiency": "Advanced" },
@@ -108,7 +108,7 @@
         { "name": "Chrome DevTools", "proficiency": "Expert" },
         { "name": "npm", "proficiency": "Expert" },
         { "name": "ESLint", "proficiency": "Expert" },
-        { "name": "Prettier", "proficiency": "Expert" }
+        { "name": "AXE Dev Tool", "proficiency": "Expert" }
       ]
     },
     {
