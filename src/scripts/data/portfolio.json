@@ -3,7 +3,7 @@
   "subheading": "My Work",
   "projects": [
     {
-      "title": "Nexpenso - Personal Finance Tracker",
+      "title": "Nexpenso",
       "category": "Personal Finance Tracker",
       "image": "nexpenso.png",
       "link": "https://nexpenso.netlify.app/",
