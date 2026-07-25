@@ -1,53 +1,102 @@
 /**
- * Hero Section Component
- * Full-screen hero with animated text
+ * Hero Section
+ *
+ * Typographic full-height opener. Deliberately no background photograph: text
+ * over an image cannot guarantee a contrast ratio, so the headline sits on a
+ * solid canvas token instead.
  */
 
-class Sectionhero extends HTMLElement {
+import { icon } from '../scripts/utils/icons.js';
+import { yearsOfExperience } from '../scripts/utils/experience.js';
+import { SOCIAL_LINKS, NEW_TAB_HINT } from '../scripts/data/social.js';
+
+// Vite's configured `base`, so a change of deploy path stays in one place.
+const BASE = import.meta.env.BASE_URL;
+
+class SectionHero extends HTMLElement {
   connectedCallback() {
     this.render();
   }
 
   render() {
+    const years = yearsOfExperience();
+
     this.innerHTML = `
-      <section class="hero-section" id="home" data-nav-section="home">
-        <div class="hero-background">
-          <img src="/niraj-chavan/assets/images/computer.jpg" alt="Background" loading="eager">
-        </div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content" data-animate="fade-in-up">
-          <h1 class="hero-title">
-            Hi!<br>
-            I am <span class="text-gradient">Niraj Chavan</span>
+      <section class="hero" id="home" data-nav-section="home" aria-labelledby="hero-title">
+        <div class="hero__glow" aria-hidden="true"></div>
+        <div class="hero__grid" aria-hidden="true"></div>
+
+        <div class="container hero__inner">
+          <img
+            class="hero__avatar"
+            src="${BASE}assets/images/about.jpg"
+            alt=""
+            width="88"
+            height="88"
+            decoding="async"
+          >
+
+          <p class="hero__status">
+            <span class="hero__status-dot" aria-hidden="true"></span>
+            Open to new opportunities
+          </p>
+
+          <h1 class="hero__title" id="hero-title">
+            Hi, I&rsquo;m <em>Niraj Chavan</em>
           </h1>
-          <p class="hero-subtitle">Software Engineer | Full Stack Developer</p>
-          <div class="hero-cta">
-            <a href="/niraj-chavan/assets/documents/Niraj-Chavan.pdf" download class="btn btn-primary">
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 12a1 1 0 01-.707-.293l-4-4a1 1 0 011.414-1.414L9 8.586V1a1 1 0 112 0v7.586l2.293-2.293a1 1 0 111.414 1.414l-4 4A1 1 0 0110 12z"/>
-                <path d="M17 14a1 1 0 011 1v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a1 1 0 112 0v2h12v-2a1 1 0 011-1z"/>
-              </svg>
+
+          <p class="hero__subtitle">
+            Software engineer building fast, accessible web products &mdash;
+            currently at JP Morgan Chase &amp; Co. in Pune.
+          </p>
+
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="${BASE}assets/documents/Niraj-Chavan.pdf" download>
+              ${icon('download', { size: 18 })}
               Download CV
             </a>
-          </div>
-          <div class="hero-social">
-            <a href="https://www.linkedin.com/in/niraj-chavan-8267bb98/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
-              <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="https://github.com/devnirajc" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
-              <i class="fab fa-github"></i>
-            </a>
-            <a href="https://medium.com/@nirajd327" target="_blank" rel="noopener noreferrer" aria-label="Medium Blog">
-              <i class="fab fa-medium"></i>
+            <a class="btn btn--outline" href="#contact">
+              Get in touch
+              ${icon('arrow-right', { size: 18 })}
             </a>
           </div>
+
+          <dl class="hero__facts">
+            <div class="hero__fact">
+              <dt>Experience</dt>
+              <dd>${years}+ years</dd>
+            </div>
+            <div class="hero__fact">
+              <dt>Focus</dt>
+              <dd>Front end &amp; full stack</dd>
+            </div>
+            <div class="hero__fact">
+              <dt>Based in</dt>
+              <dd>Pune, India</dd>
+            </div>
+          </dl>
+
+          <ul class="social-row hero__social">
+            ${SOCIAL_LINKS.map(
+              (link) => `
+                <li>
+                  <a class="icon-link" href="${link.url}" target="_blank" rel="noopener noreferrer">
+                    ${icon(link.id, { size: 20 })}
+                    <span class="sr-only">${link.label}${NEW_TAB_HINT}</span>
+                  </a>
+                </li>
+              `
+            ).join('')}
+          </ul>
         </div>
-        <div class="hero-scroll-indicator">
-          <div class="scroll-arrow"></div>
-        </div>
+
+        <a class="hero__scroll" href="#about">
+          Explore my work
+          ${icon('arrow-down', { size: 16 })}
+        </a>
       </section>
     `;
   }
 }
 
-customElements.define('section-hero', Sectionhero);
+customElements.define('section-hero', SectionHero);

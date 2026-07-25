@@ -1,0 +1,31 @@
+/**
+ * Layout
+ *
+ * One primitive, used by every section and the footer. The generic helpers that
+ * used to live here (`.stack`, `.cluster`, `.grid-auto`, spacing utilities)
+ * were never referenced by a component — each layout defines its own grid — so
+ * they have been removed rather than left as decoration.
+ */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+
+  /*
+   * Multi-column layouts inside a section must respond to the width they
+   * actually get, not to the window. Above 1024px a 272px nav rail is
+   * subtracted from the viewport, so a viewport-based `min-width: 900px` was
+   * firing on a 1024px iPad while only ~690px of usable space existed —
+   * squeezing prose to ~38 characters per line. Querying this container
+   * instead makes the breakpoints honest.
+   */
+  container: page-content / inline-size;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--space-8);
+  }
+}

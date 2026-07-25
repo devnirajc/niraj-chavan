@@ -1,17 +1,14 @@
 /**
- * Main JavaScript Entry Point
- * Portfolio - Niraj Chavan
+ * Main entry point
+ * Portfolio — Niraj Chavan
  */
 
-// Import styles
 import '../styles/main.css';
 
-// Import utility functions
 import { initThemeManager } from './utils/theme-manager.js';
 import { initSmoothScroll } from './utils/smooth-scroll.js';
-import { initIntersectionObserver } from './utils/intersection-observer.js';
+import { initScrollReveal, revealAll } from './utils/intersection-observer.js';
 
-// Import Web Components
 import '../components/theme-toggle.js';
 import '../components/app-sidebar.js';
 import '../components/section-hero.js';
@@ -22,65 +19,94 @@ import '../components/section-experience.js';
 import '../components/section-portfolio.js';
 import '../components/section-contact.js';
 
-/**
- * Initialize the application
- */
-async function initApp() {
-  console.log('🚀 Initializing portfolio...');
-
+function initApp() {
   try {
-    // Remove loading class
-    document.body.classList.remove('loading');
-
-    // Initialize theme manager (dark mode)
     initThemeManager();
-    console.log('✅ Theme manager initialized');
-
-    // Initialize smooth scrolling
     initSmoothScroll();
-    console.log('✅ Smooth scroll initialized');
-
-    // Initialize intersection observer for scroll animations
-    initIntersectionObserver();
-    console.log('✅ Intersection observer initialized');
-
-    // Initialize scroll indicator
+    initScrollReveal();
     initScrollIndicator();
-    console.log('✅ Scroll indicator initialized');
-
-    console.log('🎉 Portfolio initialized successfully!');
+    setCurrentYear();
+    applyInitialHash();
   } catch (error) {
-    console.error('❌ Error initializing portfolio:', error);
+    // Never leave reveal-animated content stranded at opacity 0 because some
+    // unrelated initialiser threw.
+    revealAll();
+    console.error('Portfolio initialisation failed:', error);
   }
 }
 
 /**
- * Initialize scroll progress indicator
+ * Decorative progress bar. Driven by `transform` rather than `width` so it
+ * stays on the compositor, and throttled to one update per frame.
  */
 function initScrollIndicator() {
-  const indicator = document.querySelector('.scroll-indicator__bar');
-  if (!indicator) return;
+  const bar = document.querySelector('.scroll-indicator__bar');
+  if (!bar) return;
 
-  window.addEventListener('scroll', () => {
-    const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (window.scrollY / windowHeight) * 100;
-    indicator.style.width = `${scrolled}%`;
+  let ticking = false;
 
-    // Update ARIA value
-    const progressBar = document.querySelector('.scroll-indicator');
-    if (progressBar) {
-      progressBar.setAttribute('aria-valuenow', Math.round(scrolled));
-    }
+  const update = () => {
+    const scrollable =
+      document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
+    bar.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1)})`;
+    ticking = false;
+  };
+
+  const schedule = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  };
+
+  window.addEventListener('scroll', schedule, { passive: true });
+
+  // Document height changes without a scroll — orientation change, a late font
+  // swap, images settling — would otherwise leave the bar showing a stale
+  // fraction until the next scroll event.
+  window.addEventListener('resize', schedule, { passive: true });
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(schedule).observe(document.body);
+  }
+
+  update();
+}
+
+/**
+ * Re-applies the URL fragment after the components have rendered.
+ *
+ * Every section is created by a custom element, so when the browser first tries
+ * to resolve a URL like `/#education` the target does not exist yet and the
+ * jump is either skipped or lands in the wrong place. Doing it again here — now
+ * that the DOM is complete — makes deep links and refreshes land correctly, and
+ * picks up the `scroll-margin` offsets the CSS defines.
+ */
+function applyInitialHash() {
+  const { hash } = window.location;
+  if (!hash || hash === '#') return;
+
+  let target = null;
+  try {
+    target = document.querySelector(hash);
+  } catch {
+    return; // Not a valid selector — nothing to jump to.
+  }
+
+  if (target) {
+    // 'instant' rather than 'auto': 'auto' defers to `scroll-behavior: smooth`
+    // on <html>, which would animate a deep link down from the top on load.
+    target.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
+}
+
+function setCurrentYear() {
+  document.querySelectorAll('[data-current-year]').forEach((node) => {
+    node.textContent = String(new Date().getFullYear());
   });
 }
 
-// Start the app when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);
 } else {
   initApp();
 }
-
-// Log version info
-console.log('%c Portfolio v2.0.0 ', 'background: #6366F1; color: white; padding: 4px 8px; border-radius: 4px;');
-console.log('Built with ❤️ using Vite + Web Components');

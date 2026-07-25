@@ -1,30 +1,57 @@
+/**
+ * Card
+ *
+ * The base surface for every panel on the page: a hairline border on a warm
+ * surface, with elevation reserved for hover. Because structure comes from the
+ * border rather than a shadow, cards stay legible in forced-colours mode and
+ * at high contrast settings.
+ */
+
 .card {
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-lg);
+  position: relative;
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-subtle);
+  border-radius: var(--radius-xl);
   padding: var(--space-6);
-  box-shadow: var(--shadow-md);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base),
+    transform var(--transition-base);
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
+.section--alt .card {
+  background: var(--bg-canvas);
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .card {
-    padding: var(--space-4);
-  }
-
-  /* Disable hover effects on mobile for better performance */
-  .card:hover {
-    transform: none;
+@media (hover: hover) {
+  .card--interactive:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
   }
 }
 
-@media (max-width: 480px) {
+/* The focus ring itself stays on the link inside — that is the thing being
+   focused, and duplicating the indicator on the card would be noisier, not
+   clearer. The card only echoes the state with its border. */
+.card--interactive:focus-within {
+  border-color: var(--border-interactive);
+}
+
+/* Icon chip used at the top of feature and contact cards. */
+.card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: var(--space-4);
+  color: var(--accent-strong);
+  background: var(--accent-quiet);
+  border: var(--hairline) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 640px) {
   .card {
-    padding: var(--space-3);
+    padding: var(--space-5);
   }
 }

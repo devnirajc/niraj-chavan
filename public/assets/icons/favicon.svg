@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>Niraj Chavan</title>
+  <!--
+    Primary favicon, and the source every raster icon is generated from
+    (scripts/generate-icons.js).
+
+    Ink tile with a clay "N", the same pair the site uses (ink-900 / clay-400).
+    They sit at 5.6:1 against each other, so the letterform still reads at
+    16px. A dark tile also keeps its edges on both light and dark browser
+    chrome, which a paper-coloured tile would not.
+
+    The letter is a path, not a text element: a favicon cannot rely on any
+    font being available in the rendering context.
+  -->
+  <rect width="64" height="64" rx="14" fill="#1a1917"/>
+  <path d="M18 48V16h10l10 20V16h10v32H38L28 28v20z" fill="#d97757"/>
+</svg>

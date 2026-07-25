@@ -1,38 +1,99 @@
+/**
+ * Skills Section
+ *
+ * Proficiency is written out in text next to every skill. The dot meter is a
+ * redundant visual aid and is hidden from assistive tech, so the level is never
+ * conveyed by colour or shape alone (WCAG 1.4.1).
+ */
+
 import skillsData from '../scripts/data/skills.json';
 
-class Sectionskills extends HTMLElement {
+const LEVELS = {
+  expert: 3,
+  advanced: 2,
+  intermediate: 1,
+};
+
+class SectionSkills extends HTMLElement {
   connectedCallback() {
     this.data = skillsData;
     this.render();
   }
 
+  /** Three dots, filled to the skill's tier — decorative only. */
+  static meter(level) {
+    const filled = LEVELS[level] || 1;
+    const dots = [1, 2, 3]
+      .map((step) => `<i class="${step <= filled ? 'is-filled' : ''}"></i>`)
+      .join('');
+    return `<span class="skill-meter" aria-hidden="true">${dots}</span>`;
+  }
+
   render() {
     this.innerHTML = `
-      <section class="skills-section" id="skills" data-nav-section="skills">
+      <section
+        class="section section--alt"
+        id="skills"
+        data-nav-section="skills"
+        aria-labelledby="skills-title"
+      >
         <div class="container">
-          <div class="section-header" data-animate="fade-in-up">
-            <span class="section-subtitle">${this.data.subheading}</span>
-            <h2 class="section-title">${this.data.heading}</h2>
+          <header class="section-header" data-animate="fade-in-up">
+            <span class="eyebrow">${this.data.subheading}</span>
+            <h2 class="section-title" id="skills-title">${this.data.heading}</h2>
+            <hr class="section-rule">
+            <p class="section-intro">${this.data.description}</p>
+          </header>
+
+          <div class="skills-groups">
+            ${this.data.categories
+              .map((category, i) => {
+                const groupId = `skills-${slug(category.name)}`;
+                return `
+                  <section
+                    class="card skill-group"
+                    aria-labelledby="${groupId}"
+                    data-animate="fade-in-up"
+                    data-animate-delay="${Math.min((i % 3) * 50 + 50, 200)}"
+                  >
+                    <h3 id="${groupId}">
+                      ${category.name}
+                      <!-- Hidden from AT: the heading names the region, and a
+                           screen reader already announces "list, N items". -->
+                      <span class="skill-group__count" aria-hidden="true">${
+                        category.skills.length
+                      }</span>
+                    </h3>
+                    <ul class="skill-chips">
+                      ${category.skills.map((skill) => renderChip(skill)).join('')}
+                    </ul>
+                  </section>
+                `;
+              })
+              .join('')}
           </div>
-          <p class="skills-description" data-animate="fade-in-left">${this.data.description}</p>
-          ${this.data.categories.map(cat => `
-            <div class="skills-category" data-animate="fade-in-up">
-              <h3 class="category-title">${cat.name}</h3>
-              <div class="skills-grid">
-                ${cat.skills.map(skill => `
-                  <div class="skill-item">
-                    <div class="skill-header">
-                      <span class="skill-name">${skill.name}</span>
-                      <span class="skill-badge skill-badge-${skill.proficiency.toLowerCase()}">${skill.proficiency}</span>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `).join('')}
         </div>
       </section>
     `;
   }
 }
-customElements.define('section-skills', Sectionskills);
+
+function renderChip(skill) {
+  const level = skill.proficiency.toLowerCase();
+  return `
+    <li class="skill-chip skill-chip--${level}">
+      ${skill.name}
+      ${SectionSkills.meter(level)}
+      <span class="skill-chip__level">${skill.proficiency}</span>
+    </li>
+  `;
+}
+
+function slug(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+customElements.define('section-skills', SectionSkills);

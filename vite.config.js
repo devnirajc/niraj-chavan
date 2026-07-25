@@ -32,24 +32,41 @@ export default defineConfig({
     // PWA support
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+      includeAssets: [
+        'assets/icons/favicon.svg',
+        'assets/icons/apple-touch-icon.png',
+        'assets/images/nc.ico',
+        'assets/images/favicon-32x32.png',
+        'assets/images/favicon-16x16.png',
+      ],
       manifest: {
         name: 'Niraj Chavan - Software Engineer',
         short_name: 'NC Portfolio',
         description: 'Portfolio website of Niraj Chavan, Software Engineer specializing in JavaScript, Angular, React, and Node.js',
-        theme_color: '#6366F1',
-        background_color: '#F9FAFB',
+        // Matches --bg-canvas / --accent in src/styles/base/variables.css
+        theme_color: '#F0EEE6',
+        background_color: '#F0EEE6',
         display: 'standalone',
         icons: [
           {
-            src: '/niraj-chavan/assets/icons/icon-192.png',
+            src: 'assets/icons/icon-192.png',
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any',
           },
           {
-            src: '/niraj-chavan/assets/icons/icon-512.png',
+            src: 'assets/icons/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            // Separate file: a "maskable" icon may be cropped to a circle, so
+            // its artwork is inset to the 80% safe zone.
+            src: 'assets/icons/icon-maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },

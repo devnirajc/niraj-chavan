@@ -1,0 +1,64 @@
+/**
+ * Section chrome
+ *
+ * Shared rhythm and headers for every content section. Sections alternate
+ * between the canvas and a slightly raised surface to create structure without
+ * heavy dividers or full-bleed colour blocks.
+ */
+
+.section {
+  padding-block: var(--section-gap);
+
+  /* A jump to #skills should land on the *header*, not on the top of the
+     section's padding box. The padding is what draws the alternating band, so
+     it has to stay — instead the landing point is pulled up past it with a
+     negative scroll-margin, leaving exactly --scroll-offset above the eyebrow.
+     Without this the header sat ~230px down the viewport. */
+  scroll-margin-top: calc(var(--section-gap) * -1);
+}
+
+.section--alt {
+  background: var(--bg-surface);
+  border-block: var(--hairline) solid var(--border-subtle);
+}
+
+/* ============================================
+   HEADER
+   ============================================
+   Left-aligned and editorial: eyebrow, serif title, then a hairline rule that
+   runs to the edge of the measure. */
+.section-header {
+  margin-bottom: var(--space-12);
+  max-width: var(--measure);
+}
+
+.section-header .eyebrow {
+  margin-bottom: var(--space-3);
+}
+
+.section-title {
+  font-size: var(--text-3xl);
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.section-rule {
+  width: var(--space-16);
+  height: 2px;
+  border: 0;
+  background: var(--accent);
+  border-radius: var(--radius-full);
+  margin: 0;
+}
+
+.section-intro {
+  margin-top: var(--space-5);
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .section-header {
+    margin-bottom: var(--space-8);
+  }
+}

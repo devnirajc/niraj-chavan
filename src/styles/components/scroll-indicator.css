@@ -1,16 +1,28 @@
+/**
+ * Scroll progress
+ *
+ * Purely decorative: it duplicates information the browser's own scrollbar
+ * already provides. It is therefore hidden from assistive tech rather than
+ * exposed as a live `progressbar`, which would otherwise chatter on every
+ * scroll event.
+ */
+
 .scroll-indicator {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--bg-secondary);
-  z-index: var(--z-fixed);
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 3px;
+  z-index: var(--z-overlay);
+  background: transparent;
+  pointer-events: none;
 }
 
+/* Full width at rest and scaled by JS — the element keeps its own resting
+   state here rather than having the width written inline at startup. */
 .scroll-indicator__bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary-600), var(--accent-cyan));
-  width: 0%;
-  transition: width 0.1s ease-out;
+  width: 100%;
+  background: var(--accent-surface);
+  transform: scaleX(0);
+  transform-origin: left center;
 }

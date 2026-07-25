@@ -12,26 +12,22 @@
     {
       "title": "Web Design",
       "description": "Create a clean, appealing design",
-      "icon": "fas fa-lightbulb",
-      "color": "color-1"
+      "icon": "lightbulb"
     },
     {
       "title": "Intuitive",
       "description": "Strong preference for intuitive UX/UI",
-      "icon": "fas fa-globe",
-      "color": "color-2"
+      "icon": "globe"
     },
     {
       "title": "Dynamic",
       "description": "Websites don't have to be static",
-      "icon": "fas fa-code",
-      "color": "color-3"
+      "icon": "code"
     },
     {
       "title": "Responsive",
       "description": "Always work on any device, big or small",
-      "icon": "fas fa-mobile-screen-button",
-      "color": "color-4"
+      "icon": "mobile"
     }
   ]
 }

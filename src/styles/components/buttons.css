@@ -1,47 +1,83 @@
-/* Buttons */
+/**
+ * Buttons
+ *
+ * Three weights: solid (primary action), outline (secondary) and quiet
+ * (tertiary/icon). All meet the 44x44 minimum target size and carry a visible
+ * border in the outline variants so they survive forced-colours mode.
+ */
+
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
+  min-height: var(--tap-target);
   padding: var(--space-3) var(--space-6);
+  font-family: var(--font-sans);
   font-size: var(--text-base);
-  font-weight: var(--font-semibold);
+  font-weight: var(--weight-medium);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-align: center;
   text-decoration: none;
-  border: none;
-  border-radius: var(--radius-md);
+  border: var(--hairline) solid transparent;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.btn-primary {
-  background: var(--primary-600);
-  color: white;
+.btn svg {
+  flex-shrink: 0;
 }
 
-.btn-primary:hover {
-  background: var(--primary-700);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+/* --- Solid ------------------------------------------------------------- */
+.btn--primary {
+  background: var(--accent-surface);
+  color: var(--text-on-accent);
+  border-color: var(--accent-surface);
+  box-shadow: var(--shadow-sm);
 }
 
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.btn--primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--text-on-accent);
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .btn {
-    padding: var(--space-4) var(--space-6);
-    font-size: var(--text-base);
-    min-height: 44px; /* Minimum touch target size for accessibility */
+/* --- Outline ----------------------------------------------------------- */
+.btn--outline {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-interactive);
+}
+
+.btn--outline:hover {
+  background: var(--bg-sunken);
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+@media (hover: hover) {
+  .btn--primary:hover,
+  .btn--outline:hover {
+    transform: translateY(-1px);
   }
 }
 
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn[aria-disabled='true'],
+.btn:disabled {
+  transform: none;
+  box-shadow: none;
+}
+
 @media (max-width: 480px) {
+  /* Stack full-width so labels never truncate on narrow screens. */
   .btn {
     width: 100%;
-    justify-content: center;
   }
 }

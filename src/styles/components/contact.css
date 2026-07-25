@@ -1,139 +1,118 @@
-.contact-content {
+/**
+ * Contact
+ *
+ * Detail cards plus a labelled social row. Icons are decorative; every link
+ * carries visible text, so nothing depends on recognising a glyph.
+ */
+
+.contact-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-8);
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: var(--space-10);
 }
 
-.contact-item {
-  padding: var(--space-10);
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  border: 2px solid transparent;
+/* Lower threshold than About: the two columns here are a detail list and a
+   link list, both of which stay legible in less width than running prose. */
+@container page-content (min-width: 720px) {
+  .contact-layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--space-16);
+    align-items: start;
+  }
 }
 
-.contact-item:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  border-color: var(--primary-500);
+.contact-list {
+  display: grid;
+  gap: var(--space-4);
 }
 
-.contact-icon {
-  font-size: 4rem;
-  margin-bottom: var(--space-4);
-  display: inline-block;
-  transition: transform var(--transition-fast);
+.contact-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-5);
 }
 
-.contact-item:hover .contact-icon {
-  transform: scale(1.2);
+.contact-card .card-icon {
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
-.contact-item h3 {
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-  margin-bottom: var(--space-3);
-  color: var(--text-primary);
+.contact-card__label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-normal);
+  margin: 0 0 var(--space-1);
 }
 
-.contact-item p {
+.contact-card__value {
   font-size: var(--text-lg);
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-.contact-item a {
-  color: var(--primary-500);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-  font-weight: var(--font-medium);
-}
-
-.contact-item a:hover {
-  color: var(--primary-400);
-  text-decoration: underline;
-}
-
-.contact-social {
-  text-align: center;
-  margin-top: var(--space-8);
-  padding-top: var(--space-8);
-  border-top: 2px solid var(--border-color);
-}
-
-.contact-social h3 {
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-  margin-bottom: var(--space-6);
   color: var(--text-primary);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.contact-card__value a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: var(--border-strong);
+}
+
+.contact-card__value a:hover {
+  color: var(--accent-strong);
+  text-decoration-color: currentColor;
+}
+
+/* ============================================
+   SOCIAL
+   ============================================ */
+.contact-social h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-normal);
+  margin-bottom: var(--space-4);
 }
 
 .social-links {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-6);
-  flex-wrap: wrap;
+  display: grid;
+  gap: var(--space-3);
 }
 
 .social-link {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-6);
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  color: var(--text-secondary);
+  gap: var(--space-3);
+  min-height: var(--tap-target);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
   text-decoration: none;
-  font-weight: var(--font-medium);
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-sm);
+  font-weight: var(--weight-medium);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
-.social-link i {
-  font-size: var(--text-2xl);
-  transition: transform var(--transition-fast);
+.section--alt .social-link {
+  background: var(--bg-canvas);
 }
 
 .social-link:hover {
-  background: var(--primary-600);
-  color: white;
-  border-color: var(--primary-600);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  border-color: var(--text-muted);
+  color: var(--accent-strong);
 }
 
-.social-link:hover i {
-  transform: scale(1.2);
+.social-link__handle {
+  margin-inline-start: auto;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
 }
 
-@media (max-width: 768px) {
-  .contact-content {
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  .contact-item {
-    padding: var(--space-8);
-  }
-
-  .contact-icon {
-    font-size: 3rem;
-  }
-
-  .social-links {
-    gap: var(--space-4);
-  }
-
-  .social-link {
-    padding: var(--space-3) var(--space-4);
-  }
-
-  .social-link i {
-    font-size: var(--text-xl);
-  }
+.social-link:hover .social-link__handle {
+  color: var(--text-secondary);
 }

@@ -1,0 +1,36 @@
+/**
+ * Site footer
+ *
+ * A sibling of <main>, not part of the contact section — which is why it lives
+ * here rather than in contact.css.
+ */
+
+.site-footer {
+  padding-block: var(--space-8);
+  border-top: var(--hairline) solid var(--border-subtle);
+  background: var(--bg-canvas);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.site-footer p {
+  margin: 0;
+  color: inherit;
+  max-width: none;
+}
+
+.site-footer a {
+  color: var(--text-secondary);
+}
+
+.site-footer a:hover {
+  color: var(--accent-strong);
+}
