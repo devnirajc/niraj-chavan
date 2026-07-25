@@ -1,46 +1,65 @@
 /**
- * Accessibility Utilities
- * WCAG 2.1 AA Compliance
+ * Accessibility
+ *
+ * The single place where focus, motion, contrast and forced-colours behaviour
+ * is defined. Targets WCAG 2.2 AA throughout, with AAA contrast on body copy.
  */
 
 /* ============================================
-   FOCUS VISIBLE
-   ============================================ */
-*:focus-visible {
-  outline: 2px solid var(--primary-600);
+   FOCUS — SC 2.4.7 (visible), 2.4.11 (not obscured), 1.4.11 (3:1 contrast)
+   ============================================
+   A two-tone ring: a solid outline in the accent plus a soft halo. The offset
+   keeps the ring clear of the element's own border so it reads on both the
+   canvas and card surfaces. */
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 6px var(--focus-halo);
 }
 
-*:focus:not(:focus-visible) {
+/* Mouse users keep a clean UI; keyboard users always get the ring above. */
+:focus:not(:focus-visible) {
   outline: none;
 }
 
 /* ============================================
-   SKIP LINKS
+   SKIP LINK — SC 2.4.1
    ============================================ */
 .skip-link {
-  position: absolute;
-  top: -100px;
+  position: fixed;
+  top: var(--space-4);
   left: var(--space-4);
-  background: var(--primary-600);
-  color: white;
-  padding: var(--space-2) var(--space-4);
+  z-index: var(--z-skip-link);
+  display: inline-block;
+  padding: var(--space-3) var(--space-5);
+  background: var(--bg-inverse);
+  color: var(--text-inverse);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
   text-decoration: none;
   border-radius: var(--radius-md);
-  z-index: var(--z-tooltip);
-  font-weight: var(--font-semibold);
-  transition: top var(--transition-fast);
+  box-shadow: var(--shadow-lg);
+  /* Moved out of view rather than hidden, so it stays focusable. */
+  transform: translateY(calc(-100% - var(--space-8)));
+  transition: transform var(--transition-fast);
 }
 
+/* Deliberately `:focus`, not `:focus-visible` — a bypass block should appear
+   for any focus that reaches it, including programmatic focus. */
 .skip-link:focus {
-  top: var(--space-4);
-  outline: 2px solid white;
-  outline-offset: 2px;
+  transform: translateY(0);
+  color: var(--text-inverse);
+}
+
+/* The scroll target must be focusable for the skip link to actually move
+   focus, but it should never show a ring when reached by mouse. */
+#main:focus {
+  outline: none;
 }
 
 /* ============================================
-   SCREEN READER ONLY
+   SCREEN-READER-ONLY TEXT
    ============================================ */
 .sr-only {
   position: absolute;
@@ -50,23 +69,17 @@
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border-width: 0;
 }
 
-.sr-only-focusable:active,
-.sr-only-focusable:focus {
-  position: static;
-  width: auto;
-  height: auto;
-  overflow: visible;
-  clip: auto;
-  white-space: normal;
-}
-
 /* ============================================
-   REDUCE MOTION
-   ============================================ */
+   REDUCED MOTION — SC 2.3.3
+   ============================================
+   Note the `[data-animate]` reset: scroll-reveal elements start at opacity 0,
+   so simply zeroing the animation duration would leave them invisible. They
+   are forced to their final state instead. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -76,35 +89,86 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* ============================================
-   HIGH CONTRAST MODE
+   INCREASED CONTRAST
    ============================================ */
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
   :root {
-    --border-color: currentColor;
+    --text-secondary: var(--paper-900);
+    --text-muted: var(--paper-800);
+    --border-subtle: var(--paper-500);
+    --border-default: var(--paper-600);
   }
 
-  button,
-  a {
-    border: 2px solid currentColor;
+  [data-theme='dark'] {
+    --text-secondary: var(--paper-50);
+    --text-muted: var(--paper-100);
+    --border-subtle: var(--ink-500);
+    --border-default: #6f6b62;
   }
 }
 
 /* ============================================
-   ARIA ATTRIBUTES
-   ============================================ */
-[aria-disabled="true"] {
+   FORCED COLOURS (Windows High Contrast)
+   ============================================
+   Backgrounds and shadows are dropped by the OS, so anything that relied on
+   them for structure gets an explicit border, and gradient/clipped text is
+   returned to a plain colour. */
+@media (forced-colors: active) {
+  .card,
+  .service-card,
+  .skill-group,
+  .timeline-card,
+  .portfolio-card,
+  .contact-card,
+  .app-sidebar,
+  .btn,
+  .theme-toggle,
+  .sidebar-toggle {
+    border: 1px solid CanvasText;
+  }
+
+  :focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  .sidebar-nav a[aria-current] {
+    background: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+
+  .hero__glow,
+  .hero__grid,
+  .section-rule {
+    display: none;
+  }
+}
+
+/* ============================================
+   ARIA STATE STYLING
+   ============================================
+   `aria-hidden` deliberately gets no `display: none` here — it marks content
+   as decorative for assistive tech while it stays visible on screen. */
+[aria-disabled='true'],
+:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
-  pointer-events: none;
+  opacity: 0.55;
 }
 
-[aria-hidden="true"] {
+[hidden] {
   display: none !important;
-}
-
-[role="button"] {
-  cursor: pointer;
 }

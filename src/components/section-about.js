@@ -1,48 +1,63 @@
-import aboutData from '../scripts/data/about.json';
+/**
+ * About Section
+ *
+ * Prose column plus capability cards. Each section labels its own landmark
+ * via `aria-labelledby`, so a screen reader's region list reads
+ * "About, region" rather than an unnamed run of sections.
+ */
 
-class Sectionabout extends HTMLElement {
+import aboutData from '../scripts/data/about.json';
+import { icon } from '../scripts/utils/icons.js';
+import { yearsOfExperience } from '../scripts/utils/experience.js';
+
+class SectionAbout extends HTMLElement {
   connectedCallback() {
     this.data = aboutData;
     this.render();
   }
 
-  calculateYears() {
-    const start = new Date('2014-07-01');
-    const now = new Date();
-    const years = (now - start) / (1000 * 60 * 60 * 24 * 365.25);
-    return years.toFixed(1);
-  }
-
   render() {
-    const years = this.calculateYears();
-    const description = this.data.description.map(p => p.replace('{years}', years + ' years')).join('</p><p>');
+    const years = `${yearsOfExperience()} years`;
+    const paragraphs = this.data.description
+      .map((text) => `<p>${text.replace('{years}', years)}</p>`)
+      .join('');
 
     this.innerHTML = `
-      <section class="about-section" id="about" data-nav-section="about">
+      <section class="section" id="about" data-nav-section="about" aria-labelledby="about-title">
         <div class="container">
-          <div class="section-header" data-animate="fade-in-up">
-            <span class="section-subtitle">${this.data.subheading}</span>
-            <h2 class="section-title">${this.data.heading}</h2>
-          </div>
-          <div class="about-content">
-            <div class="about-text" data-animate="fade-in-left">
-              <p><strong>${this.data.intro}.</strong> ${description}</p>
+          <header class="section-header" data-animate="fade-in-up">
+            <span class="eyebrow">${this.data.subheading}</span>
+            <h2 class="section-title" id="about-title">${this.data.heading}</h2>
+            <hr class="section-rule">
+          </header>
+
+          <div class="about-layout">
+            <div class="about-text prose" data-animate="fade-in-up">
+              <p><strong>${this.data.intro}.</strong></p>
+              ${paragraphs}
             </div>
-            <div class="services-grid">
-              ${this.data.services.map((service, i) => `
-                <div class="service-card ${service.color}" data-animate="fade-in-up" data-animate-delay="${i * 100}">
-                  <div class="service-icon">
-                    <i class="${service.icon}"></i>
-                  </div>
-                  <h3>${service.title}</h3>
-                  <p>${service.description}</p>
-                </div>
-              `).join('')}
-            </div>
+
+            <ul class="services-grid">
+              ${this.data.services
+                .map(
+                  (service, i) => `
+                    <li class="card service-card" data-animate="fade-in-up" data-animate-delay="${Math.min(
+                      (i + 1) * 50,
+                      200
+                    )}">
+                      <span class="card-icon">${icon(service.icon, { size: 20 })}</span>
+                      <h3>${service.title}</h3>
+                      <p>${service.description}</p>
+                    </li>
+                  `
+                )
+                .join('')}
+            </ul>
           </div>
         </div>
       </section>
     `;
   }
 }
-customElements.define('section-about', Sectionabout);
+
+customElements.define('section-about', SectionAbout);

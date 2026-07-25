@@ -1,6 +1,15 @@
-import experienceData from '../scripts/data/experience.json';
+/**
+ * Experience Section
+ *
+ * An ordered list of roles, newest first. Heading levels run h2 (section) →
+ * h3 (role title) with the employer as a paragraph rather than an h4, so the
+ * outline stays clean and no level is skipped (WCAG 1.3.1).
+ */
 
-class Sectionexperience extends HTMLElement {
+import experienceData from '../scripts/data/experience.json';
+import { icon } from '../scripts/utils/icons.js';
+
+class SectionExperience extends HTMLElement {
   connectedCallback() {
     this.data = experienceData;
     this.render();
@@ -8,31 +17,56 @@ class Sectionexperience extends HTMLElement {
 
   render() {
     this.innerHTML = `
-      <section class="experience-section" id="experience" data-nav-section="experience">
+      <section
+        class="section section--alt"
+        id="experience"
+        data-nav-section="experience"
+        aria-labelledby="experience-title"
+      >
         <div class="container">
-          <div class="section-header" data-animate="fade-in-up">
-            <span class="section-subtitle">${this.data.subheading}</span>
-            <h2 class="section-title">${this.data.heading}</h2>
-          </div>
-          <div class="timeline">
-            ${this.data.positions.map((pos, i) => `
-              <div class="timeline-item ${pos.color}" data-animate="fade-in-left" data-animate-delay="${i * 100}">
-                <div class="timeline-icon">💼</div>
-                <div class="timeline-content">
-                  <h3>${pos.title}</h3>
-                  <h4>${pos.company}</h4>
-                  <p class="timeline-duration">${pos.duration}</p>
-                  <p>${pos.description}</p>
-                  <ul>
-                    ${pos.responsibilities.map(r => `<li>${r}</li>`).join('')}
-                  </ul>
-                </div>
-              </div>
-            `).join('')}
-          </div>
+          <header class="section-header" data-animate="fade-in-up">
+            <span class="eyebrow">${this.data.subheading}</span>
+            <h2 class="section-title" id="experience-title">${this.data.heading}</h2>
+            <hr class="section-rule">
+          </header>
+
+          <ol class="timeline">
+            ${this.data.positions
+              .map(
+                (position, i) => `
+                  <li class="timeline-item" data-animate="fade-in-up" data-animate-delay="${Math.min(
+                    (i + 1) * 50,
+                    200
+                  )}">
+                    <article class="card timeline-card">
+                      <div class="timeline-head">
+                        <span class="timeline-icon">${icon(position.icon || 'briefcase', {
+                          size: 20,
+                        })}</span>
+                        <div>
+                          <h3 class="timeline-title">${position.title}</h3>
+                          <p class="timeline-org">${position.company}</p>
+                        </div>
+                      </div>
+
+                      <p class="timeline-duration">${position.duration}</p>
+
+                      <div class="prose">
+                        <p>${position.description}</p>
+                        <ul>
+                          ${position.responsibilities.map((item) => `<li>${item}</li>`).join('')}
+                        </ul>
+                      </div>
+                    </article>
+                  </li>
+                `
+              )
+              .join('')}
+          </ol>
         </div>
       </section>
     `;
   }
 }
-customElements.define('section-experience', Sectionexperience);
+
+customElements.define('section-experience', SectionExperience);
