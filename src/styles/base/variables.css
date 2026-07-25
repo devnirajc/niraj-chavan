@@ -1,7 +1,7 @@
 /**
  * Design Tokens
  *
- * A warm, paper-like system: ivory canvas, clay accent, generous type.
+ * A bright, cool system: near-white canvas, electric blue accent, generous type.
  * Colour is expressed only through semantic tokens (`--text-secondary`,
  * `--border-default`, …) so the light and dark themes stay in lock-step and
  * every pair can be contrast-checked mechanically.
@@ -12,86 +12,107 @@
 
 :root {
   /* ============================================
-     PALETTE — warm neutrals ("paper" ramp)
-     ============================================ */
-  --paper-50: #faf9f5;
-  --paper-100: #f5f3ec;
-  --paper-150: #f0eee6;
-  --paper-200: #e8e5da;
-  --paper-300: #d3cfc0;
-  --paper-400: #b4af9e;
-  /* Tuned down from #8a8577 so --border-interactive clears 3:1 against the
-     sunken surface too (control hover states sit on it). */
-  --paper-500: #85806f;
-  --paper-600: #63605a;
-  --paper-700: #4a4741;
-  --paper-800: #2e2c28;
-  --paper-900: #1a1915;
+     PALETTE — cool neutrals ("mist" ramp)
+     ============================================
+     All eleven steps carry the same ~214° blue hue, so the greys read as part
+     of the accent family rather than as a separate neutral system.
+
+     The light end is held very high — white surfaces on a near-white canvas.
+     That is partly the look, but it is also what lets --accent-strong stay a
+     vivid mid-blue: every step of darkness in a background is subtracted from
+     the contrast the link colour has to spend. */
+  --mist-50: #ffffff;
+  --mist-100: #f7fafd;
+  --mist-150: #f2f6fc;
+  --mist-200: #eaf1fa;
+  --mist-300: #cdd9e8;
+  --mist-400: #96a8be;
+  /* Held one step darker than the ramp's midpoint so --border-interactive
+     clears 3:1 against the sunken surface too (control hover states sit on
+     it), not just against the canvas. */
+  --mist-500: #6d8099;
+  --mist-600: #4f637c;
+  --mist-700: #33475e;
+  --mist-800: #1d2d3f;
+  --mist-900: #0b1a2b;
 
   /* ============================================
-     PALETTE — ink surfaces (dark theme)
-     ============================================ */
-  --ink-950: #141312;
-  --ink-900: #1a1917;
-  --ink-800: #232220;
-  --ink-600: #403e39;
-  --ink-500: #5a5750;
+     PALETTE — navy surfaces (dark theme)
+     ============================================
+     Lifted off pure black so the dark theme reads as deep blue rather than as
+     an absence of light, and so the bright accent has something to sit on. */
+  --navy-950: #0d1626;
+  --navy-900: #111c2e;
+  --navy-800: #1a2739;
+  --navy-600: #33445c;
+  --navy-500: #4b5f7c;
 
   /* ============================================
-     PALETTE — clay accent
+     PALETTE — electric blue accent
      ============================================ */
-  --clay-100: #f7e9e1;
-  --clay-200: #f0d2c2;
-  --clay-300: #e9a387;
-  --clay-400: #d97757; /* signature clay — decorative fills only */
-  --clay-600: #a9482a; /* text-safe on light surfaces */
-  --clay-700: #8f3a20;
-  --clay-glow: rgba(217, 119, 87, 0.16);
+  --blue-100: #edf3fe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd; /* carries link text on navy */
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6; /* signature blue — decorative fills only */
+  /* Text-safe on light surfaces, and still vivid. Pulled slightly bluer than
+     the obvious #2563eb: visually indistinguishable, but it lifts the tightest
+     pair on the site — a current nav item against the sidebar — from a 0.04
+     margin over 4.5:1 to a third of a point, so the ramp survives being
+     nudged later. */
+  --blue-600: #2060e0;
+  --blue-700: #1d4ed8;
+  --blue-glow: rgba(59, 130, 246, 0.18);
 
   /* ============================================
      SEMANTIC COLOURS — light theme (default)
      ============================================ */
-  --bg-canvas: var(--paper-150);
-  --bg-surface: var(--paper-50);
-  --bg-sunken: var(--paper-200);
-  --bg-inverse: var(--paper-900);
+  --bg-canvas: var(--mist-150);
+  --bg-surface: var(--mist-50);
+  --bg-sunken: var(--mist-200);
+  --bg-inverse: var(--mist-900);
 
-  --text-primary: var(--paper-900);
-  --text-secondary: var(--paper-700);
-  --text-muted: var(--paper-600);
-  --text-inverse: var(--paper-50);
+  --text-primary: var(--mist-900);
+  --text-secondary: var(--mist-700);
+  --text-muted: var(--mist-600);
+  --text-inverse: var(--mist-50);
   --text-on-accent: #ffffff;
 
   /* Decorative grouping lines — card edges, section rules, the timeline rail.
      These are not the boundary of any control, so SC 1.4.11 does not apply. */
-  --border-subtle: #e2dfd3;
-  --border-default: var(--paper-300);
-  --border-strong: var(--paper-400);
+  --border-subtle: #e4ebf5;
+  --border-default: var(--mist-300);
+  --border-strong: var(--mist-400);
 
   /* The outline of an actual control (buttons, toggles, social links). This is
      the only thing separating those from the page, so it is held to the 3:1
      non-text contrast threshold against every surface it appears on. */
-  --border-interactive: var(--paper-500);
+  --border-interactive: var(--mist-500);
 
-  --accent: var(--clay-400);
-  --accent-strong: var(--clay-600);
-  --accent-hover: var(--clay-700);
-  --accent-surface: var(--clay-600);
-  --accent-quiet: var(--clay-100);
+  /* --accent is the saturated signature blue and is decorative only: it
+     carries fills and glows, never text. Anything a reader has to parse uses
+     --accent-strong, which is exactly one step darker rather than three —
+     enough to clear 4.5:1 on every surface, not so much that the blue turns
+     navy. That margin is deliberately thin; see the note in check-contrast. */
+  --accent: var(--blue-500);
+  --accent-strong: var(--blue-600);
+  --accent-hover: var(--blue-700);
+  --accent-surface: var(--blue-600);
+  --accent-quiet: var(--blue-100);
 
   --link-color: var(--accent-strong);
   --link-hover: var(--accent-hover);
 
-  --focus-ring: var(--clay-600);
-  --focus-halo: rgba(169, 72, 42, 0.22);
+  --focus-ring: var(--blue-600);
+  --focus-halo: rgba(37, 99, 235, 0.24);
 
-  --selection-bg: var(--clay-200);
-  --selection-text: var(--paper-900);
+  --selection-bg: var(--blue-200);
+  --selection-text: var(--mist-900);
 
-  /* Shadows — low and warm; the design leans on borders, not elevation. */
-  --shadow-sm: 0 1px 3px rgba(26, 25, 21, 0.07), 0 1px 2px rgba(26, 25, 21, 0.04);
-  --shadow-md: 0 4px 12px rgba(26, 25, 21, 0.07), 0 1px 3px rgba(26, 25, 21, 0.05);
-  --shadow-lg: 0 12px 32px rgba(26, 25, 21, 0.1), 0 2px 8px rgba(26, 25, 21, 0.05);
+  /* Shadows — low and navy-tinted; the design leans on borders, not elevation. */
+  --shadow-sm: 0 1px 3px rgba(11, 26, 43, 0.08), 0 1px 2px rgba(11, 26, 43, 0.05);
+  --shadow-md: 0 4px 12px rgba(11, 26, 43, 0.09), 0 1px 3px rgba(11, 26, 43, 0.06);
+  --shadow-lg: 0 12px 32px rgba(11, 26, 43, 0.12), 0 2px 8px rgba(11, 26, 43, 0.06);
 
   /* ============================================
      TYPOGRAPHY
@@ -208,36 +229,39 @@
    index.html before first paint, so there is a single source of truth and no
    theme flash. Only the semantic layer is remapped. */
 [data-theme='dark'] {
-  --bg-canvas: var(--ink-900);
-  --bg-surface: var(--ink-800);
-  --bg-sunken: var(--ink-950);
-  --bg-inverse: var(--paper-100);
+  --bg-canvas: var(--navy-900);
+  --bg-surface: var(--navy-800);
+  --bg-sunken: var(--navy-950);
+  --bg-inverse: var(--mist-100);
 
-  --text-primary: var(--paper-100);
-  --text-secondary: #cfcbc0;
-  --text-muted: #a8a399;
-  --text-inverse: var(--ink-900);
-  --text-on-accent: var(--ink-900);
+  --text-primary: var(--mist-100);
+  --text-secondary: #c9d6e6;
+  --text-muted: #9aadc4;
+  --text-inverse: var(--navy-900);
+  --text-on-accent: var(--navy-900);
 
-  --border-subtle: #33322e;
-  --border-default: var(--ink-600);
-  --border-strong: var(--ink-500);
-  --border-interactive: #767268;
+  --border-subtle: #26344a;
+  --border-default: var(--navy-600);
+  --border-strong: var(--navy-500);
+  --border-interactive: #6a7f9c;
 
-  --accent: var(--clay-400);
-  --accent-strong: var(--clay-300);
-  --accent-hover: #f2bca5;
-  --accent-surface: var(--clay-400);
-  --accent-quiet: #33241d;
+  /* The accent climbs the ramp rather than descending it: on navy there is no
+     contrast pressure pushing the blue darker, so every role moves to a
+     lighter, brighter step than its light-theme counterpart. */
+  --accent: var(--blue-500);
+  --accent-strong: var(--blue-300);
+  --accent-hover: var(--blue-200);
+  --accent-surface: var(--blue-400);
+  --accent-quiet: #16305c;
 
   --link-color: var(--accent-strong);
   --link-hover: var(--accent-hover);
 
-  --focus-ring: var(--clay-300);
-  --focus-halo: rgba(233, 163, 135, 0.25);
+  --focus-ring: var(--blue-300);
+  --focus-halo: rgba(147, 197, 253, 0.28);
 
-  --selection-bg: #5c3626;
-  --selection-text: var(--paper-50);
+  --selection-bg: #1e4585;
+  --selection-text: var(--mist-50);
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.35);
