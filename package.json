@@ -1,7 +1,7 @@
 {
   "name": "niraj-chavan-portfolio",
   "version": "2.0.0",
-  "description": "Modern portfolio website for Niraj Chavan - Software Engineer",
+  "description": "Portfolio website for Niraj Chavan - Software Engineer",
   "type": "module",
   "scripts": {
     "dev": "vite",
