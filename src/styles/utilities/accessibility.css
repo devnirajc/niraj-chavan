@@ -105,17 +105,17 @@
    ============================================ */
 @media (prefers-contrast: more) {
   :root {
-    --text-secondary: var(--paper-900);
-    --text-muted: var(--paper-800);
-    --border-subtle: var(--paper-500);
-    --border-default: var(--paper-600);
+    --text-secondary: var(--mist-900);
+    --text-muted: var(--mist-800);
+    --border-subtle: var(--mist-500);
+    --border-default: var(--mist-600);
   }
 
   [data-theme='dark'] {
-    --text-secondary: var(--paper-50);
-    --text-muted: var(--paper-100);
-    --border-subtle: var(--ink-500);
-    --border-default: #6f6b62;
+    --text-secondary: var(--mist-50);
+    --text-muted: var(--mist-100);
+    --border-subtle: var(--navy-500);
+    --border-default: #8798ae;
   }
 }
 

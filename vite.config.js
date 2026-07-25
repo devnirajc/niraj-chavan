@@ -44,8 +44,8 @@ export default defineConfig({
         short_name: 'NC Portfolio',
         description: 'Portfolio website of Niraj Chavan, Software Engineer specializing in JavaScript, Angular, React, and Node.js',
         // Matches --bg-canvas / --accent in src/styles/base/variables.css
-        theme_color: '#F0EEE6',
-        background_color: '#F0EEE6',
+        theme_color: '#F2F6FC',
+        background_color: '#F2F6FC',
         display: 'standalone',
         icons: [
           {

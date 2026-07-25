@@ -27,8 +27,8 @@ const ICONS = join(ROOT, 'public/assets/icons');
 const IMAGES = join(ROOT, 'public/assets/images');
 const SOURCE = join(ICONS, 'favicon.svg');
 
-/** Matches --ink-900 in src/styles/base/variables.css. */
-const INK = '#1a1917';
+/** Matches --navy-900 in src/styles/base/variables.css. */
+const NAVY = '#111c2e';
 
 if (!existsSync(ICONS)) mkdirSync(ICONS, { recursive: true });
 
@@ -52,7 +52,7 @@ async function render(size, outPath, { safeZone = 1, background } = {}) {
       bottom: size - art - pad,
       left: pad,
       right: size - art - pad,
-      background: background || INK,
+      background: background || NAVY,
     });
   }
 
@@ -119,7 +119,7 @@ async function main() {
   await writeIco([16, 32, 48], join(IMAGES, 'nc.ico'));
 
   // iOS home screen; must be opaque.
-  await render(180, join(ICONS, 'apple-touch-icon.png'), { background: INK });
+  await render(180, join(ICONS, 'apple-touch-icon.png'), { background: NAVY });
 
   // PWA, purpose "any".
   await render(192, join(ICONS, 'icon-192.png'));
@@ -128,7 +128,7 @@ async function main() {
   // PWA, purpose "maskable".
   await render(512, join(ICONS, 'icon-maskable-512.png'), {
     safeZone: 0.8,
-    background: INK,
+    background: NAVY,
   });
 
   console.log('Done.');
