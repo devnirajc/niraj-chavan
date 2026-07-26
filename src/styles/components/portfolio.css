@@ -24,9 +24,13 @@
   overflow: hidden;
 }
 
+/* The screenshots run from 1.5 to 2.17 wide, so no single box ratio fits them
+   all. `cover` scaled each one up until it filled the height and sliced 8-13%
+   off both edges — the "zoom" that hid the nav bars. `contain` letterboxes
+   instead, and 16/9 keeps those bars thin for the common ~1.9 shots. */
 .portfolio-card__media {
   position: relative;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   background: var(--bg-sunken);
   border-bottom: var(--hairline) solid var(--border-subtle);
   overflow: hidden;
@@ -35,7 +39,7 @@
 .portfolio-card__media img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform var(--transition-slow);
 }
 
