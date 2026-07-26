@@ -117,6 +117,15 @@
   padding: var(--space-1) var(--space-2);
   background: var(--bg-sunken);
   border-radius: var(--radius-sm);
+  margin-bottom: 0;
+}
+
+/*
+ * On the experience card the badge leads into the prose block and needs a gap
+ * below it. On the education card it is the last child, where that same gap
+ * stacks on the card's padding and leaves the card bottom-heavy.
+ */
+.timeline-duration:not(:last-child) {
   margin-bottom: var(--space-4);
 }
 
