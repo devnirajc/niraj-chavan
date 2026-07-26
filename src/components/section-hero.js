@@ -9,6 +9,7 @@
 import { icon } from '../scripts/utils/icons.js';
 import { yearsOfExperience } from '../scripts/utils/experience.js';
 import { SOCIAL_LINKS, NEW_TAB_HINT } from '../scripts/data/social.js';
+import { FEATURES } from '../scripts/config/features.js';
 
 // Vite's configured `base`, so a change of deploy path stays in one place.
 const BASE = import.meta.env.BASE_URL;
@@ -36,10 +37,16 @@ class SectionHero extends HTMLElement {
             decoding="async"
           >
 
-          <p class="hero__status">
-            <span class="hero__status-dot" aria-hidden="true"></span>
-            Open to new opportunities
-          </p>
+          ${
+            FEATURES.openToOpportunities
+              ? `
+                <p class="hero__status">
+                  <span class="hero__status-dot" aria-hidden="true"></span>
+                  Open to new opportunities
+                </p>
+              `
+              : ''
+          }
 
           <h1 class="hero__title" id="hero-title">
             Hi, I&rsquo;m <em>Niraj Chavan</em>
