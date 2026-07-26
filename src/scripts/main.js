@@ -8,6 +8,7 @@ import '../styles/main.css';
 import { initThemeManager } from './utils/theme-manager.js';
 import { initSmoothScroll } from './utils/smooth-scroll.js';
 import { initScrollReveal, revealAll } from './utils/intersection-observer.js';
+import { hidePageLoader } from './utils/page-loader.js';
 
 import '../components/theme-toggle.js';
 import '../components/app-sidebar.js';
@@ -32,6 +33,10 @@ function initApp() {
     // unrelated initialiser threw.
     revealAll();
     console.error('Portfolio initialisation failed:', error);
+  } finally {
+    // Whichever branch we came from, the overlay comes down: a broken
+    // initialiser must not leave the visitor watching a spinner.
+    hidePageLoader();
   }
 }
 
