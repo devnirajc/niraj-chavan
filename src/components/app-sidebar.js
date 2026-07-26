@@ -88,7 +88,7 @@ class AppSidebar extends HTMLElement {
           <div class="sidebar-header">
             <div class="profile-image">
               <img
-                src="${BASE}assets/images/about.jpg"
+                src="${BASE}assets/images/avatar.webp"
                 alt="Niraj Chavan"
                 width="64"
                 height="64"

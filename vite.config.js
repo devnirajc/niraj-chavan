@@ -42,7 +42,13 @@ export default defineConfig({
     // Keeps the meta tags' career length in step with about.json
     experienceMeta(),
 
-    // Image optimization
+    /*
+      Last-pass re-encode of whatever reaches dist. It does not resize and does
+      not convert between formats, so it is not what makes the screenshots
+      small — `npm run images` does that ahead of the build, from the masters
+      in assets-src/. This only squeezes the generated icons and the social
+      card; the .webp files arrive already encoded at this quality.
+    */
     ViteImageOptimizer({
       png: {
         quality: 80,
@@ -101,6 +107,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,svg,webp,woff,woff2}'],
+        // Neither is ever requested by the page — the social card is fetched by
+        // link-preview crawlers and the portrait only by whatever resolves the
+        // JSON-LD. Precaching them would spend ~80 kB of a first visitor's
+        // bandwidth on two files that visitor will never see.
+        globIgnores: ['**/og-image.jpg', '**/portrait.webp'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

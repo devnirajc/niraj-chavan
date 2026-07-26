@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "check:contrast": "node scripts/check-contrast.mjs",
     "icons": "node scripts/generate-icons.js",
+    "images": "node scripts/optimize-images.js",
     "og": "node scripts/generate-og.js"
   },
   "keywords": [

@@ -67,8 +67,8 @@ function renderCard(project, index) {
             alt="Screenshot of the ${project.title} interface"
             loading="lazy"
             decoding="async"
-            width="640"
-            height="400"
+            width="${project.width}"
+            height="${project.height}"
           >
         </div>
         <div class="portfolio-card__body">
