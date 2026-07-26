@@ -1,11 +1,37 @@
 import { defineConfig } from 'vite';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { VitePWA } from 'vite-plugin-pwa';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { yearsSince } from './src/scripts/utils/years.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+/**
+ * Fills the __YEARS_OF_EXPERIENCE__ token in index.html.
+ *
+ * The SEO and social meta tags have to be correct in the raw HTML — the
+ * crawlers behind link previews don't run our JavaScript — so the number is
+ * resolved here rather than by the components that render the page. Both paths
+ * read the same start date in about.json, so the tags can't drift from the
+ * visible copy. It refreshes on redeploy, which is often enough for a value
+ * that changes once a year.
+ */
+function experienceMeta() {
+  const aboutPath = path.resolve(__dirname, './src/scripts/data/about.json');
+
+  return {
+    name: 'experience-meta',
+    transformIndexHtml(html) {
+      // Read per transform, so editing about.json in dev needs no restart.
+      const { experienceStartDate } = JSON.parse(fs.readFileSync(aboutPath, 'utf-8'));
+      const years = yearsSince(experienceStartDate || '2014-07-01');
+      return html.replaceAll('__YEARS_OF_EXPERIENCE__', String(years));
+    },
+  };
+}
 
 export default defineConfig({
   root: './src',
@@ -13,6 +39,9 @@ export default defineConfig({
   publicDir: '../public',
 
   plugins: [
+    // Keeps the meta tags' career length in step with about.json
+    experienceMeta(),
+
     // Image optimization
     ViteImageOptimizer({
       png: {

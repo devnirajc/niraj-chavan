@@ -8,7 +8,7 @@
 
 import aboutData from '../scripts/data/about.json';
 import { icon } from '../scripts/utils/icons.js';
-import { yearsOfExperience } from '../scripts/utils/experience.js';
+import { withYears } from '../scripts/utils/experience.js';
 
 class SectionAbout extends HTMLElement {
   connectedCallback() {
@@ -17,9 +17,8 @@ class SectionAbout extends HTMLElement {
   }
 
   render() {
-    const years = `${yearsOfExperience()} years`;
     const paragraphs = this.data.description
-      .map((text) => `<p>${text.replace('{years}', years)}</p>`)
+      .map((text) => `<p>${withYears(text)}</p>`)
       .join('');
 
     this.innerHTML = `

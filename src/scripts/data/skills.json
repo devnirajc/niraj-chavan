@@ -1,7 +1,7 @@
 {
   "heading": "My Skills",
   "subheading": "My Specialty",
-  "description": "With over 11 years of experience in full-stack development, I've mastered the art of building scalable, performant applications. Continuous learning and adapting to new technologies while maintaining expertise in proven solutions is the foundation of lasting success in software engineering.",
+  "description": "With over {years} of experience in full-stack development, I've mastered the art of building scalable, performant applications. Continuous learning and adapting to new technologies while maintaining expertise in proven solutions is the foundation of lasting success in software engineering.",
   "categories": [
     {
       "name": "Frontend Technologies",
