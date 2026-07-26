@@ -30,7 +30,7 @@ class SectionHero extends HTMLElement {
         <div class="container hero__inner">
           <img
             class="hero__avatar"
-            src="${BASE}assets/images/about.jpg"
+            src="${BASE}assets/images/avatar.webp"
             alt=""
             width="88"
             height="88"

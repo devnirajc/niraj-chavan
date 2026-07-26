@@ -5,56 +5,72 @@
     {
       "title": "Rxbit",
       "category": "Prescription Builder",
-      "image": "rxbit.png",
+      "image": "rxbit.webp",
+      "width": 1000,
+      "height": 527,
       "link": "https://rxbit.vercel.app/",
       "description": "Clinic prescription builder with patient records, visit history and printable prescriptions"
     },
     {
       "title": "ShredTrack",
       "category": "Fitness and Nutrition Tracker",
-      "image": "shredtrack.png",
+      "image": "shredtrack.webp",
+      "width": 1000,
+      "height": 527,
       "link": "https://shred-track-livid.vercel.app/",
       "description": "Calorie and macro tracker with food logging, workouts and an AI meal planner"
     },
     {
       "title": "Nexpenso",
       "category": "Personal Finance Tracker",
-      "image": "nexpenso.png",
+      "image": "nexpenso.webp",
+      "width": 1000,
+      "height": 478,
       "link": "https://nexpenso.netlify.app/",
       "description": "Personal finance application for budget tracking and management"
     },
     {
       "title": "FLM - Field Logistic Module",
       "category": "Transport and Logistic Application",
-      "image": "flm.png",
+      "image": "flm.webp",
+      "width": 612,
+      "height": 306,
       "link": "https://www.slb.com/",
       "description": "Transport and Logistic Application for field operations management"
     },
     {
       "title": "K7 Security",
       "category": "Security and Antivirus Application",
-      "image": "k7.png",
+      "image": "k7.webp",
+      "width": 1000,
+      "height": 460,
       "link": "https://www.k7computing.com/in/",
       "description": "Security and Antivirus Application for comprehensive threat protection"
     },
     {
       "title": "Scoperetail",
       "category": "Retail Application",
-      "image": "scope.png",
+      "image": "scope.webp",
+      "width": 612,
+      "height": 408,
       "link": "https://scoperetail.com/ourproducts.html",
       "description": "Comprehensive retail application for inventory and sales management"
     },
     {
       "title": "Holland America Cruise",
       "category": "E-commerce Application",
-      "image": "holland.png",
+      "image": "holland.webp",
+      "width": 1000,
+      "height": 466,
       "link": "https://www.hollandamerica.com/en_US.html",
       "description": "E-commerce application for cruise bookings and travel experiences"
     },
     {
       "title": "VDC",
       "category": "Website",
-      "image": "vdc.png",
+      "image": "vdc.webp",
+      "width": 1000,
+      "height": 482,
       "link": "http://ddca.net.in/",
       "description": "Corporate website for VDC organization"
     }
