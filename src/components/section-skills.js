@@ -7,6 +7,7 @@
  */
 
 import skillsData from '../scripts/data/skills.json';
+import { withYears } from '../scripts/utils/experience.js';
 
 const LEVELS = {
   expert: 3,
@@ -42,7 +43,7 @@ class SectionSkills extends HTMLElement {
             <span class="eyebrow">${this.data.subheading}</span>
             <h2 class="section-title" id="skills-title">${this.data.heading}</h2>
             <hr class="section-rule">
-            <p class="section-intro">${this.data.description}</p>
+            <p class="section-intro">${withYears(this.data.description)}</p>
           </header>
 
           <div class="skills-groups">
