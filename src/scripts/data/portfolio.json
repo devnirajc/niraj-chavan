@@ -3,6 +3,20 @@
   "subheading": "My Work",
   "projects": [
     {
+      "title": "Rxbit",
+      "category": "Prescription Builder",
+      "image": "rxbit.png",
+      "link": "https://rxbit.vercel.app/",
+      "description": "Clinic prescription builder with patient records, visit history and printable prescriptions"
+    },
+    {
+      "title": "ShredTrack",
+      "category": "Fitness and Nutrition Tracker",
+      "image": "shredtrack.png",
+      "link": "https://shred-track-livid.vercel.app/",
+      "description": "Calorie and macro tracker with food logging, workouts and an AI meal planner"
+    },
+    {
       "title": "Nexpenso",
       "category": "Personal Finance Tracker",
       "image": "nexpenso.png",
