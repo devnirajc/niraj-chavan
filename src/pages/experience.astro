@@ -1,0 +1,51 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import SubNav from '@/components/ui/SubNav.astro';
+import Icon from '@/components/ui/Icon.astro';
+import CareerTimeline from '@/components/content/CareerTimeline.astro';
+import { ABOUT_NAV } from '@/data/nav';
+import { profile } from '@/data/profile';
+import { published } from '@/lib/drafts';
+import { href } from '@/lib/url';
+
+const roles = await published('experience');
+const education = await published('education');
+---
+
+<BaseLayout
+  title="Experience"
+  description={`${profile.years} years across ${roles.length} companies — roles, achievements, notable projects and the technology behind each.`}
+>
+  <PageHeader
+    eyebrow="Experience"
+    title="Career timeline"
+    lede={`${profile.years} years, ${roles.length} companies, from a web agency to one of the world's largest banks. Expand any role for what I achieved there, or filter by technology to see where I used it.`}
+  >
+    <a href={href(profile.resume)} class="btn btn-secondary btn-sm mt-7" download>
+      <Icon name="download" size={15} /> Download CV <span class="sr-only">(PDF)</span>
+    </a>
+  </PageHeader>
+  <SubNav items={ABOUT_NAV} label="About sections" />
+
+  <div class="container-page pt-14">
+    <CareerTimeline roles={roles} />
+
+    <section class="mt-20" aria-labelledby="education">
+      <h2 id="education" class="text-heading font-semibold">Education</h2>
+      <ol class="mt-6 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
+        {
+          education.map((e) => (
+            <li class="bg-surface p-5">
+              <p class="font-mono text-xs text-fg-subtle">
+                {e.data.start} – {e.data.end}
+              </p>
+              <h3 class="mt-2 font-semibold">{e.data.qualification}</h3>
+              <p class="mt-1 text-sm text-fg-muted">{e.data.institution}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </div>
+</BaseLayout>

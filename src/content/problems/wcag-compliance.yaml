@@ -1,0 +1,26 @@
+# DRAFT — the solution restates my experience entry (Xpanxion: led WCAG 2.0
+# compliance across all application features). Fill in the rest.
+title: Making an existing product accessible without stopping delivery
+draft: true
+order: 3
+domain: accessibility
+context: Xpanxion · enterprise Angular applications
+problem: >-
+  TODO: Why accessibility became a priority — a customer requirement, an
+  audit, legal exposure?
+challenge: >-
+  TODO: e.g. features already in production, and a team without much
+  accessibility experience.
+analysis: >-
+  TODO: How you prioritised — audit tooling, assistive-technology testing,
+  user impact.
+solution: >-
+  Led a WCAG 2.0 compliance initiative across every application feature,
+  and set standards for semantic HTML, accessibility and responsive design
+  that the team kept to afterwards.
+stack: [Angular, HTML, ARIA, axe DevTools]
+results:
+  - Inclusive experiences across all application features, to WCAG 2.0.
+  - TODO — audit results or issue counts before and after.
+lessons:
+  - TODO

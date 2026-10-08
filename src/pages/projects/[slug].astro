@@ -1,0 +1,241 @@
+---
+/**
+ * Project detail: overview, screenshot, features, stack and links from the
+ * frontmatter; architecture, challenges, performance, accessibility and
+ * future work from the MDX body (or the frontmatter diagram).
+ */
+import { Image } from 'astro:assets';
+import { getEntry, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/ui/Breadcrumbs.astro';
+import Icon from '@/components/ui/Icon.astro';
+import TechList from '@/components/ui/TechList.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import ArchitectureDiagram from '@/components/diagram/ArchitectureDiagram.astro';
+import MetricGrid from '@/components/content/MetricGrid.astro';
+import { mdxComponents } from '@/components/mdx';
+import { published, isVisible } from '@/lib/drafts';
+import { href } from '@/lib/url';
+
+export async function getStaticPaths() {
+  const projects = (await published('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, prev: projects[i - 1], next: projects[i + 1] },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  prev?: CollectionEntry<'projects'>;
+  next?: CollectionEntry<'projects'>;
+}
+
+const { project, prev, next } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+const study = data.caseStudy ? await getEntry(data.caseStudy) : undefined;
+const showStudy = study && isVisible(study);
+const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In progress' }[data.status];
+---
+
+<BaseLayout title={data.title} description={data.summary} type="article">
+  <div class="relative overflow-hidden border-b border-line-subtle">
+    <div aria-hidden="true" class="bg-grid pointer-events-none absolute inset-0"></div>
+    <div class="container-page relative pt-10">
+      <Breadcrumbs items={[{ label: 'Projects', href: '/projects/' }, { label: data.title }]} />
+      <div class="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+        <div>
+          <p class="eyebrow flex items-center gap-2">
+            {data.kind === 'personal' ? 'Side project' : 'Client work'} · {data.industry}
+            <DraftBadge draft={data.draft} />
+          </p>
+          <h1 class="mt-3 text-title font-semibold">{data.title}</h1>
+          <p class="mt-3 text-xl text-fg-muted">{data.tagline}</p>
+        </div>
+        <div class="flex flex-wrap gap-3 lg:justify-end">
+          {
+            data.links.live && (
+              <a href={data.links.live} class="btn btn-primary" rel="noopener">
+                {data.links.liveLabel ?? 'Open live demo'}
+                <Icon name="arrow-up-right" size={16} />
+              </a>
+            )
+          }
+          {
+            data.links.repo && (
+              <a href={data.links.repo} class="btn btn-secondary" rel="noopener">
+                <Icon name="github" size={16} />
+                Source code
+              </a>
+            )
+          }
+        </div>
+      </div>
+      <div class="mt-10 overflow-hidden rounded-t-2xl border border-b-0 border-line bg-sunken shadow-lg">
+        <Image
+          src={data.cover}
+          alt={data.coverAlt}
+          widths={[640, 960, 1280, 1600]}
+          sizes="(min-width: 72rem) 69rem, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="block w-full"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="container-page grid gap-12 pt-14 lg:grid-cols-[1fr_18rem]">
+    <article class="min-w-0">
+      <div class="prose max-w-3xl">
+        <h2 class="!mt-0">Overview</h2>
+        <Content components={mdxComponents} />
+      </div>
+
+      {
+        data.features.length > 0 && (
+          <section aria-labelledby="features" class="mt-14 max-w-3xl">
+            <h2 id="features" class="text-heading font-semibold">
+              Features
+            </h2>
+            <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+              {data.features.map((f) => (
+                <li class="flex gap-3 rounded-xl border border-line-subtle bg-surface px-4 py-3 text-[0.9375rem] leading-relaxed text-fg-muted">
+                  <Icon name="check" size={16} class="mt-1 text-success-fg" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        data.metrics.length > 0 && (
+          <section aria-labelledby="results" class="mt-14">
+            <h2 id="results" class="text-heading font-semibold">
+              Results
+            </h2>
+            <div class="mt-6">
+              <MetricGrid metrics={data.metrics} />
+            </div>
+          </section>
+        )
+      }
+
+      {
+        data.architecture && (
+          <section aria-labelledby="architecture" class="mt-14">
+            <h2 id="architecture" class="text-heading font-semibold">
+              Architecture
+            </h2>
+            <ArchitectureDiagram diagram={data.architecture} id={`dg-${project.id}`} />
+          </section>
+        )
+      }
+
+      {
+        data.timeline.length > 0 && (
+          <section aria-labelledby="evolution" class="mt-14 max-w-3xl">
+            <h2 id="evolution" class="text-heading font-semibold">
+              How it evolved
+            </h2>
+            <ol class="mt-6 grid gap-4 border-l border-line pl-6">
+              {data.timeline.map((t) => (
+                <li class="relative">
+                  <span aria-hidden="true" class="absolute top-1.5 -left-[1.6875rem] size-2.5 rounded-full border-2 border-accent-solid bg-canvas" />
+                  <p class="font-mono text-xs text-fg-subtle">{t.date}</p>
+                  <p class="font-medium text-fg">{t.title}</p>
+                  {t.note && <p class="text-sm text-fg-muted">{t.note}</p>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        )
+      }
+
+      {
+        showStudy && (
+          <a href={href(`/case-study/${study!.id}/`)} class="card card-interactive group mt-14 flex items-center gap-4 p-5">
+            <Icon name="book-open" size={22} class="text-accent-fg" />
+            <span>
+              <span class="eyebrow block">Case study</span>
+              <span class="mt-1 block font-semibold">{study!.data.title}</span>
+            </span>
+            <Icon name="arrow-right" size={18} class="ml-auto text-fg-subtle transition-transform group-hover:translate-x-1" />
+          </a>
+        )
+      }
+    </article>
+
+    <aside class="lg:pt-1">
+      <div class="card sticky top-24 p-5">
+        <dl class="grid gap-4 text-sm">
+          <div>
+            <dt class="text-fg-subtle">Category</dt>
+            <dd class="mt-0.5 font-medium text-fg">{data.category}</dd>
+          </div>
+          {
+            data.company && (
+              <div>
+                <dt class="text-fg-subtle">{data.kind === 'client' ? 'Client' : 'Company'}</dt>
+                <dd class="mt-0.5 font-medium text-fg">{data.company}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt class="text-fg-subtle">Status</dt>
+            <dd class="mt-0.5 flex items-center gap-2 font-medium text-fg">
+              <span aria-hidden="true" class:list={['size-2 rounded-full', data.status === 'live' ? 'bg-success' : 'bg-line-strong']}></span>
+              {statusLabel}
+            </dd>
+          </div>
+          {
+            data.stack.length > 0 && (
+              <div>
+                <dt class="text-fg-subtle">Stack</dt>
+                <dd class="mt-2">
+                  <TechList items={data.stack} size="sm" />
+                </dd>
+              </div>
+            )
+          }
+          {
+            !data.links.repo && (
+              <div>
+                <dt class="text-fg-subtle">Source</dt>
+                <dd class="mt-0.5 text-fg-muted">Private repository</dd>
+              </div>
+            )
+          }
+        </dl>
+      </div>
+    </aside>
+  </div>
+
+  <nav aria-label="More projects" class="container-page mt-20 grid gap-4 border-t border-line pt-8 sm:grid-cols-2">
+    {
+      prev ? (
+        <a href={href(`/projects/${prev.id}/`)} class="group rounded-xl p-2">
+          <span class="eyebrow flex items-center gap-1">
+            <Icon name="arrow-left" size={12} /> Previous
+          </span>
+          <span class="mt-1 block font-semibold group-hover:text-accent-fg">{prev.data.title}</span>
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    {
+      next && (
+        <a href={href(`/projects/${next.id}/`)} class="group rounded-xl p-2 sm:text-right">
+          <span class="eyebrow flex items-center gap-1 sm:justify-end">
+            Next <Icon name="arrow-right" size={12} />
+          </span>
+          <span class="mt-1 block font-semibold group-hover:text-accent-fg">{next.data.title}</span>
+        </a>
+      )
+    }
+  </nav>
+</BaseLayout>

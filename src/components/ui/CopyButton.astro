@@ -1,0 +1,40 @@
+---
+/**
+ * Copies `value` to the clipboard. The result ("Copied") is announced via a
+ * polite live region rather than by changing the button's name.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  value: string;
+  label: string;
+}
+
+const { value, label } = Astro.props;
+---
+
+<span class="inline-flex items-center gap-2" data-copy-root>
+  <button type="button" class="btn btn-secondary btn-sm" data-copy={value}>
+    <Icon name="copy" size={15} />
+    {label}
+  </button>
+  <span role="status" aria-live="polite" class="text-sm text-success-fg" data-copy-status></span>
+</span>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((button) => {
+    const status = button.closest('[data-copy-root]')?.querySelector<HTMLElement>('[data-copy-status]');
+    let timer: number | undefined;
+
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy!);
+        if (status) status.textContent = 'Copied';
+      } catch {
+        if (status) status.textContent = 'Copy failed — select the text instead';
+      }
+      clearTimeout(timer);
+      timer = window.setTimeout(() => status && (status.textContent = ''), 2500);
+    });
+  });
+</script>

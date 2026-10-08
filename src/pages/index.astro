@@ -1,0 +1,325 @@
+---
+/**
+ * Home — a guided tour in chapters. Each chapter is shown only when it has
+ * published content, and the numbering is assigned after that filter, so the
+ * sequence stays 01, 02, 03… whatever is still in draft.
+ */
+import { getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/home/Hero.astro';
+import ChapterRail from '@/components/home/ChapterRail.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Icon from '@/components/ui/Icon.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import CareerTimeline from '@/components/content/CareerTimeline.astro';
+import ProjectCard from '@/components/cards/ProjectCard.astro';
+import CaseStudyCard from '@/components/cards/CaseStudyCard.astro';
+import ProblemCard from '@/components/cards/ProblemCard.astro';
+import ArticleCard from '@/components/cards/ArticleCard.astro';
+import TestimonialCard from '@/components/cards/TestimonialCard.astro';
+import portrait from '@/assets/portrait.jpg';
+import { published } from '@/lib/drafts';
+import { href } from '@/lib/url';
+import { formatDate, isoDate } from '@/lib/dates';
+import { profile, specialties } from '@/data/profile';
+
+const byOrder = <T extends { data: { order: number } }>(a: T, b: T) => a.data.order - b.data.order;
+
+const roles = await published('experience');
+const playbooks = (await published('playbooks')).sort(byOrder);
+const problems = (await published('problems')).sort(byOrder).slice(0, 3);
+const caseStudies = (await published('caseStudies')).filter((c) => c.data.featured).sort(byOrder);
+const projects = (await published('projects')).filter((p) => p.data.featured).sort(byOrder);
+const skills = (await published('skills')).sort(byOrder);
+const articles = (await published('articles')).sort((a, b) => +b.data.published - +a.data.published).slice(0, 3);
+const now = await Promise.all(
+  (await published('now'))
+    .sort((a, b) => +b.data.date - +a.data.date)
+    .slice(0, 3)
+    // Bodies are Markdown — render them rather than printing the source.
+    .map(async (entry) => ({ entry, Body: (await render(entry)).Content }))
+);
+const testimonials = await published('testimonials');
+
+const candidates = [
+  { id: 'story', label: 'Story', show: true },
+  { id: 'approach', label: 'How I think', show: playbooks.length > 0 },
+  { id: 'problems', label: 'Problems solved', show: problems.length > 0 },
+  { id: 'case-studies', label: 'Case studies', show: caseStudies.length > 0 },
+  { id: 'projects', label: 'Projects', show: projects.length > 0 },
+  { id: 'expertise', label: 'Expertise', show: skills.length > 0 },
+  { id: 'writing', label: 'Writing', show: articles.length > 0 },
+  { id: 'now', label: 'Now', show: now.length > 0 },
+  { id: 'kind-words', label: 'Kind words', show: testimonials.length > 0 },
+  { id: 'contact', label: 'Contact', show: true },
+];
+const chapters = candidates.filter((c) => c.show).map((c, i) => ({ ...c, index: String(i + 1).padStart(2, '0') }));
+const chapter = Object.fromEntries(chapters.map((c) => [c.id, c])) as Record<string, (typeof chapters)[number]>;
+
+const portraitImage = await getImage({ src: portrait, width: 800, height: 800, format: 'webp' });
+const site = Astro.site!;
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  url: new URL(href('/'), site).toString(),
+  image: new URL(portraitImage.src, site).toString(),
+  jobTitle: profile.role,
+  worksFor: { '@type': 'Organization', name: profile.current.company },
+  address: { '@type': 'PostalAddress', addressLocality: 'Pune', addressRegion: 'Maharashtra', addressCountry: 'IN' },
+  email: `mailto:${profile.email}`,
+  knowsAbout: ['Angular', 'React', 'TypeScript', 'Design systems', 'Web accessibility', 'Web performance'],
+  sameAs: profile.socials.map((s) => s.url),
+};
+---
+
+<BaseLayout
+  title={`${profile.name} — ${profile.role}`}
+  description={`${profile.role} with ${profile.years} years building fast, accessible web applications for enterprise teams. Case studies, projects, writing and the thinking behind them.`}
+  type="profile"
+  jsonLd={personLd}
+>
+  <ChapterRail chapters={chapters} />
+  <Hero companies={roles.length} />
+
+  <!-- Story -->
+  <section class="container-page pt-24" aria-labelledby="story">
+    <SectionHeading
+      id="story"
+      index={chapter.story.index}
+      eyebrow="Story"
+      title="The short version"
+      lede={`I started out building e-commerce storefronts in 2014. ${profile.years} years later, I work on enterprise travel platforms used by thousands of people a day. The job hasn't really changed: take a complicated set of business requirements and turn it into something people can use without stopping to think about it.`}
+      link={{ label: 'Read the full story', href: '/about/' }}
+    />
+    <div class="mt-10 reveal">
+      <CareerTimeline roles={roles} variant="map" headingLevel="h3" />
+    </div>
+    <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {
+        specialties.map((s) => (
+          <li class="reveal rounded-2xl border border-line-subtle bg-surface/60 p-5">
+            <Icon name={s.icon} size={20} class="text-accent-fg" />
+            <h3 class="mt-3 font-semibold">{s.title}</h3>
+            <p class="mt-1.5 text-sm leading-relaxed text-fg-muted">{s.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    chapter.approach && (
+      <section class="container-page pt-28" aria-labelledby="approach">
+        <SectionHeading
+          id="approach"
+          index={chapter.approach.index}
+          eyebrow="How I think"
+          title="The method behind the work"
+          lede="Frameworks change every few years. The way I approach a problem, a bug, a slow page or a pull request hasn't — and it's what I'd bring to your team."
+          link={{ label: 'See all playbooks', href: '/approach/' }}
+        />
+        <ol class="mt-10 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2 md:span-odd-last lg:grid-cols-5 lg:span-odd-last-none">
+          {playbooks.map((p, i) => (
+            <li class="group relative bg-surface p-5 transition-colors hover:bg-sunken/60">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xs text-fg-subtle">{String(i + 1).padStart(2, '0')}</span>
+                <DraftBadge draft={p.data.draft} />
+              </div>
+              <h3 class="mt-3 font-semibold">
+                <a href={href(`/approach/#${p.id}`)} class="card-link">
+                  {p.data.title}
+                </a>
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-fg-muted">{p.data.summary}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+
+  {
+    chapter.problems && (
+      <section class="container-page pt-28" aria-labelledby="problems">
+        <SectionHeading
+          id="problems"
+          index={chapter.problems.index}
+          eyebrow="Problems solved"
+          title="Enterprise problems, and how I solved them"
+          lede="Each one told the same way: the problem, the constraint, how I found the cause, what I built, and what it changed."
+          link={{ label: 'Explore all problems', href: '/problems/' }}
+        />
+        <div class="mt-10 grid gap-5 lg:grid-cols-3 lg:items-start">
+          {problems.map((p) => (
+            <ProblemCard problem={p} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    chapter['case-studies'] && (
+      <section class="container-page pt-28" aria-labelledby="case-studies">
+        <SectionHeading
+          id="case-studies"
+          index={chapter['case-studies'].index}
+          eyebrow="Case studies"
+          title="The long version"
+          lede="Architecture, decisions, trade-offs and outcomes — the full story of the work I'm proudest of."
+          link={{ label: 'All case studies', href: '/case-study/' }}
+        />
+        <div class="mt-10 grid gap-5 md:grid-cols-2">
+          {caseStudies.map((study) => (
+            <CaseStudyCard study={study} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    chapter.projects && (
+      <section class="container-page pt-28" aria-labelledby="projects">
+        <SectionHeading
+          id="projects"
+          index={chapter.projects.index}
+          eyebrow="Projects"
+          title="Things I've built"
+          lede="Products I build on my own time, and enterprise work for clients across energy, travel, security and retail."
+          link={{ label: 'All projects', href: '/projects/' }}
+        />
+        <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {projects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    chapter.expertise && (
+      <section class="container-page pt-28" aria-labelledby="expertise">
+        <SectionHeading
+          id="expertise"
+          index={chapter.expertise.index}
+          eyebrow="Expertise"
+          title="What I'm good at, and where I proved it"
+          lede="Not a wall of logos — each skill is tied to the roles and projects where I used it."
+          link={{ label: 'Explore expertise', href: '/skills/' }}
+        />
+        <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {skills.map((area) => (
+            <li class="card card-interactive group reveal p-5">
+              <h3 class="font-semibold">
+                <a href={href(`/skills/#${area.id}`)} class="card-link">
+                  {area.data.area}
+                </a>
+              </h3>
+              <p class="mt-1.5 text-sm text-fg-muted">{area.data.summary}</p>
+              <ul class="mt-4 flex flex-wrap gap-1.5" aria-label={`${area.data.area} skills`}>
+                {area.data.skills.slice(0, 5).map((s) => (
+                  <li class="chip min-h-6 px-2 text-xs">{s.name}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    chapter.writing && (
+      <section class="container-page pt-28" aria-labelledby="writing">
+        <SectionHeading
+          id="writing"
+          index={chapter.writing.index}
+          eyebrow="Writing"
+          title="Engineering notes"
+          lede="Things I've learned, written down so others don't have to learn them the hard way."
+          link={{ label: 'All writing', href: '/writing/' }}
+        />
+        <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {articles.map((article) => (
+            <ArticleCard article={article} showTags={false} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    chapter.now && (
+      <section class="container-page pt-28" aria-labelledby="now">
+        <SectionHeading
+          id="now"
+          index={chapter.now.index}
+          eyebrow="Now"
+          title="What I'm building now"
+          link={{ label: 'Changelog & tech radar', href: '/now/' }}
+        />
+        <ol
+          class:list={[
+            'mt-10 grid gap-px overflow-hidden rounded-2xl border border-line bg-line',
+            now.length === 2 ? 'md:grid-cols-2' : now.length >= 3 && 'md:grid-cols-3',
+          ]}
+        >
+          {now.map(({ entry, Body }) => (
+            <li class="bg-surface p-5">
+              <p class="flex items-center gap-2 font-mono text-xs text-fg-subtle uppercase">
+                <span class="text-accent-fg">{entry.data.kind}</span>
+                <span aria-hidden="true">·</span>
+                <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
+              </p>
+              <h3 class="mt-2 font-semibold">{entry.data.title}</h3>
+              <div class="mt-1.5 text-sm leading-relaxed text-fg-muted [&_a]:text-accent-fg [&_a]:underline [&_strong]:text-fg">
+                <Body />
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+
+  {
+    chapter['kind-words'] && (
+      <section class="container-page pt-28" aria-labelledby="kind-words">
+        <SectionHeading id="kind-words" index={chapter['kind-words'].index} eyebrow="Kind words" title="What people I've worked with say" />
+        <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((t) => (
+            <TestimonialCard testimonial={t} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="container-page pt-28" aria-labelledby="contact">
+    <div class="relative overflow-hidden rounded-3xl border border-line bg-surface px-6 py-14 text-center shadow-md sm:px-12">
+      <div aria-hidden="true" class="bg-glow pointer-events-none absolute inset-0"></div>
+      <p class="eyebrow relative">
+        <span class="text-accent-fg">{chapter.contact.index}</span> · Contact
+      </p>
+      <h2 id="contact" class="relative mx-auto mt-3 max-w-3xl text-title font-semibold">
+        Have a hard front-end problem? I'd like to hear about it.
+      </h2>
+      <p class="relative mx-auto mt-4 max-w-xl text-lg text-fg-muted">
+        {profile.availability.detail}
+      </p>
+      <div class="relative mt-8 flex flex-wrap justify-center gap-3">
+        <a href={href('/contact/')} class="btn btn-primary">
+          Get in touch <Icon name="arrow-right" size={16} />
+        </a>
+        <a href={`mailto:${profile.email}`} class="btn btn-secondary">
+          <Icon name="mail" size={16} />
+          {profile.email}
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

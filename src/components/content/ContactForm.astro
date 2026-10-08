@@ -1,0 +1,161 @@
+---
+/**
+ * Contact form. GitHub Pages has no backend, so the form posts to a
+ * Formspree-compatible endpoint set in profile.contactFormEndpoint. With no
+ * endpoint configured it renders only while drafts are visible (marked as
+ * such), so production never shows a form that cannot send.
+ *
+ * Accessibility: visible labels, required fields marked in text, errors
+ * linked with aria-describedby and summarised on submit, focus moved to the
+ * summary (or the status message on success). Works without JavaScript as a
+ * normal POST; with JavaScript it submits in place.
+ */
+import { profile } from '@/data/profile';
+import { SHOW_DRAFTS } from '@/lib/drafts';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+
+const endpoint = profile.contactFormEndpoint;
+const show = Boolean(endpoint) || SHOW_DRAFTS;
+const field =
+  'mt-1.5 block w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-base text-fg placeholder:text-fg-subtle aria-[invalid=true]:border-danger-fg';
+---
+
+{
+  show && (
+    <form
+      class="card grid gap-5 p-6"
+      method="POST"
+      action={endpoint || '#'}
+      data-contact-form
+      aria-labelledby="contact-form-title"
+    >
+      <div class="flex items-center gap-3">
+        <h2 id="contact-form-title" class="text-lg font-semibold">
+          Send a message
+        </h2>
+        <DraftBadge draft={!endpoint} />
+      </div>
+      {!endpoint && (
+        <p class="text-sm text-draft-fg">
+          No form endpoint configured — set <code class="font-mono">contactFormEndpoint</code> in src/data/profile.ts.
+          This form is hidden in production until you do.
+        </p>
+      )}
+
+      <div role="alert" tabindex="-1" class="hidden rounded-lg border border-danger-fg/40 bg-danger-bg p-4 text-sm text-danger-fg" data-error-summary />
+
+      <p class="text-sm text-fg-subtle">All fields are required.</p>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="cf-name" class="text-sm font-medium">Your name</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required class={field} aria-describedby="cf-name-error" />
+          <p id="cf-name-error" class="mt-1 text-sm text-danger-fg" data-error-for="cf-name" />
+        </div>
+        <div>
+          <label for="cf-email" class="text-sm font-medium">Email</label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" required class={field} aria-describedby="cf-email-error" />
+          <p id="cf-email-error" class="mt-1 text-sm text-danger-fg" data-error-for="cf-email" />
+        </div>
+      </div>
+
+      <div>
+        <label for="cf-topic" class="text-sm font-medium">What is it about?</label>
+        <select id="cf-topic" name="topic" required class={field} aria-describedby="cf-topic-error">
+          <option value="">Choose one</option>
+          <option>A role or opportunity</option>
+          <option>Consulting or a review</option>
+          <option>Speaking or writing</option>
+          <option>Just saying hello</option>
+        </select>
+        <p id="cf-topic-error" class="mt-1 text-sm text-danger-fg" data-error-for="cf-topic" />
+      </div>
+
+      <div>
+        <label for="cf-message" class="text-sm font-medium">Message</label>
+        <textarea id="cf-message" name="message" rows="5" required class={field} aria-describedby="cf-message-error" />
+        <p id="cf-message-error" class="mt-1 text-sm text-danger-fg" data-error-for="cf-message" />
+      </div>
+
+      {/* Spam trap: hidden from people and assistive technology, filled by bots. */}
+      <div aria-hidden="true" class="hidden">
+        <label>
+          Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <button type="submit" class="btn btn-primary">Send message</button>
+        <p role="status" tabindex="-1" class="text-sm outline-none" data-form-status />
+      </div>
+    </form>
+  )
+}
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+
+  if (form) {
+    // Native validation stays on without JavaScript; with it, the accessible
+    // error summary below takes over.
+    form.noValidate = true;
+    const summary = form.querySelector<HTMLElement>('[data-error-summary]')!;
+    const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+    const fields = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('[required]')];
+
+    const messageFor = (el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
+      const label = form.querySelector(`label[for="${el.id}"]`)?.textContent?.trim() ?? 'This field';
+      if (!el.value.trim()) return `${label} is required.`;
+      if (el instanceof HTMLInputElement && el.type === 'email' && el.validity.typeMismatch)
+        return 'Enter an email address like name@example.com.';
+      return '';
+    };
+
+    const validate = () => {
+      const errors: { id: string; message: string }[] = [];
+      for (const el of fields) {
+        const message = messageFor(el);
+        el.setAttribute('aria-invalid', String(Boolean(message)));
+        form.querySelector<HTMLElement>(`[data-error-for="${el.id}"]`)!.textContent = message;
+        if (message) errors.push({ id: el.id, message });
+      }
+      return errors;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const errors = validate();
+
+      if (errors.length) {
+        summary.innerHTML = `<p class="font-medium">Please fix ${errors.length} ${errors.length === 1 ? 'problem' : 'problems'}:</p><ul class="mt-2 list-disc pl-5">${errors
+          .map((e) => `<li><a class="underline" href="#${e.id}">${e.message}</a></li>`)
+          .join('')}</ul>`;
+        summary.classList.remove('hidden');
+        summary.focus();
+        return;
+      }
+
+      summary.classList.add('hidden');
+      if (form.getAttribute('action') === '#') {
+        status.textContent = 'This form is not connected yet — please email me instead.';
+        status.focus();
+        return;
+      }
+
+      status.textContent = 'Sending…';
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) throw new Error(String(response.status));
+        form.reset();
+        status.textContent = 'Thanks — your message is on its way.';
+      } catch {
+        status.textContent = 'Something went wrong sending that. Please email me directly instead.';
+      }
+      status.focus();
+    });
+  }
+</script>

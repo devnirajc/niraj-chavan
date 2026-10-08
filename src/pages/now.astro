@@ -1,0 +1,192 @@
+---
+/**
+ * Now — a public changelog ("what I'm building now"), a small developer
+ * dashboard of what is on this site, and the tech radar.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import Icon from '@/components/ui/Icon.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import TechRadar from '@/components/content/TechRadar.astro';
+import { render } from 'astro:content';
+import { published } from '@/lib/drafts';
+import { href } from '@/lib/url';
+import { formatDate, isoDate } from '@/lib/dates';
+import { profile } from '@/data/profile';
+
+const entries = await published('now');
+const articles = await published('articles');
+const projects = await published('projects');
+const studies = await published('caseStudies');
+const problems = await published('problems');
+const radar = await published('radar');
+
+const isExternal = (link: string) => /^https?:\/\//.test(link);
+
+/**
+ * Changelog: hand-written entries plus every article, newest first. Entry
+ * bodies are Markdown, so they are rendered (links, emphasis) rather than
+ * printed raw; article excerpts are plain text.
+ */
+const feed = [
+  ...(await Promise.all(
+    entries.map(async (e) => ({
+      date: e.data.date,
+      kind: e.data.kind,
+      title: e.data.title,
+      Body: (await render(e)).Content,
+      text: undefined as string | undefined,
+      // `link` may be a site path ("/projects/rxbit/") or a full URL.
+      link: e.data.link ? (isExternal(e.data.link) ? e.data.link : href(e.data.link)) : undefined,
+      external: e.data.link ? isExternal(e.data.link) : false,
+      draft: e.data.draft,
+    }))
+  )),
+  ...articles.map((a) => ({
+    date: a.data.published,
+    kind: 'writing' as const,
+    title: `Published “${a.data.title}”`,
+    Body: undefined,
+    text: a.data.excerpt,
+    link: a.data.url,
+    external: true,
+    draft: false,
+  })),
+].sort((a, b) => +b.date - +a.date);
+
+const updated = feed[0]?.date;
+const stats = [
+  { value: profile.years, label: 'Years of experience', href: '/experience/' },
+  { value: projects.length, label: 'Projects', href: '/projects/' },
+  { value: studies.length, label: 'Case studies', href: '/case-study/' },
+  { value: problems.length, label: 'Problems written up', href: '/problems/' },
+  { value: articles.length, label: 'Articles', href: '/writing/' },
+].filter((s) => s.value > 0); // a "0 case studies" tile reads as an apology
+const kindIcon = { shipped: 'check', building: 'code', learning: 'book-open', writing: 'file-text', milestone: 'flag' } as const;
+---
+
+<BaseLayout title="Now" description="What I'm building, learning and writing right now — a public changelog and tech radar.">
+  <PageHeader
+    eyebrow="Now"
+    title="What I'm building now"
+    lede="A public changelog of what I'm shipping, learning and writing — and a radar of the technology I'm betting on."
+  >
+    {
+      updated && (
+        <p class="mt-6 inline-flex items-center gap-2 text-sm text-fg-subtle">
+          <span aria-hidden="true" class="size-2 rounded-full bg-success" />
+          Last updated <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
+        </p>
+      )
+    }
+  </PageHeader>
+
+  <div class="container-page pt-12">
+    <section aria-labelledby="dashboard">
+      <h2 id="dashboard" class="sr-only">Dashboard</h2>
+      <ul class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line span-odd-last md:grid-flow-col md:auto-cols-fr md:grid-cols-none md:span-odd-last-none">
+        {
+          stats.map((s) => (
+            <li class="group relative bg-surface p-5 transition-colors hover:bg-sunken/60">
+              <p class="text-3xl font-semibold tracking-tight tabular-nums">{s.value}</p>
+              <p class="mt-1 text-sm text-fg-muted">
+                {s.href ? (
+                  <a href={href(s.href)} class="card-link">
+                    {s.label}
+                  </a>
+                ) : (
+                  s.label
+                )}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <div class="mt-16 grid gap-14 lg:grid-cols-[1fr_20rem]">
+      <section aria-labelledby="changelog">
+        <h2 id="changelog" class="text-heading font-semibold">Changelog</h2>
+        <ol class="relative mt-8 grid gap-8 border-l border-line pl-8">
+          {
+            feed.map(({ Body, ...item }) => (
+              <li class="relative">
+                <span
+                  aria-hidden="true"
+                  class="absolute top-0 -left-[2.75rem] grid size-7 place-items-center rounded-full border border-line bg-surface text-fg-subtle"
+                >
+                  <Icon name={kindIcon[item.kind]} size={13} />
+                </span>
+                <p class="flex flex-wrap items-center gap-2 font-mono text-xs text-fg-subtle uppercase">
+                  <span class="text-accent-fg">{item.kind}</span>
+                  <span aria-hidden="true">·</span>
+                  <time datetime={isoDate(item.date)}>{formatDate(item.date)}</time>
+                  <DraftBadge draft={item.draft} />
+                </p>
+                <h3 class="mt-1.5 font-semibold">
+                  {item.link ? (
+                    <a class="hover:text-accent-fg" href={item.link} rel={item.external ? 'noopener' : undefined}>
+                      {item.title}
+                      {item.external && <span class="sr-only"> (external site)</span>}
+                    </a>
+                  ) : (
+                    item.title
+                  )}
+                </h3>
+                {Body ? (
+                  <div class="mt-1.5 max-w-2xl text-[0.9375rem] leading-relaxed text-fg-muted [&_a]:text-accent-fg [&_a]:underline [&_strong]:text-fg">
+                    <Body />
+                  </div>
+                ) : (
+                  item.text && <p class="mt-1.5 max-w-2xl text-[0.9375rem] leading-relaxed text-fg-muted">{item.text}</p>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <aside aria-labelledby="currently" class="lg:sticky lg:top-24 lg:self-start">
+        <div class="card p-5">
+          <h2 id="currently" class="eyebrow">Currently</h2>
+          <dl class="mt-4 grid gap-4 text-sm">
+            <div>
+              <dt class="text-fg-subtle">Working at</dt>
+              <dd class="font-medium text-fg">{profile.current.company}</dd>
+            </div>
+            <div>
+              <dt class="text-fg-subtle">Role</dt>
+              <dd class="font-medium text-fg">{profile.current.title}</dd>
+            </div>
+            <div>
+              <dt class="text-fg-subtle">Focus</dt>
+              <dd class="font-medium text-fg">Enterprise travel platforms</dd>
+            </div>
+            <div>
+              <dt class="text-fg-subtle">Availability</dt>
+              <dd class="font-medium text-fg">{profile.availability.label}</dd>
+            </div>
+          </dl>
+          <a href={href('/contact/')} class="btn btn-secondary btn-sm mt-5 w-full">Get in touch</a>
+        </div>
+      </aside>
+    </div>
+
+    {
+      radar.length > 0 && (
+        <section aria-labelledby="radar" class="mt-20">
+          <h2 id="radar" class="text-heading font-semibold">
+            Tech radar
+          </h2>
+          <p class="mt-2 max-w-2xl text-fg-muted">
+            Where each technology sits for me right now — and where I've used it. Adopt and Trial entries all point to real
+            work.
+          </p>
+          <div class="mt-8">
+            <TechRadar entries={radar} />
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

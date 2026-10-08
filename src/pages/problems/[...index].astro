@@ -1,0 +1,52 @@
+---
+/**
+ * Enterprise problem-solving explorer. Each problem is told in the same
+ * seven beats; filter chips narrow the list by domain.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import FilterBar from '@/components/ui/FilterBar.astro';
+import ProblemCard from '@/components/cards/ProblemCard.astro';
+import { DOMAIN_LABELS, PROBLEM_DOMAINS } from '@/data/taxonomy';
+import { published, pathsWhenVisible } from '@/lib/drafts';
+
+export const getStaticPaths = () => pathsWhenVisible('problems');
+
+const problems = (await published('problems')).sort((a, b) => a.data.order - b.data.order);
+const options = PROBLEM_DOMAINS.map((d) => ({
+  value: d,
+  label: DOMAIN_LABELS[d],
+  count: problems.filter((p) => p.data.domain === d).length,
+})).filter((o) => o.count > 0);
+
+const beats = ['Problem', 'Challenge', 'Analysis', 'Solution', 'Stack', 'Results', 'Lessons'];
+---
+
+<BaseLayout
+  title="Problems solved"
+  description="Enterprise engineering problems — authentication, performance, accessibility, design systems and more — and how I solved each one."
+>
+  <PageHeader
+    eyebrow="Problems solved"
+    title="Enterprise problems, and how I solved them"
+    lede="The kind of problems that show up in large organisations: shared sign-in, slow apps, accessibility debt, teams duplicating each other's work. Each is told the same way, so you can compare how I think across very different situations."
+  >
+    <ol class="mt-8 flex flex-wrap items-center gap-x-2 gap-y-2 font-mono text-xs text-fg-subtle" aria-label="How each problem is told">
+      {
+        beats.map((beat, i) => (
+          <li class="flex items-center gap-2">
+            <span class="rounded-md border border-line bg-surface px-2 py-1 text-fg-muted">{beat}</span>
+            {i < beats.length - 1 && <span aria-hidden="true">→</span>}
+          </li>
+        ))
+      }
+    </ol>
+  </PageHeader>
+
+  <div class="container-page pt-12" data-filter-root>
+    <FilterBar label="Filter problems by domain" options={options} noun={['problem', 'problems']} param="domain" />
+    <div class="mt-8 grid gap-5 lg:grid-cols-2 lg:items-start">
+      {problems.map((problem) => <ProblemCard problem={problem} headingLevel="h2" />)}
+    </div>
+  </div>
+</BaseLayout>

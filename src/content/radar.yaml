@@ -1,0 +1,103 @@
+# Tech radar. Adopt and Trial entries cite where I use the thing; Assess and
+# Hold are drafts until I fill them in.
+#
+# Use block style (one key per line) here: in a one-line { … } mapping, a
+# comma inside a value silently ends it.
+
+- id: angular
+  name: Angular
+  ring: adopt
+  quadrant: languages-frameworks
+  note: My primary framework for enterprise applications.
+
+- id: typescript
+  name: TypeScript
+  ring: adopt
+  quadrant: languages-frameworks
+  note: The default for every codebase I start.
+
+- id: react
+  name: React
+  ring: adopt
+  quadrant: languages-frameworks
+  note: Product work, plus Rxbit and Nexpenso.
+
+- id: rxjs
+  name: RxJS
+  ring: adopt
+  quadrant: languages-frameworks
+  note: Async state and data flow in Angular.
+
+- id: vite
+  name: Vite
+  ring: adopt
+  quadrant: tools
+  note: The build tool behind Rxbit and Nexpenso.
+
+- id: axe
+  name: axe DevTools
+  ring: adopt
+  quadrant: tools
+  note: The first accessibility check on any new UI.
+
+- id: gh-actions
+  name: GitHub Actions
+  ring: adopt
+  quadrant: platforms
+  note: Builds, audits and deploys this site.
+
+- id: tokens
+  name: Design tokens
+  ring: adopt
+  quadrant: techniques
+  note: Semantic colour and spacing tokens, contrast-checked in CI.
+
+- id: a11y-first
+  name: Accessibility-first UI
+  ring: adopt
+  quadrant: techniques
+  note: Built in from the first commit, not audited in at the end.
+
+- id: astro
+  name: Astro
+  ring: trial
+  quadrant: languages-frameworks
+  note: This site — static by default, JavaScript only where it earns its place.
+
+- id: nextjs
+  name: Next.js
+  ring: trial
+  quadrant: languages-frameworks
+  note: ShredTrack runs on it.
+
+- id: tailwind
+  name: Tailwind CSS 4
+  ring: trial
+  quadrant: tools
+  note: Utilities generated from semantic tokens on this site.
+
+- id: dexie
+  name: IndexedDB with Dexie
+  ring: trial
+  quadrant: platforms
+  note: Browser-side storage in Rxbit.
+
+- id: view-transitions
+  name: View Transitions
+  ring: trial
+  quadrant: techniques
+  note: Cross-document page transitions on this site, with no client router.
+
+- id: assess-1
+  name: TODO
+  ring: assess
+  quadrant: techniques
+  note: TODO — something you are reading about or prototyping.
+  draft: true
+
+- id: hold-1
+  name: TODO
+  ring: hold
+  quadrant: tools
+  note: TODO — something you deliberately avoid for new work, and why.
+  draft: true

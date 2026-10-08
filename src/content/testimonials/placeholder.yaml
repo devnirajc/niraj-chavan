@@ -1,0 +1,11 @@
+# PLACEHOLDER — not a real recommendation. Replace every field with a real
+# one (LinkedIn recommendations work well; ask permission to quote), add one
+# file per testimonial, then set draft: false. The testimonials section stays
+# hidden in production until at least one is published.
+quote: TODO — paste a real recommendation here. Two or three sentences about a specific piece of work read better than general praise.
+name: TODO Name
+title: TODO Title
+company: TODO Company
+relationship: manager
+source: linkedin
+draft: true

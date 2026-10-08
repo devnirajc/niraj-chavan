@@ -1,9 +1,0 @@
-/**
- * Light Theme
- * Default theme colors and styles
- */
-
-:root,
-[data-theme="light"] {
-  color-scheme: light;
-}

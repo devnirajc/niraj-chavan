@@ -1,0 +1,123 @@
+---
+title: Making a field-operations dashboard fast on any connection
+summary: Cutting load time in an enterprise logistics application with code splitting, lazy loading and leaner state.
+draft: true
+featured: true
+order: 2
+role: UI Developer
+company: Schlumberger
+period: 2019 – 2021
+domains: [performance, scalability]
+industry: Energy · Oilfield logistics
+stack: [Angular, React, JavaScript, SCSS]
+problem: >-
+  TODO: What was slow, for whom, and what did it cost? (e.g. dispatchers
+  waiting on a dashboard that loaded everything up front.)
+goals:
+  - TODO — e.g. First meaningful screen under N seconds on a field connection
+  - TODO — e.g. No regressions in features while the work landed
+constraints:
+  - TODO — e.g. Global users on variable networks
+  - TODO — e.g. Feature work continued in parallel
+metrics:
+  - label: TODO (e.g. initial bundle)
+    before: TODO
+    after: TODO
+  - label: TODO (e.g. time to interactive)
+    before: TODO
+    after: TODO
+  - label: TODO (e.g. Lighthouse performance)
+    before: TODO
+    after: TODO
+architecture:
+  title: What loads, and when
+  caption: >-
+    ASSUMED SHAPE — replace with the real module structure. The shell loads
+    first; each feature arrives only when its route is visited.
+  layers:
+    - { id: entry, label: First load }
+    - { id: lazy, label: On demand }
+    - { id: data, label: Data }
+  nodes:
+    - id: shell
+      label: App shell
+      sublabel: layout · nav · auth
+      layer: entry
+      detail: The only code every visitor downloads — layout, navigation and authentication.
+    - id: dashboard
+      label: Dashboard
+      sublabel: lazy route
+      layer: lazy
+      detail: Loaded when the dashboard route is first visited.
+    - id: shipments
+      label: Shipments
+      sublabel: lazy route
+      layer: lazy
+      detail: Loaded on demand; heavy tables and filters stay out of the first load.
+    - id: reports
+      label: Reports
+      sublabel: lazy route
+      layer: lazy
+      detail: Charting libraries ship only with this chunk.
+    - id: store
+      label: State store
+      sublabel: per-feature slices
+      layer: data
+      detail: Each feature registers its own state slice when it loads, instead of one global store built up front.
+    - id: api
+      label: Logistics APIs
+      sublabel: REST
+      layer: data
+      detail: Paged, filtered requests rather than whole datasets.
+  edges:
+    - { from: shell, to: dashboard }
+    - { from: shell, to: shipments }
+    - { from: shell, to: reports }
+    - { from: dashboard, to: store }
+    - { from: shipments, to: store }
+    - { from: shipments, to: api }
+    - { from: reports, to: api }
+  steps:
+    - title: First visit
+      nodes: [shell]
+      detail: Only the shell downloads — enough to render navigation and the signed-in state.
+    - title: Opening a feature
+      nodes: [shell, shipments, store, api]
+      detail: The route triggers the shipments chunk; it registers its state slice and requests the first page of data.
+decisions:
+  - title: Split by route or by component
+    context: TODO — confirm. Where to draw the chunk boundaries.
+    options:
+      - name: Route-level lazy loading
+        chosen: true
+        reason: Matches how people use the app; simple to reason about.
+      - name: Component-level splitting everywhere
+        chosen: false
+        reason: More requests and more loading states, for little extra gain.
+    tradeoff: TODO
+lessons:
+  - TODO
+relatedProjects: [flm-field-logistics]
+---
+
+<Draft note="Scaffold — confirm this work was on FLM before publishing">
+
+My experience at Schlumberger records improving page-load speed through code splitting, lazy loading and efficient state management. This case study assumes that work was on the Field Logistics Module; if it was on another application, retitle it. **Check what Schlumberger allows you to publish** about internal systems before setting `draft: false`.
+
+</Draft>
+
+## Context
+
+TODO
+
+## How I found the bottleneck
+
+TODO: Bundle analysis, profiling, field reports — what showed you where the time went?
+
+## What changed
+
+TODO
+
+## Results
+
+TODO

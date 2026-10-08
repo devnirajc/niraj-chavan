@@ -1,0 +1,35 @@
+---
+/**
+ * Light/dark toggle. A toggle button (aria-pressed = dark theme on) with a
+ * stable accessible name, so a screen reader announces "Dark theme, toggle
+ * button, pressed" rather than a label that changes under the user.
+ */
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<button type="button" class="icon-btn" aria-pressed="false" data-theme-toggle>
+  <span class="sr-only">Dark theme</span>
+  <Icon name="moon" size={18} class="[[data-theme=dark]_&]:hidden" />
+  <Icon name="sun" size={18} class="hidden [[data-theme=dark]_&]:block" />
+</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  const root = document.documentElement;
+
+  if (button) {
+    const sync = () => button.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+    sync();
+
+    button.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        /* private mode: the choice lasts for this page only */
+      }
+      sync();
+    });
+  }
+</script>

@@ -1,0 +1,25 @@
+# DRAFT — solution and results restate my experience entry (JP Morgan Chase).
+# Check what you can say publicly about JPMC systems before publishing.
+title: Teams rebuilding the same components, slightly differently
+draft: true
+order: 4
+domain: design-systems
+context: JP Morgan Chase & Co. · enterprise travel platforms
+problem: >-
+  TODO: What it looked like before — duplicated components, inconsistent
+  UX, slower delivery.
+challenge: >-
+  TODO: Several teams, different release cadences, existing features to
+  migrate.
+analysis: >-
+  TODO
+solution: >-
+  Reusable component libraries and a design system that product teams
+  build their features on.
+stack: [Angular, React, TypeScript]
+results:
+  - Faster feature development across several teams.
+  - TODO — adoption numbers or delivery-time change.
+lessons:
+  - TODO
+caseStudy: microfrontend-architecture

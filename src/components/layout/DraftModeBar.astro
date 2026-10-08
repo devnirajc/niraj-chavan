@@ -1,0 +1,18 @@
+---
+/**
+ * A thin banner shown only while drafts are visible (dev, build:drafts), so
+ * nobody mistakes a draft preview for what production will look like.
+ */
+import { SHOW_DRAFTS } from '@/lib/drafts';
+---
+
+{
+  SHOW_DRAFTS && (
+    <aside aria-label="Draft preview notice" class="border-b border-line bg-draft-bg text-draft-fg">
+      <p class="container-page py-1.5 text-center text-xs font-medium">
+        Draft preview: entries marked <strong>Draft</strong> are hidden in production.
+        Run <code class="font-mono">npm run dev:published</code> to see the live site.
+      </p>
+    </aside>
+  )
+}

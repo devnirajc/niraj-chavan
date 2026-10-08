@@ -1,0 +1,142 @@
+---
+/**
+ * Sticky site header. Desktop shows the primary nav inline; below the `nav`
+ * breakpoint it collapses into a disclosure menu. Items whose collection has
+ * nothing published are omitted (see src/lib/nav.ts).
+ */
+import Icon from '@/components/ui/Icon.astro';
+import ThemeToggle from '@/components/layout/ThemeToggle.astro';
+import { PRIMARY_NAV } from '@/data/nav';
+import { visibleNav } from '@/lib/nav';
+import { href, isCurrent } from '@/lib/url';
+import { profile } from '@/data/profile';
+
+const items = await visibleNav(PRIMARY_NAV);
+const path = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-40 border-b border-line-subtle bg-canvas/80 backdrop-blur-md backdrop-saturate-150">
+  <div class="container-page flex h-16 items-center gap-4">
+    <a
+      href={href('/')}
+      class="group -ml-1 flex items-center gap-2.5 rounded-lg p-1 font-semibold tracking-tight text-fg"
+      aria-label={`${profile.name}, home`}
+    >
+      <span
+        aria-hidden="true"
+        class="grid size-8 place-items-center rounded-lg bg-inverse font-mono text-[0.8125rem] font-semibold text-fg-inverse transition-transform group-hover:-rotate-6"
+      >
+        {profile.initials}
+      </span>
+      <span class="hidden sm:inline">{profile.name}</span>
+    </a>
+
+    <nav aria-label="Primary" class="ml-auto hidden nav:block">
+      <ul class="flex items-center gap-0.5">
+        {
+          items.map((item) => {
+            const current = isCurrent(path, item.href);
+            return (
+              <li>
+                <a
+                  href={href(item.href)}
+                  aria-current={current ? 'page' : undefined}
+                  class:list={[
+                    'relative rounded-lg px-3 py-2 text-sm transition-colors',
+                    current ? 'font-medium text-fg' : 'text-fg-muted hover:bg-sunken hover:text-fg',
+                  ]}
+                >
+                  {item.label}
+                  {current && (
+                    <span
+                      aria-hidden="true"
+                      class="absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-accent-solid"
+                    />
+                  )}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1 nav:ml-2">
+      <button
+        type="button"
+        data-search-open
+        class="flex h-9 items-center gap-2 rounded-lg border border-line-strong bg-surface pr-1.5 pl-2.5 text-sm text-fg-subtle transition-colors hover:text-fg"
+        aria-haspopup="dialog"
+      >
+        <Icon name="search" size={16} />
+        <span class="sr-only sm:not-sr-only">Search</span>
+        <kbd class="kbd ml-2 hidden sm:inline-flex" data-search-shortcut aria-hidden="true">Ctrl K</kbd>
+      </button>
+      <ThemeToggle />
+      <a href={href('/contact/')} class="btn btn-primary btn-sm ml-1 hidden md:inline-flex">Contact</a>
+      <button
+        type="button"
+        class="icon-btn nav:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <span class="sr-only">Menu</span>
+        <Icon name="menu" size={20} class="[[aria-expanded=true]_&]:hidden" />
+        <Icon name="close" size={20} class="hidden [[aria-expanded=true]_&]:block" />
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" aria-label="Primary" class="border-t border-line-subtle nav:hidden" hidden>
+    <ul class="container-page grid gap-1 py-3">
+      {
+        [...items, { label: 'Contact', href: '/contact/' }].map((item) => {
+          const current = isCurrent(path, item.href);
+          return (
+            <li>
+              <a
+                href={href(item.href)}
+                aria-current={current ? 'page' : undefined}
+                class:list={[
+                  'flex min-h-11 items-center rounded-lg px-3 text-base',
+                  current ? 'bg-accent-quiet font-medium text-accent-fg' : 'text-fg-muted hover:bg-sunken hover:text-fg',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.getElementById('mobile-menu');
+
+  if (toggle && menu) {
+    const setOpen = (open: boolean, { restoreFocus = false } = {}) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+      if (!open && restoreFocus) toggle.focus();
+    };
+
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !menu.hidden) setOpen(false, { restoreFocus: true });
+    });
+
+    // Widening past the breakpoint hides the button; don't leave a stale
+    // open panel behind for when the window narrows again.
+    matchMedia('(width >= 70rem)').addEventListener('change', (e) => e.matches && setOpen(false));
+  }
+
+  // Show the platform's modifier in the search shortcut hint.
+  if (/Mac|iPhone|iPad/.test(navigator.platform)) {
+    document.querySelectorAll('[data-search-shortcut]').forEach((kbd) => (kbd.textContent = '⌘K'));
+  }
+</script>

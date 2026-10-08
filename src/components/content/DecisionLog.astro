@@ -1,0 +1,69 @@
+---
+/**
+ * Technical decision journal — each decision written ADR-style: the context,
+ * the options weighed, which one was chosen and why, and what it cost.
+ * "Chosen" is stated in text, never by colour alone.
+ */
+import Icon from '@/components/ui/Icon.astro';
+
+interface Props {
+  decisions: {
+    title: string;
+    context: string;
+    options: { name: string; chosen: boolean; reason: string }[];
+    tradeoff: string;
+  }[];
+}
+
+const { decisions } = Astro.props;
+---
+
+<ol class="grid gap-5">
+  {
+    decisions.map((d, i) => (
+      <li class="card p-5 sm:p-6">
+        <p class="eyebrow">Decision {String(i + 1).padStart(2, '0')}</p>
+        <h3 class="mt-2 text-lg font-semibold">{d.title}</h3>
+        <p class="mt-2 leading-relaxed text-fg-muted">{d.context}</p>
+
+        <ul class="mt-5 grid gap-2" aria-label="Options considered">
+          {d.options.map((o) => (
+            <li
+              class:list={[
+                'grid grid-cols-[auto_1fr] gap-3 rounded-xl border px-4 py-3',
+                o.chosen ? 'border-accent-line bg-accent-quiet/60' : 'border-line bg-sunken/50',
+              ]}
+            >
+              <span
+                class:list={[
+                  'mt-0.5 grid size-5 place-items-center rounded-full',
+                  o.chosen ? 'bg-accent-solid text-fg-on-accent' : 'border border-line-strong text-fg-subtle',
+                ]}
+                aria-hidden="true"
+              >
+                {o.chosen ? <Icon name="check" size={12} /> : <Icon name="close" size={10} />}
+              </span>
+              <div>
+                <p class="font-medium text-fg">
+                  {o.name}
+                  <span class:list={['ml-2 font-mono text-[0.6875rem] tracking-wider uppercase', o.chosen ? 'text-accent-fg' : 'text-fg-subtle']}>
+                    {o.chosen ? 'Chosen' : 'Not chosen'}
+                  </span>
+                </p>
+                <p class="mt-1 text-sm leading-relaxed text-fg-muted">{o.reason}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <p class="mt-4 flex gap-2 text-sm leading-relaxed text-fg-muted">
+          <Icon name="compass" size={16} class="mt-0.5 text-fg-subtle" />
+          <span>
+            <strong class="font-medium text-fg">Trade-off: </strong>
+            {d.tradeoff}
+          </span>
+        </p>
+      </li>
+    ))
+  }
+</ol>

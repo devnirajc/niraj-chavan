@@ -1,0 +1,23 @@
+---
+title: My code review philosophy
+summary: Review for the reader six months from now. Be specific, be kind, and separate must-fix from preference.
+draft: true
+order: 5
+steps:
+  - title: Understand the why first
+    detail: I read the ticket and the description before the diff. Reviewing code without knowing its purpose only checks style.
+  - title: Correctness, then clarity, then style
+    detail: Does it work in the edge cases? Will the next person understand it? Only then, does it match our conventions — and those should be automated.
+  - title: Label every comment
+    detail: >-
+      "Must fix", "suggestion" or "question". The author should never have to
+      guess which comments block the merge.
+  - title: Explain, don't decree
+    detail: Every request comes with the reason, and ideally a link or an example. Reviews are where standards are taught.
+  - title: Check what is missing
+    detail: Tests for the failure paths, accessibility of new UI, loading and error states, and the docs the change makes stale.
+  - title: Approve quickly when it is good
+    detail: Fast, clear approval is part of the job. A review queue is a tax on the whole team.
+---
+
+The standards you set in code review are what keep a codebase healthy long after the sprint that shipped it.

@@ -1,0 +1,97 @@
+---
+/**
+ * Engineering writing — my Medium articles, fetched at build time, with
+ * categories, tags and reading time. Articles link out to Medium (the
+ * canonical copy) rather than being republished here.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import FilterBar from '@/components/ui/FilterBar.astro';
+import ArticleCard from '@/components/cards/ArticleCard.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { WRITING_CATEGORIES } from '@/data/taxonomy';
+import { published } from '@/lib/drafts';
+import { formatDate, isoDate } from '@/lib/dates';
+import { profile } from '@/data/profile';
+
+const articles = (await published('articles')).sort((a, b) => +b.data.published - +a.data.published);
+const featured = articles.find((a) => a.data.featured);
+const options = WRITING_CATEGORIES.map((c) => ({
+  value: c,
+  label: c,
+  count: articles.filter((a) => a.data.categories.includes(c)).length,
+})).filter((o) => o.count > 0);
+const tags = [...new Set(articles.flatMap((a) => a.data.tags))].sort();
+const medium = profile.socials.find((s) => s.id === 'medium')!;
+---
+
+<BaseLayout
+  title="Writing"
+  description="Engineering notes on Angular, JavaScript, architecture and performance — published on Medium."
+>
+  <PageHeader
+    eyebrow="Writing"
+    title="Engineering notes"
+    lede="What I've learned about Angular, JavaScript, architecture and performance, written down. Articles are published on Medium; this page pulls in the latest at every build."
+  >
+    <a href={medium.url} class="btn btn-secondary btn-sm mt-7" rel="me noopener">
+      <Icon name="medium" size={15} /> Follow on Medium
+    </a>
+  </PageHeader>
+
+  <div class="container-page pt-12">
+    {
+      featured && (
+        <section aria-labelledby="featured" class="mb-14">
+          <h2 id="featured" class="eyebrow flex items-center gap-2">
+            <Icon name="sparkles" size={14} class="text-accent-fg" /> Featured
+          </h2>
+          <article class="card card-interactive group mt-4 grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-end">
+            <div>
+              <p class="text-sm text-fg-subtle">
+                <time datetime={isoDate(featured.data.published)}>{formatDate(featured.data.published)}</time> ·{' '}
+                {featured.data.readingMinutes} min read · {featured.data.categories.join(', ')}
+              </p>
+              <h3 class="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
+                <a href={featured.data.url} class="card-link" rel="noopener">
+                  {featured.data.title}
+                  <span class="sr-only"> (on Medium)</span>
+                </a>
+              </h3>
+              <p class="mt-3 max-w-2xl leading-relaxed text-fg-muted">{featured.data.excerpt}</p>
+            </div>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-accent-fg" aria-hidden="true">
+              Read on Medium <Icon name="arrow-up-right" size={16} />
+            </span>
+          </article>
+        </section>
+      )
+    }
+
+    <section aria-labelledby="all-articles" data-filter-root>
+      <div class="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="all-articles" class="text-heading font-semibold">All articles</h2>
+        <p class="text-sm text-fg-subtle">{articles.length} published</p>
+      </div>
+      <FilterBar label="Filter articles by category" options={options} noun={['article', 'articles']} param="category" />
+      <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {articles.map((article) => <ArticleCard article={article} headingLevel="h3" />)}
+      </div>
+    </section>
+
+    {
+      tags.length > 0 && (
+        <section aria-labelledby="tags" class="mt-16 border-t border-line pt-8">
+          <h2 id="tags" class="eyebrow">
+            Tags
+          </h2>
+          <ul class="mt-4 flex flex-wrap gap-2">
+            {tags.map((t) => (
+              <li class="font-mono text-sm text-fg-subtle">#{t}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

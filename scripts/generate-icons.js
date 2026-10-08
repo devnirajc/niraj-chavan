@@ -13,8 +13,9 @@
  *   favicon-16/32.png      PNG fallback for browsers without SVG icon support
  *   nc.ico                 legacy container, 16/32/48
  *   apple-touch-icon.png   180px, opaque — iOS composites onto white otherwise
- *   icon-192/512.png       PWA, purpose "any"
- *   icon-maskable-512.png  PWA, purpose "maskable" — art inside the 80% safe zone
+ *
+ * (The PWA icons the previous build generated went with its web app
+ * manifest; the Astro site ships no manifest, so they are no longer made.)
  */
 
 import sharp from 'sharp';
@@ -27,8 +28,8 @@ const ICONS = join(ROOT, 'public/assets/icons');
 const IMAGES = join(ROOT, 'public/assets/images');
 const SOURCE = join(ICONS, 'favicon.svg');
 
-/** Matches --navy-900 in src/styles/base/variables.css. */
-const NAVY = '#111c2e';
+/** Matches --gray-900 in src/styles/tokens.css — the favicon's tile colour. */
+const INK = '#0c0e12';
 
 if (!existsSync(ICONS)) mkdirSync(ICONS, { recursive: true });
 
@@ -52,7 +53,7 @@ async function render(size, outPath, { safeZone = 1, background } = {}) {
       bottom: size - art - pad,
       left: pad,
       right: size - art - pad,
-      background: background || NAVY,
+      background: background || INK,
     });
   }
 
@@ -111,25 +112,15 @@ async function writeIco(sizes, outPath) {
 async function main() {
   console.log('Generating icons from favicon.svg');
 
-  // Classic favicons — index.html has always referenced these from /images.
+  // Classic favicons, linked from src/layouts/BaseLayout.astro.
   await render(16, join(IMAGES, 'favicon-16x16.png'));
   await render(32, join(IMAGES, 'favicon-32x32.png'));
 
-  // Legacy container, still referenced by index.html.
+  // Legacy container for old Windows contexts, also linked from BaseLayout.
   await writeIco([16, 32, 48], join(IMAGES, 'nc.ico'));
 
   // iOS home screen; must be opaque.
-  await render(180, join(ICONS, 'apple-touch-icon.png'), { background: NAVY });
-
-  // PWA, purpose "any".
-  await render(192, join(ICONS, 'icon-192.png'));
-  await render(512, join(ICONS, 'icon-512.png'));
-
-  // PWA, purpose "maskable".
-  await render(512, join(ICONS, 'icon-maskable-512.png'), {
-    safeZone: 0.8,
-    background: NAVY,
-  });
+  await render(180, join(ICONS, 'apple-touch-icon.png'), { background: INK });
 
   console.log('Done.');
 }

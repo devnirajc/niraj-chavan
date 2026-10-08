@@ -1,0 +1,21 @@
+---
+title: How I solve problems
+summary: Start from the business outcome, make the problem small enough to see, and choose the boring solution unless there is a reason not to.
+draft: true
+order: 1
+steps:
+  - title: Restate the problem in business terms
+    detail: Before any code, I write down who is affected, what it costs them, and how we will know it is fixed. Half of "technical" problems turn out to be a missing requirement.
+  - title: Find the real constraint
+    detail: Deadlines, legacy contracts, team skills, compliance. The constraint usually decides the design more than the technology does.
+  - title: Make it small and observable
+    detail: Reproduce it, measure it, and reduce it to the smallest case that still fails. A problem you can see in one screen is half solved.
+  - title: Compare at least two options
+    detail: Write down the options and what each one costs — now and in a year. If only one option exists, I have not looked hard enough.
+  - title: Ship the simplest thing that holds
+    detail: Prefer the boring, well-understood solution; spend novelty only where it buys something users will notice.
+  - title: Close the loop
+    detail: Check the outcome against the measure from step one, and write down what we learned so the next person starts further ahead.
+---
+
+The longer I do this, the clearer it gets that the code is rarely the hard part. Most of the work is understanding the problem well enough that the code becomes obvious.

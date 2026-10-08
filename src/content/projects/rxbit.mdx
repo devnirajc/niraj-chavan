@@ -1,0 +1,54 @@
+---
+title: Rxbit
+tagline: A prescription builder for doctors' clinics
+summary: Clinic prescription builder with patient records, visit history and printable prescriptions.
+featured: true
+order: 1
+kind: personal
+category: Prescription builder
+industry: Healthcare
+status: live
+cover: ../../assets/projects/rxbit.png
+coverAlt: "Rxbit's patient page: allergy and condition badges, then a visit with complaint, diagnosis, four medicines with dosage and duration, advice, and Preview, Print, PDF and Edit actions."
+links:
+  live: https://rxbit.vercel.app/
+  liveLabel: Open Rxbit
+stack: [React, Vite, IndexedDB (Dexie), Zod, PWA]
+features:
+  - Patient records with allergy and existing-condition flags at the top of every page
+  - Structured prescriptions — complaint, diagnosis, medicines with dosage and duration, advice
+  - Visit history with follow-up dates
+  - Preview, print or export any prescription as a PDF
+  - Installable as an app, with a web app manifest and service worker
+---
+
+Rxbit is a prescription builder for small clinics. The doctor keeps one record per patient, with allergies and existing conditions flagged where they cannot be missed, and writes each visit as a structured prescription: the complaint, the diagnosis, each medicine with its dosage and duration, and the advice to go home with. Any visit can be previewed, printed or saved as a PDF, and the whole history stays on the patient's page.
+
+## Under the hood
+
+Rxbit is a React single-page app built with Vite. It uses IndexedDB, through Dexie, for storage in the browser, and Zod for validation. PDF generation ships as its own chunk, separate from the main application code.
+
+<Draft note="Inferred from the production bundle — confirm or rewrite">
+
+## Architecture decisions
+
+- **Browser storage first.** TODO: Does any patient data leave the device? Is there backup, export or sync? Why IndexedDB over a hosted database for a clinic?
+- **Validation at the edges.** TODO: Where does Zod run — form input, data import, both?
+
+## Challenges solved
+
+TODO: The hardest problem in building Rxbit — e.g. making printed prescriptions match what clinics expect on paper.
+
+## Performance
+
+TODO: Bundle size, first load, and how the PDF engine is loaded.
+
+## Accessibility
+
+TODO: Keyboard flow through the prescription form, labels, contrast.
+
+## What's next
+
+TODO: Planned features.
+
+</Draft>

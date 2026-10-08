@@ -1,40 +1,40 @@
 {
   "name": "niraj-chavan-portfolio",
-  "version": "2.0.0",
-  "description": "Portfolio website for Niraj Chavan - Software Engineer",
+  "version": "3.0.0",
+  "description": "Portfolio of Niraj Chavan — senior UI engineer. Case studies, projects, writing and the thinking behind them.",
   "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "npm run check:contrast && vite build",
-    "preview": "vite preview",
+    "dev": "astro dev",
+    "dev:published": "astro dev --mode published",
+    "build": "npm run check:contrast && npm run check:content && astro build",
+    "build:drafts": "astro build --mode drafts --outDir ./dist-drafts",
+    "preview": "astro preview",
+    "check": "astro check && npm run check:contrast && npm run check:content",
     "check:contrast": "node scripts/check-contrast.mjs",
+    "check:content": "node scripts/check-content.mjs",
+    "content:status": "node scripts/check-content.mjs --report",
+    "sync:medium": "node scripts/sync-medium.mjs",
     "icons": "node scripts/generate-icons.js",
-    "images": "node scripts/optimize-images.js",
     "og": "node scripts/generate-og.js"
   },
-  "keywords": [
-    "portfolio",
-    "web-components",
-    "vite",
-    "pwa"
-  ],
   "author": "Niraj Chavan",
   "license": "MIT",
-  "devDependencies": {
-    "autoprefixer": "^10.4.17",
-    "cssnano": "^7.1.2",
-    "postcss": "^8.4.33",
-    "postcss-import": "^16.0.0",
-    "postcss-nested": "^7.0.2",
-    "sharp": "^0.35.3",
-    "terser": "^5.27.0",
-    "vite": "^7.3.1",
-    "vite-plugin-image-optimizer": "^2.0.3",
-    "vite-plugin-pwa": "^1.2.0"
+  "dependencies": {
+    "@astrojs/mdx": "^8.0.3",
+    "@astrojs/sitemap": "^3.7.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.8",
+    "fast-xml-parser": "^5.11.2",
+    "tailwindcss": "^4.3.3"
   },
-  "overrides": {
-    "filelist": {
-      "minimatch": "^10.2.5"
-    }
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "sharp": "^0.35.5",
+    "typescript": "^6.0.3",
+    "yaml": "^2.9.1"
   }
 }

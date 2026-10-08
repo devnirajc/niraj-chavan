@@ -1,0 +1,295 @@
+---
+/**
+ * About — the story, told as milestones rather than a bio paragraph:
+ * where I started, what each move taught me, what I value and how I work.
+ */
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import SubNav from '@/components/ui/SubNav.astro';
+import Icon from '@/components/ui/Icon.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import Draft from '@/components/mdx/Draft.astro';
+import portrait from '@/assets/portrait.jpg';
+import { ABOUT_NAV } from '@/data/nav';
+import { profile, domains } from '@/data/profile';
+import { published } from '@/lib/drafts';
+import { hasVisible } from '@/lib/nav';
+import { href } from '@/lib/url';
+
+const roles = (await published('experience')).sort((a, b) => a.data.start.localeCompare(b.data.start));
+const education = await published('education');
+const community = await published('community');
+const showApproach = await hasVisible('playbooks');
+
+/**
+ * The milestones restate the experience entries in story form: what each
+ * move was, and what it taught. Keyed by experience id.
+ */
+const lessons: Record<string, { chapter: string; lesson: string }> = {
+  whitecode: {
+    chapter: 'Learning to ship, end to end',
+    lesson:
+      'My first job covered the whole stack: WordPress themes and plugins, PHP on CodeIgniter and Laravel, shopping carts and payment gateways, scheduled jobs and email templates — every project from requirements to deployment.',
+  },
+  connect91: {
+    chapter: 'Falling for the front end',
+    lesson:
+      'I turned PSD and Sketch designs into pixel-accurate, accessible, cross-browser pages for large e-commerce sites, and built the Sass framework — design tokens and component patterns — that those front ends shared.',
+  },
+  xpanxion: {
+    chapter: 'Leading the front end',
+    lesson:
+      'As a senior UI engineer I architected modular Angular applications, designed a JWT authentication system and led WCAG accessibility compliance across every feature — and set the coding standards the team built on, mentoring them on semantic HTML, accessibility and responsive design.',
+  },
+  slb: {
+    chapter: 'Enterprise scale, global users',
+    lesson:
+      'At Schlumberger I built applications for global enterprise clients, including the Field Logistics Module, improved load times with code splitting, lazy loading and leaner state, and mentored junior developers on responsive layout and CSS.',
+  },
+  jpmc: {
+    chapter: 'Platforms people depend on',
+    lesson:
+      'Today I work on enterprise travel platforms at JP Morgan Chase — booking and order-management flows used by thousands of people a day. I spend as much time on architecture decisions, component libraries, testing standards and code review as on features, because that is what keeps a large codebase healthy.',
+  },
+};
+
+const values = [
+  {
+    title: 'Users before code',
+    body: 'The job is to take a complicated set of business requirements and turn it into something people can use without stopping to think about it.',
+  },
+  {
+    title: 'Accessible from the first commit',
+    body: 'Accessibility is built in from the start, not patched in before release. It is cheaper, and it is right.',
+  },
+  {
+    title: 'Standards outlast sprints',
+    body: 'The standards you set around performance and testing are what keep a codebase healthy long after the sprint that shipped it.',
+  },
+  {
+    title: 'Teach as you go',
+    body: 'I spend as much time on architecture decisions, code reviews and mentoring as on writing features — that is where standards spread.',
+  },
+];
+---
+
+<BaseLayout
+  title="About"
+  description={`The story behind the work: ${profile.years} years from WordPress and e-commerce to enterprise platforms at ${profile.current.company}.`}
+  type="profile"
+>
+  <PageHeader
+    eyebrow="About"
+    title="From e-commerce storefronts to enterprise platforms"
+    lede={`I'm ${profile.name}, a senior UI engineer in ${profile.location}. This is the ${profile.years}-year story of how I got here, and how I work now.`}
+  />
+  <SubNav items={ABOUT_NAV} label="About sections" />
+
+  <div class="container-page grid gap-12 pt-14 lg:grid-cols-[17rem_1fr] lg:gap-16">
+    <!-- Profile column -->
+    <aside class="lg:sticky lg:top-24 lg:self-start" aria-label="Quick facts">
+      <Image
+        src={portrait}
+        alt={`Portrait of ${profile.name}`}
+        widths={[272, 544]}
+        sizes="17rem"
+        width={272}
+        height={320}
+        fit="cover"
+        position="top"
+        class="aspect-[17/20] w-full max-w-[17rem] rounded-2xl border border-line object-cover"
+      />
+      <dl class="mt-6 grid gap-3 text-sm">
+        <div>
+          <dt class="text-fg-subtle">Currently</dt>
+          <dd class="text-fg">{profile.current.title}, {profile.current.company}</dd>
+        </div>
+        <div>
+          <dt class="text-fg-subtle">Based in</dt>
+          <dd class="text-fg">{profile.location}</dd>
+        </div>
+        <div>
+          <dt class="text-fg-subtle">Experience</dt>
+          <dd class="text-fg">{profile.years} years, {roles.length} companies</dd>
+        </div>
+      </dl>
+      <div class="mt-6 flex flex-wrap gap-2">
+        <a href={href(profile.resume)} class="btn btn-secondary btn-sm" download>
+          <Icon name="download" size={15} /> CV <span class="sr-only">(PDF)</span>
+        </a>
+        <a href={href('/contact/')} class="btn btn-primary btn-sm">Get in touch</a>
+      </div>
+    </aside>
+
+    <div class="min-w-0">
+      <!-- Intro: the original about copy -->
+      <section aria-labelledby="intro" class="prose max-w-none">
+        <h2 id="intro" class="!mt-0">In short</h2>
+        <p>
+          Senior UI engineer with {profile.years} years of experience building web applications that have to stay fast
+          under real traffic. I started out on e-commerce storefronts and now work on enterprise travel platforms at JP
+          Morgan Chase. The job hasn't really changed in that time: take a complicated set of business requirements and
+          turn it into something people can use without stopping to think about it.
+        </p>
+        <p>
+          Most of my work is Angular, React and TypeScript on the front end, with Node.js and REST APIs behind it,
+          though I'm strongest in the part users actually see. Across ten-plus enterprise applications, that has meant
+          design systems and shared component libraries, JWT authentication, travel booking and order-management flows
+          used by thousands of people a day, and accessibility built in from the start rather than patched in before
+          release.
+        </p>
+        <p>
+          The longer I do this, the clearer it gets that the code is rarely the hard part. I now spend as much time on
+          architecture decisions, code reviews and mentoring as I do writing features, because the standards you set
+          around performance and testing are what keep a codebase healthy long after the sprint that shipped it.
+        </p>
+      </section>
+
+      <Draft note="Your words — I have no source for this">
+        <section aria-labelledby="why" class="prose max-w-none">
+          <h2 id="why" class="!mt-0">Why I became a software engineer</h2>
+          <p>
+            TODO: What drew you to building software — a first program, a person, a problem you wanted solved? Two or
+            three honest sentences beat a polished paragraph.
+          </p>
+        </section>
+      </Draft>
+
+      <!-- Milestones -->
+      <section aria-labelledby="journey" class="mt-16">
+        <p class="eyebrow">Career map</p>
+        <h2 id="journey" class="mt-2 text-heading font-semibold">The journey, in five moves</h2>
+        <ol class="relative mt-10 grid gap-10">
+          <span aria-hidden="true" class="absolute top-2 bottom-2 left-[0.6875rem] w-px bg-gradient-to-b from-line via-accent-line to-accent" />
+          {
+            roles.map((role, i) => {
+              const story = lessons[role.id];
+              return (
+                <li class="reveal relative grid grid-cols-[1.5rem_1fr] gap-5">
+                  <span
+                    aria-hidden="true"
+                    class:list={[
+                      'relative mt-1 grid size-6 place-items-center rounded-full border bg-canvas font-mono text-[0.625rem]',
+                      role.data.end ? 'border-line-strong text-fg-subtle' : 'border-accent-solid bg-accent-solid text-fg-on-accent',
+                    ]}
+                  >
+                    {i + 1}
+                  </span>
+                  <div>
+                    <p class="font-mono text-xs text-fg-subtle">
+                      {role.data.start.slice(0, 4)} – {role.data.end ? role.data.end.slice(0, 4) : 'now'} · {role.data.company}
+                    </p>
+                    <h3 class="mt-1.5 text-lg font-semibold tracking-tight">{story?.chapter ?? role.data.role}</h3>
+                    <p class="mt-2 leading-relaxed text-fg-muted">{story?.lesson ?? role.data.summary}</p>
+                    <a href={href(`/experience/#${role.id}`)} class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-accent-fg hover:text-accent-hover">
+                      {role.data.role} at {role.data.company}
+                      <Icon name="arrow-right" size={14} />
+                    </a>
+                  </div>
+                </li>
+              );
+            })
+          }
+        </ol>
+      </section>
+
+      <!-- Values -->
+      <section aria-labelledby="values" class="mt-20">
+        <p class="eyebrow">Values</p>
+        <h2 id="values" class="mt-2 text-heading font-semibold">What I hold myself to</h2>
+        <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+          {
+            values.map((v, i) => (
+              <li class="card p-5">
+                <span class="font-mono text-xs text-accent-fg">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="mt-2 font-semibold">{v.title}</h3>
+                <p class="mt-1.5 text-sm leading-relaxed text-fg-muted">{v.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- Approach (shown once the playbooks are published) -->
+      {
+        showApproach && (
+          <section aria-labelledby="how" class="mt-20">
+            <p class="eyebrow">Approach</p>
+            <h2 id="how" class="mt-2 text-heading font-semibold">How I approach complex business problems</h2>
+            <p class="mt-4 max-w-2xl leading-relaxed text-fg-muted">
+              Start from the business outcome, find the real constraint, make the problem small enough to see — and
+              choose the boring solution unless there is a reason not to.
+            </p>
+            <a href={href('/approach/')} class="btn btn-secondary btn-sm mt-5">
+              Read my playbooks <Icon name="arrow-right" size={15} />
+            </a>
+          </section>
+        )
+      }
+
+      <!-- Domains -->
+      <section aria-labelledby="domains" class="mt-20">
+        <p class="eyebrow">Domains</p>
+        <h2 id="domains" class="mt-2 text-heading font-semibold">Industries I've shipped software for</h2>
+        <ul class="mt-8 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 sm:span-odd-last">
+          {
+            domains.map((d) => (
+              <li class="bg-surface px-5 py-4">
+                <p class="font-medium text-fg">{d.name}</p>
+                <p class="mt-0.5 text-sm text-fg-subtle">{d.where}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- Learning & community -->
+      <section aria-labelledby="learning" class="mt-20">
+        <p class="eyebrow">Learning & community</p>
+        <h2 id="learning" class="mt-2 text-heading font-semibold">Education, writing and contributions</h2>
+        <div class="mt-8 grid gap-8 md:grid-cols-2">
+          <div>
+            <h3 class="flex items-center gap-2 font-semibold">
+              <Icon name="graduation-cap" size={18} class="text-fg-subtle" /> Education
+            </h3>
+            <ul class="mt-4 grid gap-4">
+              {
+                education.map((e) => (
+                  <li>
+                    <p class="font-medium text-fg">{e.data.qualification}</p>
+                    <p class="text-sm text-fg-muted">{e.data.institution}</p>
+                    <p class="font-mono text-xs text-fg-subtle">
+                      {e.data.start} – {e.data.end}
+                    </p>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <div>
+            <h3 class="flex items-center gap-2 font-semibold">
+              <Icon name="award" size={18} class="text-fg-subtle" /> Talks, writing & contributions
+            </h3>
+            <ul class="mt-4 grid gap-4">
+              {
+                community.map((c) => (
+                  <li>
+                    <p class="flex items-center gap-2 font-medium text-fg">
+                      {c.data.url ? <a class="link" href={c.data.url}>{c.data.title}</a> : c.data.title}
+                      <DraftBadge draft={c.data.draft} />
+                    </p>
+                    <p class="text-sm text-fg-muted">
+                      <span class="capitalize">{c.data.kind.replace('-', ' ')}</span> · {c.data.org} · {c.data.date}
+                    </p>
+                    {c.data.note && <p class="text-sm text-fg-subtle">{c.data.note}</p>}
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

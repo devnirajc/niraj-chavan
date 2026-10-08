@@ -1,0 +1,51 @@
+---
+title: Nexpenso
+tagline: Personal finance from your bank statements
+summary: Personal finance tracker that imports bank statements, categorises spending and tracks bills, goals and investments.
+featured: true
+order: 2
+kind: personal
+category: Personal finance tracker
+industry: Personal finance
+status: live
+cover: ../../assets/projects/nexpenso.png
+coverAlt: "Nexpenso's upload screen: a drag-and-drop area for CSV, XLSX, XLS and TXT statements beside the required column format and a sample table, with the app's navigation down the left."
+links:
+  live: https://nexpenso.netlify.app/
+  liveLabel: Open Nexpenso
+stack: [React, Redux, React Router, Vite, PWA]
+features:
+  - Import bank statements as CSV, XLSX, XLS or TXT
+  - Automatic, AI-assisted categorisation of transactions, plus rules for future uploads
+  - Duplicate detection using each transaction's reference — UTR, UPI ref or cheque number
+  - Overview dashboard, spending by category, and insights and trends over time
+  - Account balances per bank, and upcoming bills and subscriptions
+  - Savings goals and an investment portfolio tracker
+  - Sign-in, search and filters across every view
+---
+
+Nexpenso turns bank statements into a picture of where the money goes. Upload a statement — CSV, Excel or plain text — and it categorises every transaction, flags duplicates by their reference number, and rolls everything up into dashboards: spending by category, balances per bank, upcoming bills and subscriptions, savings goals and investments.
+
+## Under the hood
+
+Nexpenso is a React app with Redux for state and React Router for navigation, built with Vite. Vendor code is split into separate chunks — React, Redux, charting and data handling — which the page preloads in parallel, so changing application code does not invalidate the cached libraries.
+
+<Draft note="Fill in — not visible from the outside">
+
+## Architecture
+
+TODO: Where does categorisation run, and which AI service does it call? How are statements parsed in the browser? Where is the data stored?
+
+## Challenges solved
+
+TODO: e.g. normalising statement formats across banks; deduplicating same-day transactions.
+
+## Accessibility
+
+TODO
+
+## What's next
+
+TODO
+
+</Draft>

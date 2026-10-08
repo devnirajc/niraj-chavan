@@ -1,0 +1,169 @@
+---
+title: Securing sessions across an enterprise Angular platform
+summary: Designing and shipping JWT-based authentication and session management for a family of enterprise Angular applications.
+draft: true
+featured: true
+order: 1
+role: Senior UI Engineer
+company: Xpanxion International
+period: 2017 – 2019
+domains: [auth-security, api-integration]
+industry: Product engineering services
+stack: [Angular, TypeScript, RxJS, JWT, REST APIs]
+problem: >-
+  TODO: Describe the business issue in one or two sentences. What was wrong
+  with sign-in or sessions before — and what did it cost users or the business?
+goals:
+  - TODO — e.g. Users stay signed in across a working day without re-entering credentials
+  - TODO — e.g. A revoked account loses access within minutes, not at token expiry
+  - TODO — e.g. Every app on the platform uses the same sign-in code
+constraints:
+  - TODO — e.g. Existing REST APIs could not change their contract
+  - TODO — e.g. Security review sign-off before release
+metrics:
+  - label: TODO metric (e.g. sign-in related support tickets)
+    before: TODO
+    after: TODO
+  - label: TODO metric (e.g. time to add auth to a new app)
+    before: TODO
+    after: TODO
+architecture:
+  title: Token flow between the Angular apps and the API
+  caption: >-
+    ASSUMED DESIGN — replace with what you actually built. Access tokens live
+    in memory, a single interceptor attaches them and coordinates refresh, and
+    route guards wait on the session state before rendering.
+  layers:
+    - { id: client, label: Angular app }
+    - { id: edge, label: Edge }
+    - { id: services, label: Services }
+    - { id: data, label: Data }
+  nodes:
+    - id: login
+      label: Sign-in screens
+      sublabel: forms · SSO redirect
+      layer: client
+      detail: Collects credentials or starts the SSO redirect, then hands the result to the session service. Never stores tokens itself.
+    - id: session
+      label: Session service
+      sublabel: RxJS state
+      layer: client
+      detail: Holds the access token in memory and exposes the signed-in user as an observable that guards and components subscribe to.
+    - id: guards
+      label: Route guards
+      sublabel: auth · roles
+      layer: client
+      detail: Wait for the session to resolve, then allow, redirect to sign-in, or reject on missing role.
+    - id: interceptor
+      label: HTTP interceptor
+      sublabel: attach · refresh
+      layer: client
+      detail: Adds the bearer token to API calls. On a 401 it pauses outgoing requests, performs one refresh, then replays them.
+    - id: gateway
+      label: API gateway
+      sublabel: TLS · rate limits
+      layer: edge
+      detail: Terminates TLS and forwards authenticated traffic to the services.
+    - id: auth
+      label: Auth service
+      sublabel: issue · refresh · revoke
+      layer: services
+      detail: Issues short-lived access tokens and longer-lived refresh tokens, and checks refresh tokens against the revocation list.
+    - id: apis
+      label: Domain APIs
+      sublabel: REST
+      layer: services
+      detail: Validate the access token's signature and claims on every request; no session lookup needed.
+    - id: users
+      label: User store
+      sublabel: accounts · roles
+      layer: data
+      detail: Accounts, roles and refresh-token state, including revocations.
+  edges:
+    - { from: login, to: session }
+    - { from: session, to: guards }
+    - { from: interceptor, to: gateway, label: Bearer JWT }
+    - { from: session, to: interceptor }
+    - { from: gateway, to: auth }
+    - { from: gateway, to: apis }
+    - { from: auth, to: users }
+  steps:
+    - title: Sign in
+      nodes: [login, session, interceptor, gateway, auth, users]
+      detail: The sign-in screen posts credentials; the auth service checks them against the user store and returns an access token and a refresh token. The session service keeps the access token in memory only.
+    - title: Every API call
+      nodes: [session, interceptor, gateway, apis]
+      detail: The interceptor attaches the current access token. Domain APIs validate the signature and claims locally, so there is no extra round trip per request.
+    - title: Token expires mid-session
+      nodes: [interceptor, gateway, auth, users]
+      detail: A 401 makes the interceptor pause the queue and run exactly one refresh, even if ten requests failed at once. The new token replays the queued calls; a revoked refresh token signs the user out instead.
+    - title: Navigating to a protected page
+      nodes: [session, guards]
+      detail: Guards subscribe to the session state and wait for it to resolve before deciding, so a page refresh never flashes protected content or bounces a signed-in user to the sign-in screen.
+decisions:
+  - title: Where the access token lives in the browser
+    context: >-
+      ASSUMED — confirm. Tokens in localStorage survive reloads but are readable
+      by any script that runs on the page; an XSS bug becomes account takeover.
+    options:
+      - name: Memory, with refresh on reload
+        chosen: true
+        reason: Not reachable from injected script; a reload costs one silent refresh call.
+      - name: localStorage
+        chosen: false
+        reason: Simplest, but exposes the token to any XSS.
+      - name: HttpOnly cookie for the access token
+        chosen: false
+        reason: Safest from XSS but needed CSRF protection and changes to every API.
+    tradeoff: One extra request on every full page load, in exchange for tokens that injected script cannot read.
+  - title: How concurrent 401s are handled
+    context: >-
+      ASSUMED — confirm. A dashboard firing ten requests at expiry would
+      otherwise trigger ten refreshes, and rotating refresh tokens would
+      invalidate each other.
+    options:
+      - name: Single-flight refresh in the interceptor
+        chosen: true
+        reason: One refresh, a queue of paused requests, then a replay — invisible to feature code.
+      - name: Refresh in each service on failure
+        chosen: false
+        reason: Duplicated logic and racing refreshes.
+    tradeoff: The interceptor became the most delicate code in the app and needed thorough tests for ordering and failure paths.
+lessons:
+  - TODO — What would you do differently?
+  - TODO — What surprised you?
+---
+
+<Draft note="Everything on this page is a scaffold — replace before publishing">
+
+This case study is a **worked example of the format**. The structure is real; the specifics — the token storage choice, the refresh flow, the diagram — are a typical design for JWT authentication in Angular, *assumed* from the one-line description in my experience. Replace them with what actually happened, delete anything that does not apply, then set `draft: false`.
+
+</Draft>
+
+## Context
+
+TODO: The product, the team, the users. How many applications shared this sign-in? What was the security posture before?
+
+## How I approached it
+
+<Steps
+  label="Approach"
+  steps={[
+    { title: 'Map every place a credential is handled', detail: 'TODO: what you audited and what you found.' },
+    { title: 'Agree the threat model', detail: 'TODO: which threats mattered (XSS, CSRF, token replay) and with whom you agreed it.' },
+    { title: 'Build the session core once', detail: 'TODO: the shared service, interceptor and guards, and how apps adopted them.' },
+    { title: 'Roll out and verify', detail: 'TODO: migration order, testing, security review.' },
+  ]}
+/>
+
+## Implementation
+
+TODO: The interesting parts of the code. A short snippet of the interceptor's single-flight refresh would make this concrete.
+
+## Challenges
+
+TODO: What went wrong, and how you dealt with it.
+
+<Callout kind="tradeoff">
+TODO: The trade-off you would want another engineer to understand before copying this design.
+</Callout>

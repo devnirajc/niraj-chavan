@@ -1,0 +1,28 @@
+---
+/**
+ * <Figure src={import('…')} alt="…" caption="…" /> — a screenshot or diagram
+ * inside MDX, optimised and responsive. Import the image at the top of the
+ * MDX file:  import shot from '../../assets/case-studies/x.png';
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+}
+
+const { src, alt, caption } = Astro.props;
+---
+
+<figure class="my-10">
+  <Image
+    src={src}
+    alt={alt}
+    widths={[640, 960, 1280]}
+    sizes="(min-width: 48rem) 48rem, 100vw"
+    class="w-full rounded-xl border border-line bg-sunken"
+  />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

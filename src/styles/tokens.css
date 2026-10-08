@@ -1,0 +1,162 @@
+/**
+ * Design tokens.
+ *
+ * A quiet neutral system with one indigo accent — closer to the tools engineers
+ * use every day (Linear, Vercel, Stripe's docs) than to a résumé template.
+ * Colour is only ever applied through the semantic layer (`--bg-*`, `--fg-*`,
+ * `--line-*`, `--accent-*`), and every foreground/background pair the design
+ * renders is verified by scripts/check-contrast.mjs before each build.
+ *
+ * Literals live in this file only. Tailwind utilities are generated from the
+ * semantic names in global.css (`bg-surface`, `text-fg-muted`, `border-line`),
+ * so a component cannot reach for a colour the audit has not checked.
+ */
+
+:root {
+  /* ---------- Palette: cool greys (light) ---------- */
+  --gray-0: #ffffff;
+  --gray-25: #fbfbfc;
+  --gray-50: #f5f6f8;
+  --gray-100: #eceef2;
+  --gray-200: #dfe2e8;
+  --gray-400: #858c99;
+  --gray-600: #4f5562;
+  --gray-700: #373c46;
+  --gray-900: #0c0e12;
+
+  /* ---------- Palette: ink (dark) ---------- */
+  --ink-950: #08090b;
+  --ink-900: #0f1115;
+  --ink-850: #14171c;
+  --ink-800: #1b1e24;
+  --ink-700: #282c34;
+  --ink-500: #6a7180;
+  --ink-300: #9aa1ad;
+  --ink-200: #b9bec8;
+  --ink-50: #eef0f3;
+
+  /* ---------- Palette: indigo accent ---------- */
+  --indigo-50: #eef0ff;
+  --indigo-100: #e1e4ff;
+  --indigo-200: #c7cdfe;
+  --indigo-300: #a5b4fc;
+  --indigo-400: #818cf8;
+  --indigo-500: #6366f1;
+  --indigo-600: #4f46e5;
+  --indigo-700: #4338ca;
+  --indigo-950: #1a1c3a;
+
+  /* ---------- Palette: status ---------- */
+  --green-500: #22c55e;
+  --green-700: #15803d;
+  --green-300: #6ee7a0;
+  --amber-50: #fff8e6;
+  --amber-800: #8a3c0b;
+  --amber-300: #fcd34d;
+  --amber-950: #2b1f05;
+  --red-50: #fef3f2;
+  --red-700: #b42318;
+  --red-300: #fda29b;
+  --red-950: #2d0d0b;
+
+  /* ---------- Semantic: light (default) ---------- */
+  --bg-canvas: var(--gray-25);
+  --bg-surface: var(--gray-0);
+  --bg-sunken: var(--gray-50);
+  --bg-inverse: var(--gray-900);
+
+  --fg: var(--gray-900);
+  --fg-muted: var(--gray-700);
+  --fg-subtle: var(--gray-600);
+  --fg-inverse: var(--gray-0);
+  --fg-on-accent: #ffffff;
+
+  /* Decorative grouping lines — card edges, rules, rails. Not control
+     boundaries, so SC 1.4.11 does not apply to them. */
+  --line-subtle: var(--gray-100);
+  --line: var(--gray-200);
+  /* The visible edge of a real control (buttons, chips, inputs). Held to
+     3:1 against every surface it sits on. */
+  --line-strong: var(--gray-400);
+
+  /* --accent is decorative (glows, dots, rails). Anything a reader parses
+     uses --accent-fg, which clears 4.5:1 on every surface. */
+  --accent: var(--indigo-500);
+  --accent-fg: var(--indigo-600);
+  --accent-hover: var(--indigo-700);
+  --accent-solid: var(--indigo-600);
+  --accent-quiet: var(--indigo-50);
+  --accent-line: var(--indigo-200);
+
+  --success: var(--green-500);
+  --success-fg: var(--green-700);
+  --draft-bg: var(--amber-50);
+  --draft-fg: var(--amber-800);
+  --danger-bg: var(--red-50);
+  --danger-fg: var(--red-700);
+
+  --focus-ring: var(--indigo-600);
+
+  --selection-bg: var(--indigo-100);
+  --selection-fg: var(--gray-900);
+
+  --elev-1: 0 1px 2px rgb(12 14 18 / 0.05);
+  --elev-2: 0 1px 2px rgb(12 14 18 / 0.04), 0 4px 16px -4px rgb(12 14 18 / 0.08);
+  --elev-3: 0 2px 4px rgb(12 14 18 / 0.04), 0 16px 40px -12px rgb(12 14 18 / 0.16);
+
+  --glow: rgb(99 102 241 / 0.14);
+  --grid-line: rgb(12 14 18 / 0.045);
+
+  color-scheme: light;
+}
+
+/* ---------- Semantic: dark ----------
+   `data-theme` is set on <html> by the inline bootstrap in BaseLayout before
+   first paint, so it is the single source of truth — there is no
+   prefers-color-scheme block to keep in sync. */
+[data-theme='dark'] {
+  --bg-canvas: var(--ink-950);
+  --bg-surface: var(--ink-900);
+  --bg-sunken: var(--ink-850);
+  --bg-inverse: var(--ink-50);
+
+  --fg: var(--ink-50);
+  --fg-muted: var(--ink-200);
+  --fg-subtle: var(--ink-300);
+  --fg-inverse: var(--ink-950);
+  --fg-on-accent: var(--ink-950);
+
+  --line-subtle: var(--ink-800);
+  --line: var(--ink-700);
+  --line-strong: var(--ink-500);
+
+  /* On ink there is no contrast pressure pushing the accent darker, so every
+     role climbs to a lighter step than its light-theme counterpart. */
+  --accent: var(--indigo-400);
+  --accent-fg: var(--indigo-300);
+  --accent-hover: var(--indigo-200);
+  --accent-solid: var(--indigo-400);
+  --accent-quiet: var(--indigo-950);
+  --accent-line: #3b3f7a;
+
+  --success: var(--green-500);
+  --success-fg: var(--green-300);
+  --draft-bg: var(--amber-950);
+  --draft-fg: var(--amber-300);
+  --danger-bg: var(--red-950);
+  --danger-fg: var(--red-300);
+
+  --focus-ring: var(--indigo-300);
+
+  --selection-bg: #2e3270;
+  --selection-fg: var(--ink-50);
+
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --elev-2: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px -4px rgb(0 0 0 / 0.5);
+  --elev-3: 0 2px 4px rgb(0 0 0 / 0.4), 0 16px 40px -12px rgb(0 0 0 / 0.7);
+
+  --glow: rgb(129 140 248 / 0.16);
+  --grid-line: rgb(238 240 243 / 0.05);
+
+  color-scheme: dark;
+}

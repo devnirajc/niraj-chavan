@@ -1,0 +1,59 @@
+---
+/**
+ * Per-page metadata: title, description, canonical, Open Graph, Twitter and
+ * JSON-LD. Pages pass plain props; absolute URLs are resolved here so no page
+ * has to know the deploy origin or base path.
+ */
+import { absolute } from '@/lib/url';
+import { profile } from '@/data/profile';
+
+export interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article' | 'profile';
+  /** Root-relative path under public/, or an absolute URL (e.g. an optimised image). */
+  image?: string;
+  imageAlt?: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  type = 'website',
+  image = '/assets/images/og-image.jpg',
+  imageAlt = `${profile.name} — ${profile.role}`,
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+
+const site = Astro.site;
+const canonical = new URL(Astro.url.pathname, site).toString();
+const imageUrl = /^https?:/.test(image) ? image : absolute(image, site);
+const fullTitle = Astro.url.pathname === import.meta.env.BASE_URL ? title : `${title} · ${profile.name}`;
+const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+<meta name="author" content={profile.name} />
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={profile.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:locale" content="en_GB" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+{ld.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}

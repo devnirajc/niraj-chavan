@@ -3,6 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [redesign, master]
+  # Weekly rebuild so new Medium articles appear without a code change
+  # (the writing page fetches the feed at build time).
+  schedule:
+    - cron: '0 5 * * 1'
   workflow_dispatch:
 
 permissions:
@@ -24,15 +28,24 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Astro 7 requires Node 22.12 or newer.
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
+      # Type-checks .astro/.ts files and validates content against the schemas.
+      - name: Check
+        run: npx astro check
+
+      # Runs the contrast audit and the published-content TODO guard first;
+      # either failing stops the deploy.
       - name: Build
         run: npm run build
 
+      # GitHub Pages runs Jekyll by default, which drops folders starting with
+      # an underscore — Astro's assets live in _astro/.
       - name: Add .nojekyll file
         run: touch ./dist/.nojekyll
 
