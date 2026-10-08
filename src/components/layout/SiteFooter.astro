@@ -59,22 +59,10 @@ const year = new Date().getFullYear();
   <div class="border-t border-line-subtle">
     <div class="container-page flex flex-col gap-2 py-6 text-sm text-fg-subtle sm:flex-row sm:items-center sm:justify-between">
       <p>&copy; {year} {profile.name}</p>
-      <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
-        <p class="flex items-center gap-2">
-          <span
-            aria-hidden="true"
-            class:list={['size-2 shrink-0 rounded-full', profile.availability.status === 'unavailable' ? 'bg-line-strong' : 'bg-success']}
-          ></span>
-          <span>
-            {profile.availability.label}.
-            <a class="link" href={href('/contact/')}>Get in touch</a>
-          </span>
-        </p>
-        <!-- #main rather than #: moves keyboard focus back up, not just the scroll position. -->
-        <a href="#main" class="inline-flex items-center gap-1.5 transition-colors hover:text-fg">
-          Back to top <Icon name="arrow-up" size={14} />
-        </a>
-      </div>
+      <!-- #main rather than #: moves keyboard focus back up, not just the scroll position. -->
+      <a href="#main" class="inline-flex items-center gap-1.5 self-start transition-colors hover:text-fg sm:self-auto">
+        Back to top <Icon name="arrow-up" size={14} />
+      </a>
     </div>
   </div>
 </footer>
