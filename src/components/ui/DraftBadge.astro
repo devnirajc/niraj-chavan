@@ -1,0 +1,21 @@
+---
+/** Marks a draft entry. Renders nothing for published entries. */
+interface Props {
+  draft?: boolean;
+  class?: string;
+}
+const { draft = false, class: className } = Astro.props;
+---
+
+{
+  draft && (
+    <span
+      class:list={[
+        'inline-flex items-center rounded-full border border-draft-fg/40 bg-draft-bg px-2 py-0.5 font-mono text-[0.6875rem] font-medium tracking-wider text-draft-fg uppercase',
+        className,
+      ]}
+    >
+      Draft
+    </span>
+  )
+}

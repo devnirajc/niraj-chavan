@@ -1,0 +1,146 @@
+# Expertise by area. Levels are my own self-assessment (carried over from the
+# previous site); skills I have not rated have no level. Every `context` line
+# restates something the experience or project entries already say. Evidence ids:
+#   roles: experience.yaml ids · projects: src/content/projects · caseStudies:
+#   src/content/case-studies (drafts are dropped from production automatically).
+
+- id: frontend
+  order: 1
+  area: Frontend engineering
+  summary: >-
+    The part users actually touch — and where I have spent most of my career.
+  skills:
+    - name: Angular
+      level: Expert
+      context: Enterprise applications at JP Morgan Chase, Schlumberger and Xpanxion — modular component architecture, JWT auth, lazy-loaded features.
+      roles: [jpmc, slb, xpanxion]
+      caseStudies: [authentication-platform]
+    - name: TypeScript
+      level: Expert
+      context: Typed Angular and React codebases at JP Morgan Chase and Xpanxion.
+      roles: [jpmc, xpanxion]
+    - name: RxJS
+      level: Expert
+      context: Async data flows and state in Angular applications.
+      roles: [jpmc, xpanxion]
+    - name: React
+      level: Advanced
+      context: Product work at JP Morgan Chase and Schlumberger, and my own Rxbit and Nexpenso; ShredTrack is built on Next.js.
+      roles: [jpmc, slb]
+      projects: [rxbit, nexpenso, shredtrack]
+    - name: State management
+      level: Advanced
+      context: NgRx and RxJS services in Angular; Redux in React — Nexpenso's state lives in Redux.
+      projects: [nexpenso]
+    - name: HTML & CSS
+      level: Expert
+      context: Semantic, accessible markup converted from PSD and Sketch designs for large e-commerce sites.
+      roles: [connect91]
+    - name: Responsive design
+      level: Expert
+      context: Led responsive implementation across devices at Schlumberger; mobile-first layouts at Connect | 91.
+      roles: [slb, connect91]
+    - name: Sass / SCSS
+      level: Expert
+      context: Built the Sass framework and token system behind large e-commerce front ends at Connect | 91.
+      roles: [connect91]
+    - name: Tailwind CSS
+      level: Advanced
+      context: Utility-first styling over semantic design tokens — this site is built that way.
+
+- id: architecture
+  order: 2
+  area: UI architecture
+  summary: >-
+    Structure that lets many people ship into one codebase without slowing each other down.
+  skills:
+    - name: Design systems & component libraries
+      context: Reusable component libraries at JP Morgan Chase that several teams build features on.
+      roles: [jpmc]
+      caseStudies: [microfrontend-architecture]
+    - name: Scalable application structure
+      context: Modular Angular architecture at Xpanxion that cut the time it took to build new features.
+      roles: [xpanxion]
+    - name: Code review
+      level: Expert
+      context: As much of my week now goes on architecture decisions, reviews and mentoring as on writing features.
+      roles: [jpmc]
+    - name: Microservices
+      level: Advanced
+
+- id: quality
+  order: 3
+  area: Accessibility & quality
+  summary: >-
+    Accessibility built in from the start, and tests that make change safe.
+  skills:
+    - name: Web accessibility (WCAG)
+      level: Advanced
+      context: Led WCAG 2.0 compliance at Xpanxion; this site targets WCAG 2.2 AA with an automated contrast audit in the build.
+      roles: [xpanxion]
+    - name: Accessibility testing
+      level: Expert
+      context: Auditing with axe DevTools.
+    - name: Unit testing
+      level: Expert
+      context: Jasmine and Karma in Angular, Jest in React — test suites that raised coverage and cut production defects.
+      roles: [jpmc]
+    - name: End-to-end testing
+      level: Advanced
+
+- id: performance
+  order: 4
+  area: Performance
+  summary: >-
+    Fast on any device, on any network — measured, not guessed.
+  skills:
+    - name: Load-time optimisation
+      level: Advanced
+      context: Code splitting, lazy loading and leaner state at Schlumberger; performance initiatives at JP Morgan Chase.
+      roles: [slb, jpmc]
+      caseStudies: [enterprise-dashboard]
+    - name: Angular runtime performance
+      level: Advanced
+      context: Change-detection tuning, lazy-loaded modules and bundle-size reduction on large Angular apps.
+      roles: [xpanxion]
+    - name: Build tooling
+      level: Advanced
+      context: Webpack and Vite — Rxbit and Nexpenso ship as Vite builds with vendor and feature code split into separate chunks.
+      projects: [rxbit, nexpenso]
+
+- id: backend
+  order: 5
+  area: Backend & data
+  summary: >-
+    The APIs and data behind the interfaces I build.
+  skills:
+    - name: Node.js & Express
+      level: Expert
+      context: REST services that sit behind the front ends I build.
+    - name: REST API integration
+      level: Expert
+      context: Optimised fetching, error handling and retry strategies for reliable integrations.
+      roles: [xpanxion]
+    - name: MongoDB
+      level: Expert
+    - name: MySQL
+      level: Advanced
+    - name: GraphQL
+      level: Intermediate
+
+- id: cloud
+  order: 6
+  area: Cloud & DevOps
+  summary: >-
+    Getting code to production safely and repeatably.
+  skills:
+    - name: CI/CD
+      level: Advanced
+      context: GitHub Actions — this site builds, audits its colour contrast and deploys on every push. Side projects ship to Vercel and Netlify.
+      projects: [rxbit, shredtrack, nexpenso]
+    - name: Docker
+      level: Intermediate
+    - name: AWS & Azure
+      level: Intermediate
+    - name: Kubernetes
+      level: Intermediate

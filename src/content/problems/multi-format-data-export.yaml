@@ -1,0 +1,20 @@
+# DRAFT — solution restates my experience entry (Xpanxion).
+title: Getting data out of the app in the format people actually use
+draft: true
+order: 8
+domain: data-reporting
+context: Xpanxion · enterprise Angular applications
+problem: >-
+  TODO: Who needed exports, and what they did without them.
+challenge: >-
+  TODO: e.g. large datasets, consistent formatting across three formats.
+analysis: >-
+  TODO
+solution: >-
+  Data export to CSV, Excel and PDF from within the application.
+stack: [Angular, TypeScript]
+results:
+  - Users could take data into the tools they already worked in.
+  - TODO
+lessons:
+  - TODO

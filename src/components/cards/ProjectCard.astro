@@ -1,0 +1,46 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Icon from '@/components/ui/Icon.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import { href } from '@/lib/url';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  headingLevel?: 'h2' | 'h3';
+  eager?: boolean;
+}
+
+const { project, headingLevel: H = 'h3', eager = false } = Astro.props;
+const { data } = project;
+---
+
+<article class="card card-interactive group flex flex-col overflow-hidden">
+  <div class="relative aspect-[16/9] overflow-hidden border-b border-line bg-sunken">
+    <Image
+      src={data.cover}
+      alt=""
+      widths={[400, 640, 960]}
+      sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"
+      class="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
+    />
+  </div>
+  <div class="flex flex-1 flex-col p-5">
+    <div class="flex items-center gap-2">
+      <p class="eyebrow">{data.kind === 'personal' ? 'Side project' : 'Client work'} · {data.industry}</p>
+      <DraftBadge draft={data.draft} class="ml-auto" />
+    </div>
+    <H class="mt-2 text-lg font-semibold">
+      <a href={href(`/projects/${project.id}/`)} class="card-link">{data.title}</a>
+    </H>
+    <p class="mt-1.5 text-sm leading-relaxed text-fg-muted">{data.summary}</p>
+    <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Stack">
+      {data.stack.slice(0, 4).map((s) => <li class="chip min-h-6 px-2 text-xs">{s}</li>)}
+    </ul>
+    <p class="mt-auto flex items-center gap-1.5 pt-5 text-sm font-medium text-accent-fg" aria-hidden="true">
+      Read the write-up <Icon name="arrow-right" size={15} class="transition-transform group-hover:translate-x-0.5" />
+    </p>
+  </div>
+</article>

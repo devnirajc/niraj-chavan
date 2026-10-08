@@ -1,0 +1,14 @@
+# Talks, certifications, open source, hackathons, workshops. Items without
+# draft: true are published. The placeholders show the format.
+
+- id: medium
+  kind: writing
+  title: Engineering articles on Angular and front-end architecture
+  org: Medium
+  date: '2020'
+  url: https://medium.com/@nirajd327
+
+- { id: talk-1, kind: talk, title: TODO talk title, org: TODO event or meetup, date: TODO, draft: true }
+- { id: cert-1, kind: certification, title: TODO certification, org: TODO issuer, date: TODO, draft: true }
+- { id: oss-1, kind: open-source, title: TODO contribution, org: TODO project, date: TODO, draft: true }
+- { id: hack-1, kind: hackathon, title: TODO hackathon, org: TODO organiser, date: TODO, note: TODO what you built, draft: true }

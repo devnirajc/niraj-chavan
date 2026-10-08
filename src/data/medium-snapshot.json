@@ -1,0 +1,25 @@
+[
+  {
+    "id": "164885369aa",
+    "title": "flux",
+    "url": "https://medium.com/@nirajd327/flux-164885369aa",
+    "published": "2020-07-19T11:56:32.000Z",
+    "excerpt": "One thing which comes in mind before building the structure of any project is its architecture. Flux architecture provides an efficient way of building web applications.",
+    "tags": [],
+    "readingMinutes": 2
+  },
+  {
+    "id": "2d91b8559e4a",
+    "title": "Ivy — New compiler and rendering engine",
+    "url": "https://medium.com/@nirajd327/ivy-new-compiler-and-rendering-engine-2d91b8559e4a",
+    "published": "2020-02-22T12:16:39.000Z",
+    "excerpt": "Angular 9 introduced a new compiler and rendering engine called Ivy which is an enhanced version of an older version of View Engine. Ivy is the code name for Angular’s next-generation compilation and rendering engine.…",
+    "tags": [
+      "ivy",
+      "angular",
+      "tree-shaking",
+      "locality"
+    ],
+    "readingMinutes": 3
+  }
+]

@@ -1,0 +1,61 @@
+---
+/**
+ * Tech radar, rendered as four ring columns rather than a polar plot: the
+ * same information, readable at a glance, and a plain list for assistive
+ * technology. Quadrant is shown as a small label on each entry.
+ */
+import type { CollectionEntry } from 'astro:content';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import { RADAR_QUADRANTS, RADAR_RINGS } from '@/data/taxonomy';
+
+interface Props {
+  entries: CollectionEntry<'radar'>[];
+}
+
+const { entries } = Astro.props;
+const rings = (Object.keys(RADAR_RINGS) as (keyof typeof RADAR_RINGS)[])
+  .map((ring, level) => ({ ring, level, ...RADAR_RINGS[ring], items: entries.filter((e) => e.data.ring === ring) }))
+  .filter((r) => r.items.length > 0);
+---
+
+<div
+  class:list={[
+    'grid gap-px overflow-hidden rounded-2xl border border-line bg-line',
+    rings.length === 2 && 'md:grid-cols-2',
+    rings.length === 3 && 'md:grid-cols-3',
+    rings.length === 4 && 'md:grid-cols-2 xl:grid-cols-4',
+  ]}
+>
+  {
+    rings.map((ring) => (
+      <section class="bg-surface p-5" aria-labelledby={`ring-${ring.ring}`}>
+        <div class="flex items-center gap-2">
+          <span aria-hidden="true" class="flex gap-0.5">
+            {Array.from({ length: 4 }, (_, j) => (
+              <span class:list={['h-3 w-1 rounded-full', j < 4 - ring.level ? 'bg-accent-solid' : 'bg-line']} />
+            ))}
+          </span>
+          <h3 id={`ring-${ring.ring}`} class="font-semibold">
+            {ring.label}
+          </h3>
+          <span class="ml-auto font-mono text-xs text-fg-subtle">{ring.items.length}</span>
+        </div>
+        <p class="mt-1 text-sm text-fg-subtle">{ring.blurb}</p>
+        <ul class="mt-4 grid gap-3">
+          {ring.items.map((item) => (
+            <li class="rounded-xl border border-line-subtle bg-sunken/50 px-3.5 py-3">
+              <p class="flex items-center gap-2">
+                <span class="font-medium text-fg">{item.data.name}</span>
+                <DraftBadge draft={item.data.draft} class="ml-auto" />
+              </p>
+              <p class="mt-0.5 font-mono text-[0.6875rem] tracking-wide text-fg-subtle uppercase">
+                {RADAR_QUADRANTS[item.data.quadrant]}
+              </p>
+              <p class="mt-1.5 text-sm leading-relaxed text-fg-muted">{item.data.note}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>

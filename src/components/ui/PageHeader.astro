@@ -1,0 +1,29 @@
+---
+/**
+ * The opening block of every inner page: optional breadcrumbs, a mono
+ * eyebrow, the page's single <h1>, and a lede. Extra actions go in the slot.
+ */
+import Breadcrumbs, { type Crumb } from './Breadcrumbs.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  crumbs?: Crumb[];
+  wide?: boolean;
+}
+
+const { eyebrow, title, lede, crumbs, wide = false } = Astro.props;
+---
+
+<div class="relative overflow-hidden border-b border-line-subtle">
+  <div aria-hidden="true" class="bg-grid pointer-events-none absolute inset-0"></div>
+  <div aria-hidden="true" class="bg-glow pointer-events-none absolute inset-0"></div>
+  <div class="container-page relative pt-10 pb-12 sm:pt-14 sm:pb-16">
+    {crumbs && <Breadcrumbs items={crumbs} />}
+    {eyebrow && <p class="eyebrow mt-6">{eyebrow}</p>}
+    <h1 class:list={['mt-3 text-title font-semibold', wide ? 'max-w-4xl' : 'max-w-3xl']}>{title}</h1>
+    {lede && <p class="mt-5 max-w-2xl text-lg leading-relaxed text-fg-muted">{lede}</p>}
+    <slot />
+  </div>
+</div>

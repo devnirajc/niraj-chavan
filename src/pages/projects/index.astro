@@ -1,0 +1,41 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import FilterBar from '@/components/ui/FilterBar.astro';
+import ProjectCard from '@/components/cards/ProjectCard.astro';
+import { published } from '@/lib/drafts';
+
+const projects = (await published('projects')).sort((a, b) => a.data.order - b.data.order);
+const count = (kind: string) => projects.filter((p) => p.data.kind === kind).length;
+---
+
+<BaseLayout
+  title="Projects"
+  description="Products I build on my own time and enterprise work for clients in energy, travel, cybersecurity, retail and professional services."
+>
+  <PageHeader
+    eyebrow="Projects"
+    title="Things I've built"
+    lede="Side projects I design, build and run end to end — and client work from a decade of enterprise and e-commerce engagements. Each has its own page with the stack, the features and what I learned."
+  />
+  <div class="container-page pt-12" data-filter-root>
+    <FilterBar
+      label="Filter projects by type"
+      options={[
+        { value: 'personal', label: 'Side projects', count: count('personal') },
+        { value: 'client', label: 'Client work', count: count('client') },
+      ]}
+      noun={['project', 'projects']}
+      param="type"
+    />
+    <ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        projects.map((project, i) => (
+          <li data-filter-item data-filter-tags={project.data.kind} class="grid">
+            <ProjectCard project={project} headingLevel="h2" eager={i < 3} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

@@ -1,0 +1,21 @@
+---
+title: How I debug
+summary: Reproduce first, change one thing at a time, and believe the evidence over the theory.
+draft: true
+order: 2
+steps:
+  - title: Reproduce it reliably
+    detail: A bug I cannot reproduce is a bug I cannot prove I fixed. I capture the exact inputs, environment and steps — network throttling, user role, browser — until it fails on demand.
+  - title: Read what the system is already telling me
+    detail: Console, network panel, server logs, the stack trace read all the way down. The answer is often printed somewhere nobody looked.
+  - title: Bisect
+    detail: Split the search space in half — by commit (git bisect), by component, by data. Guessing is slower than halving.
+  - title: Form one hypothesis and test it
+    detail: Change one thing, predict the result, observe. If the prediction is wrong, the model in my head is wrong, and that is the useful finding.
+  - title: Fix the cause, then guard it
+    detail: Patch the root cause rather than the symptom, and add the test that would have caught it.
+  - title: Leave a trail
+    detail: A short note in the PR on what failed and why, so the next person debugging nearby starts with context.
+---
+
+Most debugging time is lost to theories nobody tested. The method below is how I keep myself honest.

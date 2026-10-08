@@ -1,0 +1,58 @@
+---
+/**
+ * The home page reads as a guided tour in numbered chapters. On wide screens
+ * this rail sits in the left margin, showing where you are in the story
+ * (aria-current="true" on the chapter in view) and letting you jump ahead.
+ */
+interface Props {
+  chapters: { id: string; index: string; label: string }[];
+}
+
+const { chapters } = Astro.props;
+---
+
+<nav
+  aria-label="Chapters"
+  class="fixed top-1/2 left-6 z-30 hidden -translate-y-1/2 min-[90rem]:block"
+  data-chapter-rail
+>
+  <ol class="grid gap-1">
+    {
+      chapters.map((c) => (
+        <li>
+          <a
+            href={`#${c.id}`}
+            class="group flex items-center gap-3 rounded-md py-1 pr-2 text-xs text-fg-subtle transition-colors hover:text-fg aria-[current=true]:text-fg"
+          >
+            <span class="font-mono tabular-nums group-aria-[current=true]:text-accent-fg">{c.index}</span>
+            <span
+              aria-hidden="true"
+              class="h-px w-4 bg-line transition-all group-hover:w-6 group-aria-[current=true]:w-8 group-aria-[current=true]:bg-accent-solid"
+            />
+            <span>{c.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<script>
+  const rail = document.querySelector<HTMLElement>('[data-chapter-rail]');
+  if (rail) {
+    const links = [...rail.querySelectorAll<HTMLAnchorElement>('a')];
+    const sections = links.map((a) => document.getElementById(a.hash.slice(1))).filter(Boolean) as HTMLElement[];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          links.forEach((a) => a.setAttribute('aria-current', String(a.hash === `#${entry.target.id}`)));
+        }
+      },
+      // A chapter is "current" while it crosses the middle band of the screen.
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    sections.forEach((s) => observer.observe(s));
+  }
+</script>

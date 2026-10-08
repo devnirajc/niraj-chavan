@@ -1,11 +1,12 @@
 /**
  * Colour contrast audit.
  *
- * Parses the semantic tokens out of src/styles/base/variables.css, resolves
+ * Parses the semantic tokens out of src/styles/tokens.css, resolves
  * var() indirection, and checks every foreground/background pair the design
  * actually renders against its WCAG 2.2 threshold.
  *
- *   node scripts/check-contrast.mjs        # or: npm run check:contrast
+ *   node scripts/check-contrast.mjs            # or: npm run check:contrast
+ *   node scripts/check-contrast.mjs --verbose  # print every pair and ratio
  *
  * Exits non-zero if any pair falls short, so the claim "AA everywhere" is
  * something the build can prove rather than something a comment asserts.
@@ -16,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CSS = readFileSync(join(ROOT, 'src/styles/base/variables.css'), 'utf8');
+const CSS = readFileSync(join(ROOT, 'src/styles/tokens.css'), 'utf8');
 
 /* ============================================================
    TOKEN PARSING
@@ -115,46 +116,58 @@ function contrast(a, b) {
    AAA threshold of 7.0 where the design already clears it. */
 const PAIRS = [
   // Body and heading text on each surface
-  { fg: 'text-primary', bg: 'bg-canvas', min: 7, note: 'body text on page' },
-  { fg: 'text-primary', bg: 'bg-surface', min: 7, note: 'body text on card' },
-  { fg: 'text-primary', bg: 'bg-sunken', min: 7, note: 'body text on well' },
-  { fg: 'text-secondary', bg: 'bg-canvas', min: 7, note: 'prose on page' },
-  { fg: 'text-secondary', bg: 'bg-surface', min: 7, note: 'prose on card' },
-  { fg: 'text-secondary', bg: 'bg-sunken', min: 4.5, note: 'prose on well' },
+  { fg: 'fg', bg: 'bg-canvas', min: 7, note: 'body text on page' },
+  { fg: 'fg', bg: 'bg-surface', min: 7, note: 'body text on card' },
+  { fg: 'fg', bg: 'bg-sunken', min: 7, note: 'body text on well' },
+  { fg: 'fg-muted', bg: 'bg-canvas', min: 7, note: 'prose on page' },
+  { fg: 'fg-muted', bg: 'bg-surface', min: 7, note: 'prose on card' },
+  { fg: 'fg-muted', bg: 'bg-sunken', min: 4.5, note: 'prose on well' },
 
-  // Muted text — labels, captions, meta
-  { fg: 'text-muted', bg: 'bg-canvas', min: 4.5, note: 'muted on page' },
-  { fg: 'text-muted', bg: 'bg-surface', min: 4.5, note: 'muted on card' },
-  { fg: 'text-muted', bg: 'bg-sunken', min: 4.5, note: 'muted on well' },
+  // Subtle text — labels, captions, meta, mono eyebrows
+  { fg: 'fg-subtle', bg: 'bg-canvas', min: 4.5, note: 'meta on page' },
+  { fg: 'fg-subtle', bg: 'bg-surface', min: 4.5, note: 'meta on card' },
+  { fg: 'fg-subtle', bg: 'bg-sunken', min: 4.5, note: 'meta on well' },
 
-  // Accent text: links, eyebrows, current nav item
-  { fg: 'accent-strong', bg: 'bg-canvas', min: 4.5, note: 'link on page' },
-  { fg: 'accent-strong', bg: 'bg-surface', min: 4.5, note: 'link on card' },
-  { fg: 'accent-strong', bg: 'accent-quiet', min: 4.5, note: 'current nav item' },
-  { fg: 'accent-strong', bg: 'bg-sunken', min: 4.5, note: 'link on well' },
+  // Accent text: links, eyebrows, active chips, current nav item
+  { fg: 'accent-fg', bg: 'bg-canvas', min: 4.5, note: 'link on page' },
+  { fg: 'accent-fg', bg: 'bg-surface', min: 4.5, note: 'link on card' },
+  { fg: 'accent-fg', bg: 'bg-sunken', min: 4.5, note: 'link on well' },
+  { fg: 'accent-fg', bg: 'accent-quiet', min: 4.5, note: 'active chip / current item' },
+  { fg: 'accent-hover', bg: 'bg-surface', min: 4.5, note: 'hovered link on card' },
+  { fg: 'fg', bg: 'accent-quiet', min: 7, note: 'text on selected panel' },
+
+  // Status
+  { fg: 'success-fg', bg: 'bg-surface', min: 4.5, note: 'availability label' },
+  { fg: 'success-fg', bg: 'bg-canvas', min: 4.5, note: 'availability label on page' },
+  { fg: 'draft-fg', bg: 'draft-bg', min: 4.5, note: 'draft banner' },
+  { fg: 'danger-fg', bg: 'bg-surface', min: 4.5, note: 'form error message' },
+  { fg: 'danger-fg', bg: 'danger-bg', min: 4.5, note: 'error summary' },
+  { fg: 'danger-fg', bg: 'bg-surface', min: 3, note: 'invalid field outline' },
 
   // Solid controls
-  { fg: 'text-on-accent', bg: 'accent-surface', min: 4.5, note: 'primary button label' },
-  { fg: 'text-inverse', bg: 'bg-inverse', min: 4.5, note: 'skip link' },
+  { fg: 'fg-on-accent', bg: 'accent-solid', min: 4.5, note: 'primary button label' },
+  { fg: 'fg-inverse', bg: 'bg-inverse', min: 4.5, note: 'skip link / inverse button' },
+  { fg: 'selection-fg', bg: 'selection-bg', min: 4.5, note: 'selected text' },
 
   // Non-text contrast (SC 1.4.11): focus ring, control outlines, indicators
   { fg: 'focus-ring', bg: 'bg-canvas', min: 3, note: 'focus ring on page' },
   { fg: 'focus-ring', bg: 'bg-surface', min: 3, note: 'focus ring on card' },
-  { fg: 'border-interactive', bg: 'bg-canvas', min: 3, note: 'control outline on page' },
-  { fg: 'border-interactive', bg: 'bg-surface', min: 3, note: 'control outline on card' },
-  { fg: 'border-interactive', bg: 'bg-sunken', min: 3, note: 'control outline on well' },
-  { fg: 'accent-surface', bg: 'bg-canvas', min: 3, note: 'timeline marker / filled dot' },
-  { fg: 'accent-surface', bg: 'bg-surface', min: 3, note: 'filled dot on card' },
-  { fg: 'accent-surface', bg: 'accent-quiet', min: 3, note: 'current-item marker bar' },
+  { fg: 'focus-ring', bg: 'bg-sunken', min: 3, note: 'focus ring on well' },
+  { fg: 'line-strong', bg: 'bg-canvas', min: 3, note: 'control outline on page' },
+  { fg: 'line-strong', bg: 'bg-surface', min: 3, note: 'control outline on card' },
+  { fg: 'line-strong', bg: 'bg-sunken', min: 3, note: 'control outline on well' },
+  { fg: 'accent-solid', bg: 'bg-canvas', min: 3, note: 'filled marker on page' },
+  { fg: 'accent-solid', bg: 'bg-surface', min: 3, note: 'filled marker on card' },
+  { fg: 'accent', bg: 'bg-surface', min: 3, note: 'diagram highlight stroke' },
+  { fg: 'success', bg: 'bg-surface', min: null, note: 'status dot (paired with text)' },
 
-  /* Reported but not enforced. `--border-subtle` / `--border-default` draw
-     card edges, section rules and the timeline rail — decoration and visual
-     grouping, none of it the boundary of a control or required to understand
-     any content, so SC 1.4.11 does not set a floor for them. They are printed
-     so a deliberately-quiet line can never be confused with an oversight. */
-  { fg: 'border-subtle', bg: 'bg-surface', min: null, note: 'card hairline (decorative)' },
-  { fg: 'border-default', bg: 'bg-canvas', min: null, note: 'timeline rail (decorative)' },
-  { fg: 'border-strong', bg: 'bg-surface', min: null, note: 'hover boundary (decorative)' },
+  /* Reported but not enforced. `--line-subtle` / `--line` draw card edges,
+     rules and the timeline rail — decoration and grouping, none of it the
+     boundary of a control, so SC 1.4.11 sets no floor for them. They are
+     printed so a deliberately quiet line is never mistaken for an oversight. */
+  { fg: 'line-subtle', bg: 'bg-surface', min: null, note: 'card hairline (decorative)' },
+  { fg: 'line', bg: 'bg-canvas', min: null, note: 'rail / rule (decorative)' },
+  { fg: 'accent-line', bg: 'bg-surface', min: null, note: 'accent hairline (decorative)' },
 ];
 
 /* ============================================================
@@ -187,7 +200,8 @@ for (const theme of Object.keys(THEMES)) {
   }
 }
 
-console.table(rows);
+// The full table is for humans tuning the palette; a passing build stays quiet.
+if (failures > 0 || process.argv.includes('--verbose')) console.table(rows);
 
 if (failures > 0) {
   console.error(`\n${failures} of ${enforcedCount} enforced colour pairs are below threshold.`);

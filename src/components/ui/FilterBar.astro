@@ -1,0 +1,79 @@
+---
+/**
+ * Filter chips for a list. Place it inside a [data-filter-root] element that
+ * also contains the [data-filter-item] elements; each item lists its values
+ * in data-filter-tags, separated by "|".
+ *
+ * Chips are toggle buttons (aria-pressed); the result count is announced in a
+ * polite live region; the choice is mirrored to ?<param>= so a filtered view
+ * can be shared. Without JavaScript the chips are hidden and every item shows.
+ */
+interface Props {
+  label: string;
+  options: { value: string; label: string; count?: number }[];
+  noun: [singular: string, plural: string];
+  param?: string;
+}
+
+const { label, options, noun, param = 'filter' } = Astro.props;
+---
+
+<div class="filter-bar hidden flex-wrap items-center gap-2" data-filter-bar data-param={param} data-noun={noun.join('|')}>
+  <p class="sr-only" id={`${param}-label`}>{label}</p>
+  <div role="group" aria-labelledby={`${param}-label`} class="flex flex-wrap gap-2">
+    <button type="button" class="chip" aria-pressed="true" data-filter-value="">All</button>
+    {
+      options.map((o) => (
+        <button type="button" class="chip" aria-pressed="false" data-filter-value={o.value}>
+          {o.label}
+          {o.count !== undefined && <span class="font-mono text-xs text-fg-subtle">{o.count}</span>}
+        </button>
+      ))
+    }
+  </div>
+  <p class="ml-auto text-sm text-fg-subtle" role="status" aria-live="polite" data-filter-status></p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-filter-bar]').forEach((bar) => {
+    const root = bar.closest<HTMLElement>('[data-filter-root]');
+    if (!root) return;
+
+    const param = bar.dataset.param!;
+    const [one, many] = bar.dataset.noun!.split('|');
+    const buttons = [...bar.querySelectorAll<HTMLButtonElement>('[data-filter-value]')];
+    const items = [...root.querySelectorAll<HTMLElement>('[data-filter-item]')];
+    const status = bar.querySelector<HTMLElement>('[data-filter-status]')!;
+
+    const apply = (value: string, { announce = true } = {}) => {
+      let shown = 0;
+      for (const item of items) {
+        const match = !value || item.dataset.filterTags!.split('|').includes(value);
+        item.hidden = !match;
+        if (match) shown += 1;
+      }
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filterValue === value)));
+
+      // Groups (e.g. a year heading) hide when everything under them is hidden.
+      root.querySelectorAll<HTMLElement>('[data-filter-group]').forEach((group) => {
+        group.hidden = !group.querySelector('[data-filter-item]:not([hidden])');
+      });
+
+      // "1 of 8 problems": the noun agrees with the total, not the count shown.
+      if (announce) status.textContent = value ? `${shown} of ${items.length} ${items.length === 1 ? one : many}` : '';
+
+      const url = new URL(window.location.href);
+      if (value) url.searchParams.set(param, value);
+      else url.searchParams.delete(param);
+      history.replaceState(history.state, '', url);
+    };
+
+    buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filterValue!)));
+
+    bar.classList.remove('hidden');
+    bar.classList.add('flex');
+
+    const initial = new URL(window.location.href).searchParams.get(param) ?? '';
+    if (initial && buttons.some((b) => b.dataset.filterValue === initial)) apply(initial, { announce: false });
+  });
+</script>

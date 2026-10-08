@@ -1,0 +1,22 @@
+# DRAFT — solution restates my experience entry (Xpanxion: REST integration
+# with optimised fetching, error handling and retry). Fill in the rest.
+title: Interfaces that kept working when the API did not
+draft: true
+order: 5
+domain: api-integration
+context: Xpanxion · enterprise Angular applications
+problem: >-
+  TODO: Which integrations were unreliable, and what users saw when they failed.
+challenge: >-
+  TODO
+analysis: >-
+  TODO
+solution: >-
+  REST integrations with optimised data-fetching strategies, consistent
+  error handling and retry, so transient failures did not reach users.
+stack: [Angular, RxJS, REST APIs]
+results:
+  - More reliable integrations.
+  - TODO — error-rate or support-ticket change.
+lessons:
+  - TODO

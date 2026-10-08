@@ -1,0 +1,76 @@
+---
+/**
+ * Document shell for every page: head metadata, fonts, theme bootstrap,
+ * skip link, header, footer and the search palette.
+ */
+import { Font } from 'astro:assets';
+import '@/styles/global.css';
+import Seo, { type Props as SeoProps } from '@/components/layout/Seo.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import CommandPalette from '@/components/layout/CommandPalette.astro';
+import DraftModeBar from '@/components/layout/DraftModeBar.astro';
+import { href } from '@/lib/url';
+
+type Props = SeoProps;
+const seo = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-GB" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!--
+      Theme bootstrap. Runs before first paint so the right palette is applied
+      with no flash, and so data-theme is always present as the single source
+      of truth for the CSS. Kept inline and tiny on purpose.
+    -->
+    <script is:inline>
+      (() => {
+        let theme = 'light';
+        try {
+          const stored = localStorage.getItem('theme');
+          theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+        } catch {}
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+
+    <Font cssVariable="--font-geist" preload />
+    <Font cssVariable="--font-geist-mono" />
+
+    <Seo {...seo} />
+
+    <link rel="icon" href={href('/assets/icons/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={href('/assets/images/favicon-32x32.png')} type="image/png" sizes="32x32" />
+    <link rel="icon" href={href('/assets/images/favicon-16x16.png')} type="image/png" sizes="16x16" />
+    <link rel="icon" href={href('/assets/images/nc.ico')} sizes="48x48" />
+    <link rel="apple-touch-icon" href={href('/assets/icons/apple-touch-icon.png')} />
+    <link rel="sitemap" href={href('/sitemap-index.xml')} />
+    <meta name="theme-color" content="#fbfbfc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#08090b" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+
+  <body class="flex min-h-dvh flex-col text-fg">
+    <a href="#main" class="skip-link">Skip to content</a>
+    <DraftModeBar />
+    <SiteHeader />
+
+    <!-- tabindex lets the skip link move focus, not just scroll. -->
+    <main id="main" tabindex="-1" class="flex-1 outline-none">
+      <slot />
+    </main>
+
+    <SiteFooter />
+    <CommandPalette />
+  </body>
+</html>

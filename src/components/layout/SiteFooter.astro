@@ -1,0 +1,68 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import { FOOTER_NAV } from '@/data/nav';
+import { visibleNav } from '@/lib/nav';
+import { href } from '@/lib/url';
+import { profile } from '@/data/profile';
+
+const groups = await Promise.all(
+  FOOTER_NAV.map(async (group) => ({ ...group, items: await visibleNav(group.items) }))
+);
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-line-subtle bg-surface">
+  <div class="container-page grid gap-12 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+    <div class="max-w-xs">
+      <p class="font-semibold tracking-tight">{profile.name}</p>
+      <p class="mt-2 text-sm text-fg-muted">
+        {profile.role} in {profile.location}. Building fast, accessible interfaces for complicated businesses.
+      </p>
+      <ul class="mt-5 flex gap-1" aria-label="Profiles">
+        {
+          profile.socials.map((s) => (
+            <li>
+              <a href={s.url} class="icon-btn" rel="me noopener">
+                <Icon name={s.id as 'github'} size={18} />
+                <span class="sr-only">{s.label}</span>
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={`mailto:${profile.email}`} class="icon-btn">
+            <Icon name="mail" size={18} />
+            <span class="sr-only">Email</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    {
+      groups.map((group) => (
+        <nav aria-label={`Footer: ${group.heading}`}>
+          <h2 class="eyebrow">{group.heading}</h2>
+          <ul class="mt-4 grid gap-2.5">
+            {group.items.map((item) => (
+              <li>
+                <a href={href(item.href)} class="text-sm text-fg-muted transition-colors hover:text-fg">
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))
+    }
+  </div>
+
+  <div class="border-t border-line-subtle">
+    <div class="container-page flex flex-col gap-2 py-6 text-sm text-fg-subtle sm:flex-row sm:items-center sm:justify-between">
+      <p>&copy; {year} {profile.name}</p>
+      <p>
+        Built with Astro, statically rendered, no tracking.
+        <a class="link" href="https://github.com/devnirajc/niraj-chavan">View source</a>
+      </p>
+    </div>
+  </div>
+</footer>

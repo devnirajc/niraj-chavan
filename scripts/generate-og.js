@@ -3,96 +3,89 @@
  *
  *   node scripts/generate-og.js     # or: npm run og
  *
- * Output: public/assets/images/og-image.jpg (1200x630)
+ * Output: public/assets/images/og-image.jpg (1200x630), the default
+ * og:image / twitter:image for every page (src/components/layout/Seo.astro).
  *
- * One image serves both og:image and twitter:image — Twitter's
- * `summary_large_image` wants the same 1.91:1 frame Facebook and LinkedIn use,
- * so a second file would only be the same picture under another name. (The
- * tags previously pointed at og-image.jpg and twitter-card.jpg; neither file
- * had ever existed, so every share rendered a blank card.)
+ * The artwork is an SVG rasterised by sharp, so the renderer only has the
+ * host's fonts: the "N" mark is the path from favicon.svg rather than a
+ * glyph, and the text is set in a generic stack — a substituted face changes
+ * the texture and nothing else.
  *
- * The artwork is an SVG rasterised by sharp, which means the same caveat the
- * favicon carries applies here: the renderer has only the host's fonts, so the
- * "N" mark is the path from favicon.svg rather than a glyph. The remaining
- * text is set in a generic stack — it is a wordmark on a plain field, so a
- * substituted face changes the texture and nothing else.
- *
- * The years figure is read from about.json through the same yearsSince() the
- * page and the meta tags use, so re-running after a birthday of the career
- * cannot leave the card disagreeing with the copy beside it.
+ * The years figure comes from CAREER_START in src/data/profile.ts — the same
+ * value the site uses — so re-running after a career anniversary keeps the
+ * card in step with the copy. Re-run whenever the role or the year changes.
  */
 
 import sharp from 'sharp';
-import { readFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { yearsSince } from '../src/scripts/utils/years.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const IMAGES = join(ROOT, 'public/assets/images');
-const OUT = join(IMAGES, 'og-image.jpg');
-
+const OUT = join(ROOT, 'public/assets/images/og-image.jpg');
 const WIDTH = 1200;
 const HEIGHT = 630;
 
-/* All five match src/styles/base/variables.css. The card is deliberately the
-   dark palette: it has to hold its own edges against both the light and dark
-   chrome that LinkedIn, Slack and X composite it onto. */
-const NAVY = '#111c2e';
-const MIST_100 = '#f7fafd';
-const MIST_500 = '#6d8099';
-const BLUE_400 = '#60a5fa';
-const BLUE_500 = '#3b82f6';
+// profile.ts is TypeScript, so read the one constant rather than import it.
+const profileSource = readFileSync(join(ROOT, 'src/data/profile.ts'), 'utf8');
+const start = profileSource.match(/const CAREER_START = '(\d{4}-\d{2}-\d{2})'/)?.[1];
+if (!start) throw new Error('CAREER_START not found in src/data/profile.ts');
+const years = Math.floor((Date.now() - new Date(start).getTime()) / (1000 * 60 * 60 * 24 * 365.25));
 
-const { experienceStartDate } = JSON.parse(
-  readFileSync(join(ROOT, 'src/scripts/data/about.json'), 'utf-8')
-);
-const years = yearsSince(experienceStartDate || '2014-07-01');
-
+/* From src/styles/tokens.css. The card uses the dark palette so it holds its
+   edges against both the light and dark chrome that LinkedIn, Slack and X
+   composite it onto. */
+const INK = '#08090b';
+const FG = '#eef0f3';
+const MUTED = '#9aa1ad';
+const INDIGO_300 = '#a5b4fc';
+const INDIGO_500 = '#6366f1';
+const GRID = 'rgba(238,240,243,0.05)';
 const FONT = "Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif";
+const MONO = "'Cascadia Mono', Consolas, 'SFMono-Regular', Menlo, monospace";
+
+const gridLines = [];
+for (let x = 0; x <= WIDTH; x += 48) gridLines.push(`<line x1="${x}" y1="0" x2="${x}" y2="${HEIGHT}"/>`);
+for (let y = 0; y <= HEIGHT; y += 48) gridLines.push(`<line x1="0" y1="${y}" x2="${WIDTH}" y2="${y}"/>`);
 
 const card = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
   <defs>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="${BLUE_500}" stop-opacity="0.22"/>
-      <stop offset="68%" stop-color="${BLUE_500}" stop-opacity="0"/>
+      <stop offset="0%" stop-color="${INDIGO_500}" stop-opacity="0.28"/>
+      <stop offset="70%" stop-color="${INDIGO_500}" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="fade" cx="30%" cy="20%" r="80%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="gridMask"><rect width="${WIDTH}" height="${HEIGHT}" fill="url(#fade)"/></mask>
   </defs>
 
-  <rect width="${WIDTH}" height="${HEIGHT}" fill="${NAVY}"/>
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="${INK}"/>
+  <g stroke="${GRID}" stroke-width="1" mask="url(#gridMask)">${gridLines.join('')}</g>
+  <ellipse cx="1000" cy="60" rx="640" ry="520" fill="url(#glow)"/>
 
-  <!-- The same soft halo the hero sits in, anchored off the top-right so it
-       never sits behind the text. -->
-  <ellipse cx="980" cy="90" rx="620" ry="620" fill="url(#glow)"/>
-
-  <!-- Logo tile: the favicon artwork, scaled 64 -> 76 and moved into place.
-       Kept as a path for the reason favicon.svg documents. -->
-  <g transform="translate(80, 74)">
-    <rect width="76" height="76" rx="17" fill="${BLUE_500}" fill-opacity="0.12"/>
-    <g transform="translate(6, 6) scale(1.0)">
-      <path d="M18 48V16h10l10 20V16h10v32H38L28 28v20z" fill="${BLUE_400}"/>
+  <g transform="translate(80, 76)">
+    <rect width="72" height="72" rx="16" fill="#0c0e12" stroke="rgba(238,240,243,0.12)"/>
+    <g transform="translate(4, 4)">
+      <path d="M18 48V16h10l10 20V16h10v32H38L28 28v20z" fill="${INDIGO_300}"/>
     </g>
   </g>
 
-  <text x="80" y="300" font-family="${FONT}" font-size="88" font-weight="600" fill="${MIST_100}">Niraj Chavan</text>
-  <text x="80" y="370" font-family="${FONT}" font-size="40" font-weight="500" fill="${BLUE_400}">Software Engineer</text>
+  <text x="80" y="300" font-family="${FONT}" font-size="84" font-weight="600" letter-spacing="-2" fill="${FG}">Niraj Chavan</text>
+  <text x="80" y="368" font-family="${FONT}" font-size="40" font-weight="500" fill="${INDIGO_300}">Senior UI Engineer</text>
 
-  <text x="80" y="452" font-family="${FONT}" font-size="28" font-weight="400" fill="${MIST_500}">${years}+ years building scalable web applications</text>
-  <text x="80" y="496" font-family="${FONT}" font-size="28" font-weight="400" fill="${MIST_500}">Angular &#183; React &#183; TypeScript &#183; Node.js</text>
+  <text x="80" y="450" font-family="${FONT}" font-size="28" fill="${MUTED}">Fast, accessible interfaces for enterprise teams</text>
+  <text x="80" y="494" font-family="${FONT}" font-size="28" fill="${MUTED}">${years} years · Angular · React · TypeScript · Design systems</text>
 
-  <rect x="80" y="556" width="120" height="4" rx="2" fill="${BLUE_500}"/>
+  <text x="80" y="566" font-family="${MONO}" font-size="22" fill="${MUTED}">devnirajc.github.io/niraj-chavan</text>
 </svg>
 `;
 
-if (!existsSync(IMAGES)) mkdirSync(IMAGES, { recursive: true });
-
-// density lifts the rasteriser above the nominal 96dpi so the type is resolved
-// at full size rather than scaled up from a smaller bitmap.
 await sharp(Buffer.from(card), { density: 192 })
   .resize(WIDTH, HEIGHT)
   .jpeg({ quality: 90, chromaSubsampling: '4:4:4' })
   .toFile(OUT);
 
-const { size } = statSync(OUT);
-console.log(`  ${OUT.replace(ROOT, '.')}  ${WIDTH}x${HEIGHT}  ${(size / 1024).toFixed(1)} kB`);
+console.log(`  ${OUT.replace(ROOT, '.')}  ${WIDTH}x${HEIGHT}  ${(statSync(OUT).size / 1024).toFixed(1)} kB`);

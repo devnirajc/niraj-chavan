@@ -1,0 +1,63 @@
+---
+/**
+ * How I think — methodology playbooks: problem solving, debugging,
+ * performance, architecture review, code review.
+ */
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import SubNav from '@/components/ui/SubNav.astro';
+import Toc from '@/components/ui/Toc.astro';
+import Steps from '@/components/ui/Steps.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import { ABOUT_NAV } from '@/data/nav';
+import { published, pathsWhenVisible } from '@/lib/drafts';
+
+export const getStaticPaths = () => pathsWhenVisible('playbooks');
+
+const playbooks = (await published('playbooks')).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(playbooks.map(async (p) => ({ p, ...(await render(p)) })));
+---
+
+<BaseLayout
+  title="Approach"
+  description="How I solve problems, debug, optimise performance, review architecture and review code — the method behind the work."
+>
+  <PageHeader
+    eyebrow="Approach"
+    title="How I think as an engineer"
+    lede="Frameworks change every few years. The way I approach a problem, a bug, a slow page or a pull request hasn't. These are the playbooks I actually use."
+  />
+  <SubNav items={ABOUT_NAV} label="About sections" />
+
+  <div class="container-page grid gap-12 pt-14 lg:grid-cols-[13rem_1fr]">
+    <div class="hidden lg:block">
+      <div class="sticky top-24">
+        <Toc items={playbooks.map((p) => ({ id: p.id, label: p.data.title }))} label="Playbooks" />
+      </div>
+    </div>
+
+    <div class="grid min-w-0 gap-20">
+      {
+        rendered.map(({ p, Content }, i) => (
+          <section aria-labelledby={p.id} class="grid gap-8 md:grid-cols-[1fr_1.4fr] md:gap-12">
+            <div>
+              <p class="flex items-center gap-2 font-mono text-xs text-fg-subtle">
+                <span class="text-accent-fg">{String(i + 1).padStart(2, '0')}</span> Playbook
+                <DraftBadge draft={p.data.draft} />
+              </p>
+              <h2 id={p.id} class="mt-3 text-heading font-semibold">
+                {p.data.title}
+              </h2>
+              <p class="mt-3 text-lg leading-relaxed text-fg-muted">{p.data.summary}</p>
+              <div class="prose mt-4 text-base">
+                <Content />
+              </div>
+            </div>
+            <Steps steps={p.data.steps} label={`${p.data.title}: steps`} />
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>

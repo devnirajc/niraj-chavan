@@ -1,0 +1,21 @@
+# DRAFT — solution restates my experience entry (Connect | 91).
+title: Styling a large e-commerce front end without it collapsing under its own weight
+draft: true
+order: 7
+domain: legacy-modernisation
+context: Connect | 91 · e-commerce platforms
+problem: >-
+  TODO: What the CSS looked like before, and what that cost each new page.
+challenge: >-
+  TODO
+analysis: >-
+  TODO
+solution: >-
+  A scalable Sass architecture with design tokens and component patterns,
+  used across large e-commerce applications.
+stack: [Sass, HTML5, CSS3]
+results:
+  - A shared styling foundation for large e-commerce applications.
+  - TODO
+lessons:
+  - TODO

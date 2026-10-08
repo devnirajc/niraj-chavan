@@ -1,0 +1,21 @@
+---
+title: My performance workflow
+summary: Measure on realistic devices, fix the biggest cost first, and put a budget in CI so it stays fixed.
+draft: true
+order: 3
+steps:
+  - title: Measure where users are
+    detail: Field data first (real devices, real networks), then a lab profile on a throttled mid-range device. Desktop on office Wi-Fi hides most problems.
+  - title: Find the biggest cost
+    detail: Bundle analysis for what ships, the performance panel for what runs, the network waterfall for what blocks. One of them usually dominates.
+  - title: Ship less JavaScript
+    detail: Route-level lazy loading and code splitting, removing dead dependencies, deferring what the first screen does not need.
+  - title: Do less work at runtime
+    detail: In Angular, OnPush change detection and trackBy; in React, avoiding needless re-renders; everywhere, virtualising long lists and paging data.
+  - title: Load the critical path first
+    detail: Optimised, correctly sized images; self-hosted fonts with metric-matched fallbacks; preload only what the first screen needs.
+  - title: Lock it in
+    detail: A performance budget checked in CI, so the next feature cannot quietly undo the work.
+---
+
+Performance work is only finished when it cannot regress. Measuring, fixing and then guarding is the whole loop.

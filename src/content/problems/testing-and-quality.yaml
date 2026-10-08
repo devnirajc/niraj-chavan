@@ -1,0 +1,21 @@
+# DRAFT — solution and results restate my experience entry (JP Morgan Chase).
+title: Fewer defects reaching production
+draft: true
+order: 6
+domain: quality-cicd
+context: JP Morgan Chase & Co. · enterprise travel platforms
+problem: >-
+  TODO: What escaped to production before, and how often.
+challenge: >-
+  TODO
+analysis: >-
+  TODO
+solution: >-
+  Introduced testing frameworks and thorough unit-test suites, and made
+  them part of how features were delivered.
+stack: [Jasmine, Karma, Jest, TypeScript]
+results:
+  - Higher code coverage and fewer production defects.
+  - TODO — coverage and defect numbers.
+lessons:
+  - TODO

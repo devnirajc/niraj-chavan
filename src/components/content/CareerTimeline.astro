@@ -1,0 +1,151 @@
+---
+/**
+ * Career timeline.
+ *
+ *   variant="full"  — /experience/: every role, expandable achievements,
+ *                     filterable by technology (FilterBar).
+ *   variant="map"   — home and about: a compact career map, one stop per
+ *                     company, each linking into the full timeline.
+ */
+import type { CollectionEntry } from 'astro:content';
+import Icon from '@/components/ui/Icon.astro';
+import TechList from '@/components/ui/TechList.astro';
+import FilterBar from '@/components/ui/FilterBar.astro';
+import { formatRange, formatDuration, monthsBetween } from '@/lib/dates';
+import { visibleRefs } from '@/lib/drafts';
+import { href } from '@/lib/url';
+
+interface Props {
+  roles: CollectionEntry<'experience'>[];
+  variant?: 'full' | 'map';
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { roles, variant = 'full', headingLevel: H = 'h2' } = Astro.props;
+const sorted = [...roles].sort((a, b) => b.data.start.localeCompare(a.data.start));
+
+const links = await Promise.all(
+  sorted.map(async (role) => ({
+    projects: await visibleRefs(role.data.projects),
+    caseStudies: await visibleRefs(role.data.caseStudies),
+  }))
+);
+
+// Filter chips: technologies used in more than one role come first.
+const frequency = new Map<string, number>();
+sorted.forEach((r) => r.data.stack.forEach((s) => frequency.set(s, (frequency.get(s) ?? 0) + 1)));
+const filterOptions = [...frequency.entries()]
+  .filter(([, n]) => n > 1)
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  .map(([value, count]) => ({ value, label: value, count }));
+---
+
+{
+  variant === 'map' ? (
+    <ol class="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 sm:span-odd-last lg:grid-cols-5 lg:span-odd-last-none">
+      {[...sorted].reverse().map((role, i) => (
+        <li class="group relative bg-surface p-5 transition-colors hover:bg-sunken/60">
+          <p class="flex items-center gap-2 font-mono text-xs text-fg-subtle">
+            <span
+              aria-hidden="true"
+              class:list={['size-2 rounded-full', role.data.end ? 'bg-line-strong' : 'bg-success ring-4 ring-success/20']}
+            />
+            {role.data.start.slice(0, 4)}
+            {!role.data.end && <span class="text-success-fg">· now</span>}
+            <span class="sr-only">— stop {i + 1} of {sorted.length}</span>
+          </p>
+          <H class="mt-3 font-semibold">
+            <a href={href(`/experience/#${role.id}`)} class="card-link">
+              {role.data.company}
+            </a>
+          </H>
+          <p class="mt-1 text-sm text-fg-muted">{role.data.role}</p>
+          <p class="mt-3 text-xs text-fg-subtle">{role.data.industry}</p>
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <div data-filter-root>
+      {filterOptions.length > 0 && (
+        <div class="mb-8">
+          <p class="mb-3 text-sm text-fg-muted">Filter by technology to see where I used it.</p>
+          <FilterBar label="Filter roles by technology" options={filterOptions} noun={['role', 'roles']} param="tech" />
+        </div>
+      )}
+
+      <ol class="relative grid gap-6">
+        <span aria-hidden="true" class="absolute top-3 bottom-3 left-[0.4375rem] w-px bg-line md:left-[10.4375rem]" />
+        {sorted.map((role, i) => {
+          const months = monthsBetween(role.data.start, role.data.end);
+          const { projects, caseStudies } = links[i];
+          return (
+            <li
+              id={role.id}
+              class="relative grid gap-3 pl-8 md:grid-cols-[9rem_1fr] md:gap-8 md:pl-0"
+              data-filter-item
+              data-filter-tags={role.data.stack.join('|')}
+            >
+              <span
+                aria-hidden="true"
+                class:list={[
+                  'absolute top-2 left-0 size-[0.9375rem] rounded-full border-2 bg-canvas md:left-[10rem]',
+                  role.data.end ? 'border-line-strong' : 'border-success bg-success',
+                ]}
+              />
+              <div class="md:pt-1 md:text-right">
+                <p class="text-sm font-medium text-fg">{formatRange(role.data.start, role.data.end)}</p>
+                <p class="mt-0.5 text-sm text-fg-subtle">{formatDuration(months)}</p>
+              </div>
+
+              <article class="card p-5 sm:p-6 md:ml-10" aria-labelledby={`${role.id}-title`}>
+                <p class="eyebrow">{role.data.industry}</p>
+                <H id={`${role.id}-title`} class="mt-2 text-lg font-semibold tracking-tight">
+                  {role.data.role}
+                  <span class="font-normal text-fg-muted"> · {role.data.company}</span>
+                </H>
+                <p class="mt-2 leading-relaxed text-fg-muted">{role.data.summary}</p>
+
+                <details class="group mt-4" open={i === 0}>
+                  <summary class="inline-flex min-h-10 cursor-pointer list-none items-center gap-1.5 text-sm font-medium text-accent-fg hover:text-accent-hover [&::-webkit-details-marker]:hidden">
+                    <span class="group-open:hidden">Show achievements</span>
+                    <span class="hidden group-open:inline">Hide achievements</span>
+                    <span class="sr-only"> at {role.data.company}</span>
+                    <Icon name="chevron-down" size={16} class="transition-transform group-open:rotate-180" />
+                  </summary>
+                  <ul class="mt-3 grid gap-2.5">
+                    {role.data.achievements.map((a) => (
+                      <li class="flex gap-2.5 text-[0.9375rem] leading-relaxed text-fg-muted">
+                        <span aria-hidden="true" class="mt-2.5 size-1 shrink-0 rounded-full bg-accent" />
+                        {a}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+
+                <div class="mt-5">
+                  <TechList items={role.data.stack} size="sm" label={`Technologies at ${role.data.company}`} />
+                </div>
+
+                {(projects.length > 0 || caseStudies.length > 0) && (
+                  <p class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line-subtle pt-4 text-sm">
+                    <span class="text-fg-subtle">Notable work:</span>
+                    {projects.map((p) => (
+                      <a class="link" href={href(`/projects/${p.id}/`)}>
+                        {p.data.title}
+                      </a>
+                    ))}
+                    {caseStudies.map((c) => (
+                      <a class="link" href={href(`/case-study/${c.id}/`)}>
+                        Case study: {c.data.title}
+                      </a>
+                    ))}
+                  </p>
+                )}
+              </article>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  )
+}

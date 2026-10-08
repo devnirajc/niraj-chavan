@@ -1,0 +1,25 @@
+# DRAFT — solution and results restate my experience entries (Xpanxion and
+# Schlumberger). Problem, challenge and analysis need the real story.
+title: Large Angular apps that took too long to become usable
+draft: true
+order: 2
+domain: performance
+context: Xpanxion and Schlumberger · enterprise web applications
+problem: >-
+  TODO: Which application, what was slow, and who felt it.
+challenge: >-
+  TODO: e.g. a large, shared codebase where every feature had been bundled
+  into the first load, with feature work continuing in parallel.
+analysis: >-
+  TODO: How you found where the time went — bundle analysis, profiling
+  change detection, field reports.
+solution: >-
+  Lazy-loaded feature modules and routes, code splitting, change-detection
+  tuning, bundle-size reduction and leaner state management.
+stack: [Angular, TypeScript, RxJS]
+results:
+  - Faster page loads across the applications.
+  - TODO — before/after numbers (bundle size, time to interactive).
+lessons:
+  - TODO
+caseStudy: enterprise-dashboard

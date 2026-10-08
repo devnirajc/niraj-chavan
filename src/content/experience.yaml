@@ -1,0 +1,91 @@
+# Career history, newest first. Rendered by /experience/ and the timelines on
+# / and /about/. `projects` and `caseStudies` are ids from those collections;
+# references to drafts are dropped automatically in production.
+
+- id: jpmc
+  company: JP Morgan Chase & Co.
+  role: Software Engineer
+  start: 2021-12
+  end: null
+  industry: Banking · Enterprise travel
+  summary: >-
+    Engineering web applications and services for enterprise travel platforms —
+    booking and order-management flows used by thousands of people a day.
+  achievements:
+    - Architect and deliver Angular, React and TypeScript applications within Agile sprints, consistently on schedule.
+    - Built reusable component libraries and design systems that sped up feature delivery across several teams.
+    - Introduced testing frameworks and thorough unit-test suites, raising coverage and cutting production defects.
+    - Led performance work that produced faster load times and a more reliable platform.
+    - Contribute to platform architecture decisions, design patterns and technical standards with cross-functional teams.
+  stack: [Angular, React, TypeScript, RxJS, Design systems, Unit testing]
+  caseStudies: [microfrontend-architecture]
+
+- id: slb
+  company: Schlumberger
+  role: UI Developer
+  start: 2019-09
+  end: 2021-12
+  industry: Energy · Oilfield logistics
+  summary: >-
+    Led front-end development for enterprise software used by global clients,
+    including the Field Logistics Module for transport and logistics operations.
+  achievements:
+    - Built high-performance web applications in Angular, React and modern JavaScript for global enterprise clients.
+    - Improved page-load speed through code splitting, lazy loading and leaner state management.
+    - Led responsive implementation across devices and browsers for a consistent experience.
+    - Mentored junior developers on responsive layout, fluid design and CSS architecture.
+    - Turned business requirements into interfaces with UX designers and product managers, and ran testing and user-acceptance validation.
+  stack: [Angular, React, JavaScript, SCSS, Responsive design]
+  projects: [flm-field-logistics]
+  caseStudies: [enterprise-dashboard]
+
+- id: xpanxion
+  company: Xpanxion International
+  role: Senior UI Engineer
+  start: 2017-01
+  end: 2019-09
+  industry: Product engineering services
+  summary: >-
+    Led Angular development and established the front-end standards —
+    component architecture, accessibility, performance — that teams built on.
+  achievements:
+    - Architected enterprise Angular applications on a modular, reusable component architecture, cutting time-to-build for new features.
+    - Designed and shipped a secure JWT-based authentication and session-management system.
+    - Led WCAG 2.0 accessibility compliance across all application features.
+    - Applied lazy loading, change-detection tuning and bundle-size reduction to speed up large Angular apps.
+    - Integrated REST APIs with optimised fetching, error handling and retry for reliability.
+    - Built data export to CSV, Excel and PDF.
+  stack: [Angular, TypeScript, RxJS, JWT, REST APIs, WCAG 2.0]
+  caseStudies: [authentication-platform]
+
+- id: connect91
+  company: Connect | 91 Web Solution
+  role: UI Developer
+  start: 2015-12
+  end: 2017-01
+  industry: E-commerce
+  summary: >-
+    Turned designs into pixel-accurate, accessible, cross-browser front ends,
+    mostly for large e-commerce platforms.
+  achievements:
+    - Built a scalable Sass architecture for large e-commerce applications, with design tokens and component patterns.
+    - Converted PSD and Sketch designs into semantic, accessible HTML5 and CSS3 templates.
+    - Delivered mobile-first responsive layouts across desktop, tablet and phone.
+    - Optimised images, CSS and JavaScript for faster loads and better SEO.
+  stack: [HTML5, CSS3, Sass, JavaScript, Responsive design]
+
+- id: whitecode
+  company: WhiteCode Technology Solutions
+  role: Web Developer
+  start: 2014-07
+  end: 2015-12
+  industry: E-commerce · Agency
+  summary: >-
+    Full-stack web work from concept to deployment — WordPress, PHP MVC
+    frameworks and e-commerce, end to end.
+  achievements:
+    - Built e-commerce and retail applications on CodeIgniter and Laravel, including cart and payment-gateway integration.
+    - Created custom WordPress themes and plugins for client requirements.
+    - Engineered scheduled jobs for email notifications and data synchronisation.
+    - Designed responsive email templates that render consistently across Gmail, Outlook and Apple Mail.
+  stack: [PHP, Laravel, CodeIgniter, WordPress, jQuery]

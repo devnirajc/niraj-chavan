@@ -1,0 +1,27 @@
+---
+/**
+ * <Draft> — a block of MDX that is not ready for production.
+ *
+ * Wrap anything unconfirmed (a guessed detail, a section still to be written)
+ * in <Draft>…</Draft>. It renders with a dashed amber outline while drafts are
+ * visible and is omitted entirely from the production build. Text inside a
+ * <Draft> block is exempt from the TODO check in scripts/check-content.mjs.
+ */
+import { SHOW_DRAFTS } from '@/lib/drafts';
+
+interface Props {
+  note?: string;
+}
+const { note } = Astro.props;
+---
+
+{
+  SHOW_DRAFTS && (
+    <div class="relative my-8 rounded-xl border border-dashed border-draft-fg/50 bg-draft-bg/40 px-5 pt-9 pb-5">
+      <p class="absolute top-2.5 left-5 font-mono text-[0.6875rem] font-medium tracking-wider text-draft-fg uppercase">
+        Draft — hidden in production{note && <span class="normal-case tracking-normal"> · {note}</span>}
+      </p>
+      <slot />
+    </div>
+  )
+}

@@ -1,0 +1,482 @@
+---
+/**
+ * Interactive architecture diagram.
+ *
+ * Layout is computed here at build time — layers become columns, nodes stack
+ * within them, edges are cubic curves between box edges — so the SVG ships as
+ * static markup and paints with the HTML. A small script then adds:
+ *
+ *   - select a node (click / Enter / Space) to highlight it, its edges and
+ *     its neighbours, and read its detail in the side panel;
+ *   - "Walk me through it": step through `steps`, each lighting up the part
+ *     of the system it describes.
+ *
+ * Without JavaScript, and for screen-reader users, the same information is
+ * in the "Component reference" list beneath, which is ordinary HTML.
+ */
+import Icon from '@/components/ui/Icon.astro';
+
+interface DiagramNode {
+  id: string;
+  label: string;
+  sublabel?: string;
+  layer: string;
+  detail: string;
+}
+
+interface Props {
+  diagram: {
+    title: string;
+    caption?: string;
+    layers: { id: string; label: string }[];
+    nodes: DiagramNode[];
+    edges: { from: string; to: string; label?: string }[];
+    steps: { title: string; nodes: string[]; detail: string }[];
+  };
+  id: string;
+}
+
+const { diagram, id } = Astro.props;
+
+const NODE_W = 176;
+const NODE_H = 60;
+const COL_GAP = 72;
+const ROW_GAP = 22;
+const PAD = 20;
+const HEAD = 34;
+
+const columns = diagram.layers.map((layer) => diagram.nodes.filter((n) => n.layer === layer.id));
+const maxRows = Math.max(...columns.map((c) => c.length));
+const width = PAD * 2 + columns.length * NODE_W + (columns.length - 1) * COL_GAP;
+const height = PAD * 2 + HEAD + maxRows * NODE_H + (maxRows - 1) * ROW_GAP;
+
+const layerIndex = new Map(diagram.layers.map((l, i) => [l.id, i]));
+const position = new Map<string, { x: number; y: number; col: number }>();
+
+columns.forEach((nodes, col) => {
+  const offset = ((maxRows - nodes.length) * (NODE_H + ROW_GAP)) / 2;
+  nodes.forEach((node, row) => {
+    position.set(node.id, {
+      x: PAD + col * (NODE_W + COL_GAP),
+      y: PAD + HEAD + offset + row * (NODE_H + ROW_GAP),
+      col,
+    });
+  });
+});
+
+for (const node of diagram.nodes) {
+  if (!layerIndex.has(node.layer)) throw new Error(`Diagram "${diagram.title}": node ${node.id} has unknown layer ${node.layer}`);
+}
+
+const edges = diagram.edges.map((edge, i) => {
+  const a = position.get(edge.from);
+  const b = position.get(edge.to);
+  if (!a || !b) throw new Error(`Diagram "${diagram.title}": edge ${edge.from} → ${edge.to} references a missing node`);
+
+  let d: string;
+  let mid: { x: number; y: number };
+  if (a.col === b.col) {
+    // Same layer: loop out to the right of the column.
+    const x = a.x + NODE_W;
+    const y1 = a.y + NODE_H / 2;
+    const y2 = b.y + NODE_H / 2;
+    d = `M ${x} ${y1} C ${x + 36} ${y1}, ${x + 36} ${y2}, ${x + 4} ${y2}`;
+    mid = { x: x + 30, y: (y1 + y2) / 2 };
+  } else {
+    const forward = b.col > a.col;
+    const x1 = forward ? a.x + NODE_W : a.x;
+    const x2 = forward ? b.x - 4 : b.x + NODE_W + 4;
+    const y1 = a.y + NODE_H / 2;
+    const y2 = b.y + NODE_H / 2;
+    const dx = (x2 - x1) / 2;
+    d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+    mid = { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
+  }
+  return { ...edge, d, mid, key: `e${i}` };
+});
+
+const labelOf = new Map(diagram.nodes.map((n) => [n.id, n.label]));
+const neighbours = (nodeId: string) =>
+  diagram.edges
+    .filter((e) => e.from === nodeId || e.to === nodeId)
+    .map((e) => (e.from === nodeId ? `→ ${labelOf.get(e.to)}` : `← ${labelOf.get(e.from)}`) + (e.label ? ` (${e.label})` : ''));
+
+// Everything the script needs, keyed by node id, embedded once.
+const payload = {
+  nodes: Object.fromEntries(
+    diagram.nodes.map((n) => [n.id, { label: n.label, sublabel: n.sublabel ?? '', detail: n.detail, links: neighbours(n.id) }])
+  ),
+  edges: edges.map((e) => ({ key: e.key, from: e.from, to: e.to })),
+  steps: diagram.steps,
+};
+
+const titleId = `${id}-title`;
+---
+
+<figure class="diagram my-10" data-diagram aria-labelledby={titleId}>
+  <div class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
+      <div>
+        <p class="eyebrow">Architecture</p>
+        <h3 id={titleId} class="mt-0.5 font-semibold">{diagram.title}</h3>
+      </div>
+      {
+        diagram.steps.length > 0 && (
+          <div class="flex items-center gap-1" data-walkthrough-controls>
+            <button type="button" class="btn btn-secondary btn-sm" data-step="start">
+              <Icon name="play" size={14} />
+              Walk me through it
+            </button>
+            <button type="button" class="icon-btn hidden" data-step="prev" aria-label="Previous step">
+              <Icon name="chevron-left" size={18} />
+            </button>
+            <span class="hidden min-w-20 text-center font-mono text-xs text-fg-subtle" data-step-count aria-hidden="true" />
+            <button type="button" class="icon-btn hidden" data-step="next" aria-label="Next step">
+              <Icon name="chevron-right" size={18} />
+            </button>
+            <button type="button" class="icon-btn hidden" data-step="reset" aria-label="Exit walkthrough">
+              <Icon name="close" size={18} />
+            </button>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Panel below the diagram, beside it only when there is room for both
+         without shrinking the SVG into a scroll box. -->
+    <div class="grid min-[96rem]:grid-cols-[1fr_18rem]">
+      <div class="overflow-x-auto bg-sunken/60 [background-image:radial-gradient(var(--grid-line)_1px,transparent_1px)] [background-size:16px_16px]">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          width="100%"
+          style={`min-width:${Math.round(width * 0.72)}px;max-width:${width}px`}
+          class="mx-auto block"
+          role="group"
+          aria-label={`${diagram.title}. Select a component to see what it does and what it connects to.`}
+        >
+          <defs>
+            <marker id={`${id}-arrow`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L8 4 L0 8 z" class="dg-arrow" />
+            </marker>
+            <marker id={`${id}-arrow-on`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L8 4 L0 8 z" class="dg-arrow-on" />
+            </marker>
+          </defs>
+
+          {
+            diagram.layers.map((layer, col) => (
+              <text x={PAD + col * (NODE_W + COL_GAP)} y={PAD + 12} class="dg-layer" aria-hidden="true">
+                {layer.label.toUpperCase()}
+              </text>
+            ))
+          }
+
+          <g aria-hidden="true">
+            {
+              edges.map((edge) => (
+                <g class="dg-edge" data-edge={edge.key}>
+                  <path d={edge.d} class="dg-edge-line" marker-end={`url(#${id}-arrow)`} data-marker-on={`url(#${id}-arrow-on)`} data-marker-off={`url(#${id}-arrow)`} />
+                  {edge.label && (
+                    <text x={edge.mid.x} y={edge.mid.y - 6} text-anchor="middle" class="dg-edge-label">
+                      {edge.label}
+                    </text>
+                  )}
+                </g>
+              ))
+            }
+          </g>
+
+          {
+            diagram.nodes.map((node) => {
+              const p = position.get(node.id)!;
+              return (
+                <g
+                  class="dg-node"
+                  data-node={node.id}
+                  transform={`translate(${p.x} ${p.y})`}
+                  tabindex="0"
+                  role="button"
+                  aria-pressed="false"
+                  aria-label={node.sublabel ? `${node.label}, ${node.sublabel}` : node.label}
+                >
+                  <rect width={NODE_W} height={NODE_H} rx="10" class="dg-box" />
+                  <text x="14" y={node.sublabel ? 25 : 35} class="dg-label">
+                    {node.label}
+                  </text>
+                  {node.sublabel && (
+                    <text x="14" y="44" class="dg-sub">
+                      {node.sublabel}
+                    </text>
+                  )}
+                </g>
+              );
+            })
+          }
+        </svg>
+      </div>
+
+      <div class="min-h-36 border-t border-line p-5 min-[96rem]:border-t-0 min-[96rem]:border-l" aria-live="polite" data-panel>
+        <p class="eyebrow" data-panel-kicker>Overview</p>
+        <p class="mt-2 font-semibold" data-panel-title>{diagram.title}</p>
+        <p class="mt-2 text-sm leading-relaxed text-fg-muted" data-panel-body>
+          {diagram.caption ?? 'Select any component to see its role and connections.'}
+        </p>
+        <ul class="mt-3 grid gap-1 font-mono text-xs text-fg-subtle" data-panel-links></ul>
+      </div>
+    </div>
+  </div>
+
+  <details class="group mt-3 rounded-xl border border-line bg-surface">
+    <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-4 text-sm font-medium text-fg-muted hover:text-fg [&::-webkit-details-marker]:hidden">
+      Component reference ({diagram.nodes.length})
+      <Icon name="chevron-down" size={16} class="transition-transform group-open:rotate-180" />
+    </summary>
+    <dl class="grid gap-x-8 gap-y-4 border-t border-line px-4 py-4 text-sm sm:grid-cols-2">
+      {
+        diagram.nodes.map((node) => (
+          <div>
+            <dt class="font-medium text-fg">
+              {node.label}
+              {node.sublabel && <span class="font-normal text-fg-subtle"> · {node.sublabel}</span>}
+            </dt>
+            <dd class="mt-1 text-fg-muted">{node.detail}</dd>
+            {neighbours(node.id).length > 0 && (
+              <dd class="mt-1 font-mono text-xs text-fg-subtle">{neighbours(node.id).join('  ')}</dd>
+            )}
+          </div>
+        ))
+      }
+    </dl>
+  </details>
+
+  {diagram.caption && <figcaption class="sr-only">{diagram.caption}</figcaption>}
+  <script type="application/json" data-diagram-data set:html={JSON.stringify(payload)} />
+</figure>
+
+<style>
+  .dg-layer {
+    fill: var(--fg-subtle);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+  }
+
+  .dg-box {
+    fill: var(--bg-surface);
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    transition:
+      fill 180ms,
+      stroke 180ms;
+  }
+
+  .dg-label {
+    fill: var(--fg);
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .dg-sub {
+    fill: var(--fg-subtle);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+  }
+
+  .dg-node {
+    cursor: pointer;
+    outline: none;
+    transition: opacity 180ms;
+  }
+
+  .dg-node:hover .dg-box {
+    stroke: var(--accent);
+  }
+
+  .dg-node:focus-visible .dg-box {
+    stroke: var(--focus-ring);
+    stroke-width: 2.5;
+  }
+
+  .dg-edge-line {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1.25;
+    transition:
+      stroke 180ms,
+      opacity 180ms;
+  }
+
+  .dg-arrow {
+    fill: var(--line-strong);
+  }
+
+  .dg-arrow-on {
+    fill: var(--accent);
+  }
+
+  .dg-edge-label {
+    fill: var(--fg-subtle);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    paint-order: stroke;
+    stroke: var(--bg-sunken);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+
+  /* States set by the script */
+  .dg-node.is-on .dg-box {
+    fill: var(--accent-quiet);
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+
+  .dg-node.is-dim,
+  .dg-edge.is-dim {
+    opacity: 0.3;
+  }
+
+  .dg-edge.is-on .dg-edge-line {
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dg-edge.is-on .dg-edge-line {
+      stroke-dasharray: 6 5;
+      animation: dg-flow 900ms linear infinite;
+    }
+  }
+
+  @keyframes dg-flow {
+    to {
+      stroke-dashoffset: -11;
+    }
+  }
+</style>
+
+<script>
+  interface Payload {
+    nodes: Record<string, { label: string; sublabel: string; detail: string; links: string[] }>;
+    edges: { key: string; from: string; to: string }[];
+    steps: { title: string; nodes: string[]; detail: string }[];
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-diagram]').forEach((root) => {
+    const data = JSON.parse(root.querySelector('[data-diagram-data]')!.textContent!) as Payload;
+    const nodes = [...root.querySelectorAll<SVGGElement>('.dg-node')];
+    const edges = [...root.querySelectorAll<SVGGElement>('.dg-edge')];
+    const panel = {
+      kicker: root.querySelector<HTMLElement>('[data-panel-kicker]')!,
+      title: root.querySelector<HTMLElement>('[data-panel-title]')!,
+      body: root.querySelector<HTMLElement>('[data-panel-body]')!,
+      links: root.querySelector<HTMLElement>('[data-panel-links]')!,
+    };
+    const initial = { title: panel.title.textContent, body: panel.body.textContent };
+
+    const controls = root.querySelector<HTMLElement>('[data-walkthrough-controls]');
+    const btn = (name: string) => controls?.querySelector<HTMLButtonElement>(`[data-step="${name}"]`);
+    const count = controls?.querySelector<HTMLElement>('[data-step-count]');
+    let step = -1;
+    let selected: string | null = null;
+
+    /** Light up a set of nodes plus every edge running between two of them. */
+    const highlight = (ids: Set<string> | null) => {
+      for (const el of nodes) {
+        const on = !!ids && ids.has(el.dataset.node!);
+        el.classList.toggle('is-on', on);
+        el.classList.toggle('is-dim', !!ids && !on);
+        el.setAttribute('aria-pressed', String(on && step < 0 && el.dataset.node === selected));
+      }
+      data.edges.forEach((edge, i) => {
+        const on = !!ids && ids.has(edge.from) && ids.has(edge.to);
+        const el = edges[i];
+        el.classList.toggle('is-on', on);
+        el.classList.toggle('is-dim', !!ids && !on);
+        const line = el.querySelector('path')!;
+        line.setAttribute('marker-end', on ? line.dataset.markerOn! : line.dataset.markerOff!);
+      });
+    };
+
+    const show = (kicker: string, title: string, body: string, links: string[] = []) => {
+      panel.kicker.textContent = kicker;
+      panel.title.textContent = title;
+      panel.body.textContent = body;
+      panel.links.innerHTML = links.map((l) => `<li>${l.replace(/</g, '&lt;')}</li>`).join('');
+    };
+
+    const reset = () => {
+      selected = null;
+      step = -1;
+      highlight(null);
+      show('Overview', initial.title ?? '', initial.body ?? '');
+      syncControls();
+    };
+
+    const select = (id: string) => {
+      if (step >= 0) exitWalkthrough();
+      if (selected === id) return reset();
+      selected = id;
+      const neighbours = new Set([id]);
+      data.edges.forEach((e) => {
+        if (e.from === id) neighbours.add(e.to);
+        if (e.to === id) neighbours.add(e.from);
+      });
+      highlight(neighbours);
+      const node = data.nodes[id];
+      show(node.sublabel || 'Component', node.label, node.detail, node.links);
+    };
+
+    const goTo = (i: number) => {
+      step = Math.max(0, Math.min(i, data.steps.length - 1));
+      selected = null;
+      const s = data.steps[step];
+      highlight(new Set(s.nodes));
+      show(`Step ${step + 1} of ${data.steps.length}`, s.title, s.detail);
+      syncControls();
+    };
+
+    const exitWalkthrough = () => {
+      step = -1;
+      syncControls();
+    };
+
+    function syncControls() {
+      if (!controls) return;
+      const walking = step >= 0;
+      btn('start')!.classList.toggle('hidden', walking);
+      for (const name of ['prev', 'next', 'reset']) btn(name)!.classList.toggle('hidden', !walking);
+      count!.classList.toggle('hidden', !walking);
+      if (walking) {
+        count!.textContent = `${step + 1} / ${data.steps.length}`;
+        // aria-disabled rather than disabled: a disabled button drops the
+        // keyboard focus that just landed on it at the last step.
+        btn('prev')!.setAttribute('aria-disabled', String(step === 0));
+        btn('next')!.setAttribute('aria-disabled', String(step === data.steps.length - 1));
+      }
+    }
+
+    nodes.forEach((el) => {
+      el.addEventListener('click', () => select(el.dataset.node!));
+      el.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          select(el.dataset.node!);
+        } else if (event.key === 'Escape') {
+          reset();
+        }
+      });
+    });
+
+    btn('start')?.addEventListener('click', () => {
+      goTo(0);
+      btn('next')?.focus();
+    });
+    btn('prev')?.addEventListener('click', () => goTo(step - 1));
+    btn('next')?.addEventListener('click', () => goTo(step + 1));
+    btn('reset')?.addEventListener('click', () => {
+      reset();
+      btn('start')?.focus();
+    });
+  });
+</script>

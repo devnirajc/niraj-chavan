@@ -5,8 +5,10 @@ pnpm-lock.yaml
 
 # Build outputs
 dist/
+dist-drafts/
 build/
 .vite/
+.astro/
 
 # Environment variables
 .env
@@ -23,21 +25,15 @@ build/
 *.sln
 *.sw?
 .DS_Store
-.claude
+# Claude Code: keep local settings private, share the project skills.
+.claude/*
+!.claude/skills/
 
 # Testing
 /test-results/
 /playwright-report/
 /playwright/.cache/
 .lighthouseci/
-
-# Old files (temporary during migration)
-/css/
-/js/
-/sass/
-/fonts/
-.sass-cache/
-old-index.html
 
 # Logs
 *.log

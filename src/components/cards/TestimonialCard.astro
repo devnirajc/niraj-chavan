@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from '@/components/ui/Icon.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+
+interface Props {
+  testimonial: CollectionEntry<'testimonials'>;
+}
+
+const { data } = Astro.props.testimonial;
+const relationship = { manager: 'Manager', client: 'Client', peer: 'Peer', report: 'Mentee' }[data.relationship];
+---
+
+<figure class="card flex h-full flex-col p-6">
+  <div class="flex items-center justify-between">
+    <Icon name="quote" size={20} class="text-accent" />
+    <DraftBadge draft={data.draft} />
+  </div>
+  <blockquote class="mt-4 flex-1 leading-relaxed text-fg">
+    <p>{data.quote}</p>
+  </blockquote>
+  <figcaption class="mt-6 border-t border-line-subtle pt-4 text-sm">
+    <p class="font-medium text-fg">{data.name}</p>
+    <p class="text-fg-muted">{data.title}, {data.company}</p>
+    <p class="mt-1 font-mono text-xs text-fg-subtle uppercase">
+      {relationship}
+      {data.source === 'linkedin' && ' · via LinkedIn'}
+      {data.url && <a class="link ml-2 normal-case" href={data.url}>View</a>}
+    </p>
+  </figcaption>
+</figure>

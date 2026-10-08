@@ -1,0 +1,17 @@
+- id: be
+  qualification: Bachelor of Engineering, Computer Engineering
+  institution: Dr. D. Y. Patil Institute of Engineering & Technology, Pimpri — Pune University
+  start: '2011'
+  end: '2014'
+
+- id: diploma
+  qualification: Diploma in Computer Engineering
+  institution: Y. B. Patil Polytechnic, Akurdi — Maharashtra State Board of Technical Education
+  start: '2008'
+  end: '2011'
+
+- id: ssc
+  qualification: Secondary School Certificate
+  institution: Sharada Vidyamandir — Maharashtra Board
+  start: '2007'
+  end: '2008'

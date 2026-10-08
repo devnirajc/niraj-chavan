@@ -1,0 +1,135 @@
+---
+/**
+ * One enterprise problem, told in seven beats: Problem → Challenge →
+ * Analysis → Solution → Stack → Results → Lessons. The summary (problem +
+ * headline result) is always visible; the full walkthrough expands in place
+ * via <details>, so it works without JavaScript and keeps the list scannable.
+ */
+import type { CollectionEntry } from 'astro:content';
+import Icon from '@/components/ui/Icon.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import TechList from '@/components/ui/TechList.astro';
+import { DOMAIN_LABELS } from '@/data/taxonomy';
+import { href } from '@/lib/url';
+import { isVisible } from '@/lib/drafts';
+import { getEntry } from 'astro:content';
+
+interface Props {
+  problem: CollectionEntry<'problems'>;
+  open?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { problem, open = false, headingLevel: H = 'h3' } = Astro.props;
+// Sub-headings sit exactly one level below the card title, wherever it lands.
+const Sub = H === 'h2' ? 'h3' : 'h4';
+const { data } = problem;
+const study = data.caseStudy ? await getEntry(data.caseStudy) : undefined;
+const showStudy = study && isVisible(study);
+
+const beats = [
+  { key: 'Challenge', icon: 'target', text: data.challenge },
+  { key: 'Analysis', icon: 'eye', text: data.analysis },
+  { key: 'Solution', icon: 'layers', text: data.solution },
+] as const;
+---
+
+<article
+  class="card overflow-hidden"
+  data-filter-item
+  data-filter-tags={data.domain}
+  id={problem.id}
+  aria-labelledby={`${problem.id}-title`}
+>
+  <div class="p-6">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="chip min-h-6 px-2 text-xs">{DOMAIN_LABELS[data.domain]}</span>
+      <span class="text-xs text-fg-subtle">{data.context}</span>
+      <DraftBadge draft={data.draft} class="ml-auto" />
+    </div>
+    <H id={`${problem.id}-title`} class="mt-3 text-lg font-semibold tracking-tight">{data.title}</H>
+    <p class="mt-2 leading-relaxed text-fg-muted">{data.problem}</p>
+    <p class="mt-4 flex gap-2 text-sm text-fg">
+      <Icon name="check" size={16} class="mt-0.5 text-success-fg" />
+      <span><span class="sr-only">Headline result: </span>{data.results[0]}</span>
+    </p>
+  </div>
+
+  <details class="group border-t border-line-subtle" open={open}>
+    <summary
+      class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 px-6 text-sm font-medium text-accent-fg hover:bg-sunken/60 [&::-webkit-details-marker]:hidden"
+    >
+      <span>How I solved it<span class="sr-only">: {data.title}</span></span>
+      <Icon name="chevron-down" size={16} class="transition-transform group-open:rotate-180" />
+    </summary>
+
+    <div class="grid gap-6 border-t border-line-subtle bg-sunken/40 px-6 py-6">
+      <ol class="grid gap-5">
+        {
+          beats.map((beat) => (
+            <li class="grid grid-cols-[1.75rem_1fr] gap-3">
+              <span class="grid size-7 place-items-center rounded-lg border border-line bg-surface text-fg-subtle" aria-hidden="true">
+                <Icon name={beat.icon} size={14} />
+              </span>
+              <div>
+                <Sub class="text-sm font-semibold">{beat.key}</Sub>
+                <p class="mt-1 text-[0.9375rem] leading-relaxed text-fg-muted">{beat.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      {
+        data.stack.length > 0 && (
+          <div>
+            <Sub class="eyebrow">Stack</Sub>
+            <div class="mt-2">
+              <TechList items={data.stack} size="sm" />
+            </div>
+          </div>
+        )
+      }
+
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div>
+          <Sub class="eyebrow">Results</Sub>
+          <ul class="mt-2 grid gap-2">
+            {
+              data.results.map((r) => (
+                <li class="flex gap-2 text-sm leading-relaxed text-fg-muted">
+                  <Icon name="check" size={15} class="mt-0.5 text-success-fg" />
+                  {r}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        {
+          data.lessons.length > 0 && (
+            <div>
+              <Sub class="eyebrow">Lessons</Sub>
+              <ul class="mt-2 grid gap-2">
+                {data.lessons.map((l) => (
+                  <li class="flex gap-2 text-sm leading-relaxed text-fg-muted">
+                    <Icon name="lightbulb" size={15} class="mt-0.5 text-fg-subtle" />
+                    {l}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+
+      {
+        showStudy && (
+          <a href={href(`/case-study/${study!.id}/`)} class="group/link inline-flex items-center gap-1.5 text-sm font-medium text-accent-fg hover:text-accent-hover">
+            Read the full case study: {study!.data.title}
+            <Icon name="arrow-right" size={15} class="transition-transform group-hover/link:translate-x-0.5" />
+          </a>
+        )
+      }
+    </div>
+  </details>
+</article>

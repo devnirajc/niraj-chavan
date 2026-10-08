@@ -1,0 +1,72 @@
+---
+/**
+ * "On this page" — a sticky table of contents for long pages, with the
+ * current section marked as the reader scrolls (aria-current="true").
+ */
+interface Props {
+  items: { id: string; label: string; depth?: number }[];
+  label?: string;
+}
+
+const { items, label = 'On this page' } = Astro.props;
+---
+
+{
+  items.length > 1 && (
+    <nav aria-label={label} class="toc" data-toc>
+      <p class="eyebrow">{label}</p>
+      <ul class="mt-3 grid gap-0.5 border-l border-line">
+        {items.map((item) => (
+          <li>
+            <a
+              href={`#${item.id}`}
+              class:list={[
+                '-ml-px block border-l-2 border-transparent py-1.5 text-sm text-fg-subtle transition-colors hover:text-fg aria-[current=true]:border-accent-solid aria-[current=true]:font-medium aria-[current=true]:text-fg',
+                item.depth === 3 ? 'pl-7' : 'pl-4',
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-toc]').forEach((toc) => {
+    const links = [...toc.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    const targets = links
+      .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
+      .filter((el): el is HTMLElement => !!el);
+    if (!targets.length) return;
+
+    const setCurrent = (id: string) =>
+      links.forEach((a) => a.setAttribute('aria-current', String(a.hash === `#${id}`)));
+
+    // The current section is the last heading that has scrolled past the
+    // top quarter of the viewport.
+    const update = () => {
+      const line = window.innerHeight * 0.25;
+      let current = targets[0];
+      for (const t of targets) if (t.getBoundingClientRect().top <= line) current = t;
+      setCurrent(current.id);
+    };
+
+    let queued = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => {
+          update();
+          queued = false;
+        });
+      },
+      { passive: true }
+    );
+    update();
+  });
+</script>

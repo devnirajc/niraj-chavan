@@ -1,0 +1,21 @@
+---
+title: How I review an architecture
+summary: Follow the data and the change, not the diagram — then ask what breaks first under growth.
+draft: true
+order: 4
+steps:
+  - title: Start from the use cases
+    detail: Which journeys matter most, and what are their latency, availability and security needs? The architecture exists to serve those.
+  - title: Trace the data
+    detail: Where is it created, who owns it, where is it cached, and how does it get invalidated? Most front-end bugs live in the gaps here.
+  - title: Trace a change
+    detail: Pick a likely next feature and walk it through. How many modules, teams and deploys does it touch? That number is the architecture's real cost.
+  - title: Find the boundaries
+    detail: Are module and team boundaries in the same place? Shared code needs an owner, a version and a release process.
+  - title: Ask what fails first
+    detail: Ten times the users, the data, the team. What breaks — bundle size, build time, coordination, an API?
+  - title: Write it down
+    detail: Decisions recorded with their context and the options rejected, so the reasoning survives the people who made it.
+---
+
+A good architecture makes the common change cheap. Reviewing one is mostly a matter of finding out what the common change is.

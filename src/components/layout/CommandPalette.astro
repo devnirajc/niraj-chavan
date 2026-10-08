@@ -1,0 +1,226 @@
+---
+/**
+ * Site search (Ctrl/⌘ K, or "/").
+ *
+ * A native <dialog> opened with showModal(), so the browser supplies the focus
+ * trap, inert background and Escape handling. Inside, the input follows the
+ * ARIA combobox pattern over a listbox of results; arrow keys move the active
+ * option, Enter opens it. The index (src/pages/search.json.ts) is fetched on
+ * first open, so visitors who never search never download it.
+ */
+import Icon from '@/components/ui/Icon.astro';
+import { href } from '@/lib/url';
+---
+
+<dialog
+  id="search-dialog"
+  aria-label="Search the site"
+  data-index={href('/search.json')}
+  class="search-dialog m-0 mx-auto mt-[10vh] w-[calc(100%-2rem)] max-w-xl overflow-hidden rounded-2xl border border-line bg-surface p-0 text-fg shadow-lg"
+>
+  <div class="flex items-center gap-3 border-b border-line px-4">
+    <Icon name="search" size={18} class="text-fg-subtle" />
+    <label for="search-input" class="sr-only">Search case studies, projects, writing and pages</label>
+    <input
+      id="search-input"
+      type="text"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="search-results"
+      aria-autocomplete="list"
+      aria-describedby="search-hint"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="Search case studies, projects, writing…"
+      class="h-14 flex-1 bg-transparent text-base text-fg outline-none placeholder:text-fg-subtle"
+    />
+    <button type="button" class="kbd cursor-pointer" data-search-close>
+      Esc<span class="sr-only"> — close search</span>
+    </button>
+  </div>
+
+  <ul id="search-results" role="listbox" aria-label="Results" class="max-h-[min(60vh,28rem)] overflow-y-auto p-2"></ul>
+
+  <div class="flex items-center justify-between gap-4 border-t border-line px-4 py-2.5 text-xs text-fg-subtle">
+    <p id="search-hint">
+      <span aria-hidden="true"><kbd class="kbd">↑</kbd> <kbd class="kbd">↓</kbd> to move, <kbd class="kbd">Enter</kbd> to open</span>
+      <span class="sr-only">Use the up and down arrow keys to move through results and Enter to open one.</span>
+    </p>
+    <p role="status" aria-live="polite" data-search-status></p>
+  </div>
+</dialog>
+
+<style>
+  .search-dialog::backdrop {
+    background: rgb(8 9 11 / 0.45);
+    backdrop-filter: blur(2px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .search-dialog[open] {
+      animation: palette-in 160ms var(--ease-out-quint);
+    }
+  }
+
+  @keyframes palette-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.985);
+    }
+  }
+</style>
+
+<script>
+  interface Entry {
+    title: string;
+    url: string;
+    type: string;
+    summary: string;
+    keywords: string;
+  }
+
+  const dialog = document.getElementById('search-dialog') as HTMLDialogElement | null;
+  const input = document.getElementById('search-input') as HTMLInputElement | null;
+  const list = document.getElementById('search-results') as HTMLUListElement | null;
+  const status = dialog?.querySelector<HTMLElement>('[data-search-status]');
+
+  if (dialog && input && list && status) {
+    // The promise is cached, not the result, so keystrokes typed while the
+    // first request is in flight share it instead of starting their own.
+    let index: Promise<Entry[]> | null = null;
+    let results: Entry[] = [];
+    let active = 0;
+    let opener: HTMLElement | null = null;
+
+    const load = () => {
+      index ??= fetch(dialog.dataset.index!).then((response) => {
+        if (!response.ok) throw new Error(`search index ${response.status}`);
+        return response.json() as Promise<Entry[]>;
+      });
+      // A failed load is forgotten, so the next keystroke can retry.
+      index.catch(() => (index = null));
+      return index;
+    };
+
+    const score = (entry: Entry, terms: string[]) => {
+      const title = entry.title.toLowerCase();
+      const rest = `${entry.type} ${entry.keywords} ${entry.summary}`.toLowerCase();
+      let total = 0;
+      for (const term of terms) {
+        if (title.startsWith(term)) total += 6;
+        else if (title.includes(term)) total += 4;
+        else if (entry.keywords.toLowerCase().includes(term)) total += 2;
+        else if (rest.includes(term)) total += 1;
+        else return 0; // every term must match somewhere
+      }
+      return total;
+    };
+
+    const escape = (text: string) =>
+      text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+    const render = () => {
+      list.innerHTML = results
+        .map(
+          (entry, i) => `
+            <li id="search-option-${i}" role="option" aria-selected="${i === active}" data-url="${escape(entry.url)}"
+                class="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5 aria-selected:bg-accent-quiet">
+              <span class="mt-0.5 w-24 shrink-0 font-mono text-[0.6875rem] uppercase tracking-wider text-fg-subtle">${escape(entry.type)}</span>
+              <span class="min-w-0">
+                <span class="block truncate font-medium text-fg">${escape(entry.title)}</span>
+                <span class="block truncate text-sm text-fg-muted">${escape(entry.summary)}</span>
+              </span>
+            </li>`
+        )
+        .join('');
+
+      if (results.length) input.setAttribute('aria-activedescendant', `search-option-${active}`);
+      else input.removeAttribute('aria-activedescendant');
+
+      const query = input.value.trim();
+      status.textContent = query
+        ? `${results.length} result${results.length === 1 ? '' : 's'}`
+        : 'Suggested pages';
+    };
+
+    const update = async () => {
+      let all: Entry[];
+      try {
+        all = await load();
+      } catch {
+        results = [];
+        list.innerHTML = '';
+        input.removeAttribute('aria-activedescendant');
+        status.textContent = 'Search is unavailable right now — try again in a moment.';
+        return;
+      }
+      const terms = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+      results = terms.length
+        ? all
+            .map((entry) => ({ entry, s: score(entry, terms) }))
+            .filter(({ s }) => s > 0)
+            .sort((a, b) => b.s - a.s)
+            .slice(0, 12)
+            .map(({ entry }) => entry)
+        : all.filter((entry) => entry.type === 'Page');
+      active = 0;
+      render();
+    };
+
+    const setActive = (next: number) => {
+      if (!results.length) return;
+      active = (next + results.length) % results.length;
+      list.querySelectorAll('[role=option]').forEach((el, i) => el.setAttribute('aria-selected', String(i === active)));
+      input.setAttribute('aria-activedescendant', `search-option-${active}`);
+      document.getElementById(`search-option-${active}`)?.scrollIntoView({ block: 'nearest' });
+    };
+
+    const open = () => {
+      if (dialog.open) return;
+      opener = document.activeElement as HTMLElement | null;
+      dialog.showModal();
+      input.value = '';
+      update();
+    };
+
+    const close = () => dialog.close();
+
+    dialog.addEventListener('close', () => opener?.focus());
+
+    document.querySelectorAll('[data-search-open]').forEach((button) => button.addEventListener('click', open));
+    dialog.querySelector('[data-search-close]')?.addEventListener('click', close);
+
+    // A click on the backdrop lands on the <dialog> element itself.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) close();
+    });
+
+    input.addEventListener('input', update);
+
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        setActive(active + 1);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        setActive(active - 1);
+      } else if (event.key === 'Enter' && results[active]) {
+        event.preventDefault();
+        window.location.href = results[active].url;
+      }
+    });
+
+    list.addEventListener('click', (event) => {
+      const option = (event.target as HTMLElement).closest<HTMLElement>('[role=option]');
+      if (option?.dataset.url) window.location.href = option.dataset.url;
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const typing = (event.target as HTMLElement).closest('input, textarea, select, [contenteditable]');
+      if ((event.key === 'k' && (event.metaKey || event.ctrlKey)) || (event.key === '/' && !typing)) {
+        event.preventDefault();
+        open();
+      }
+    });
+  }
+</script>

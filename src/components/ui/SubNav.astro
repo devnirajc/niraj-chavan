@@ -1,0 +1,39 @@
+---
+/** Tabs-style secondary navigation (links, not ARIA tabs — each is a page). */
+import type { NavItem } from '@/data/nav';
+import { visibleNav } from '@/lib/nav';
+import { href, isCurrent } from '@/lib/url';
+
+interface Props {
+  items: NavItem[];
+  label: string;
+}
+
+const { items, label } = Astro.props;
+const visible = await visibleNav(items);
+const path = Astro.url.pathname;
+---
+
+<nav aria-label={label} class="border-b border-line-subtle">
+  <ul class="container-page -mb-px flex gap-1 overflow-x-auto">
+    {
+      visible.map((item) => {
+        const current = isCurrent(path, item.href);
+        return (
+          <li>
+            <a
+              href={href(item.href)}
+              aria-current={current ? 'page' : undefined}
+              class:list={[
+                'inline-flex min-h-11 items-center border-b-2 px-3 text-sm whitespace-nowrap transition-colors',
+                current ? 'border-accent-solid font-medium text-fg' : 'border-transparent text-fg-muted hover:text-fg',
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>

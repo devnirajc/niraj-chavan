@@ -1,0 +1,228 @@
+---
+/**
+ * Case study detail. Fixed sections come from the frontmatter (problem,
+ * goals, constraints, architecture, decisions, metrics, lessons); the MDX
+ * body carries the narrative in between.
+ */
+import { render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import Toc from '@/components/ui/Toc.astro';
+import Icon from '@/components/ui/Icon.astro';
+import TechList from '@/components/ui/TechList.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import ArchitectureDiagram from '@/components/diagram/ArchitectureDiagram.astro';
+import MetricGrid from '@/components/content/MetricGrid.astro';
+import DecisionLog from '@/components/content/DecisionLog.astro';
+import ProjectCard from '@/components/cards/ProjectCard.astro';
+import { mdxComponents } from '@/components/mdx';
+import { DOMAIN_LABELS } from '@/data/taxonomy';
+import { published, visibleRefs, headingsOutsideDrafts } from '@/lib/drafts';
+import { href } from '@/lib/url';
+import { profile } from '@/data/profile';
+
+export async function getStaticPaths() {
+  const studies = (await published('caseStudies')).sort((a, b) => a.data.order - b.data.order);
+  return studies.map((study, i) => ({
+    params: { slug: study.id },
+    props: { study, next: studies[(i + 1) % studies.length] },
+  }));
+}
+
+interface Props {
+  study: CollectionEntry<'caseStudies'>;
+  next: CollectionEntry<'caseStudies'>;
+}
+
+const { study, next } = Astro.props;
+const { data } = study;
+const { Content, headings } = await render(study);
+const related = await visibleRefs(data.relatedProjects);
+
+const toc = [
+  data.metrics.length && { id: 'outcomes', label: 'Outcomes' },
+  { id: 'problem', label: 'The problem' },
+  data.architecture && { id: 'architecture', label: 'Architecture' },
+  ...headingsOutsideDrafts(study.body, headings)
+    .filter((h) => h.depth === 2)
+    .map((h) => ({ id: h.slug, label: h.text })),
+  data.decisions.length && { id: 'decisions', label: 'Key decisions' },
+  data.lessons.length && { id: 'lessons', label: 'Lessons learned' },
+].filter(Boolean) as { id: string; label: string }[];
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: data.title,
+  description: data.summary,
+  author: { '@type': 'Person', name: profile.name, url: new URL(href('/'), Astro.site).toString() },
+  about: data.domains.map((d) => DOMAIN_LABELS[d]),
+};
+---
+
+<BaseLayout title={data.title} description={data.summary} type="article" jsonLd={articleLd}>
+  <PageHeader
+    crumbs={[{ label: 'Case studies', href: '/case-study/' }, { label: data.title }]}
+    eyebrow={data.industry}
+    title={data.title}
+    lede={data.summary}
+    wide
+  >
+    <div class="mt-6"><DraftBadge draft={data.draft} /></div>
+    <dl class="mt-8 grid max-w-4xl gap-px overflow-hidden rounded-xl border border-line bg-line text-sm sm:grid-cols-4">
+      {
+        [
+          ['Role', data.role],
+          ['Company', data.company ?? '—'],
+          ['When', data.period],
+          ['Domain', data.domains.map((d) => DOMAIN_LABELS[d]).join(', ')],
+        ].map(([term, value]) => (
+          <div class="bg-surface px-4 py-3">
+            <dt class="text-fg-subtle">{term}</dt>
+            <dd class="mt-0.5 font-medium text-fg">{value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <div class="mt-5"><TechList items={data.stack} size="sm" /></div>
+  </PageHeader>
+
+  <div class="container-page grid gap-12 pt-14 xl:grid-cols-[1fr_13rem]">
+    <article class="min-w-0">
+      {
+        data.metrics.length > 0 && (
+          <section aria-labelledby="outcomes" class="mb-16">
+            <h2 id="outcomes" class="eyebrow mb-4">
+              Outcomes at a glance
+            </h2>
+            <MetricGrid metrics={data.metrics} />
+          </section>
+        )
+      }
+
+      <section aria-labelledby="problem" class="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+        <div>
+          <h2 id="problem" class="text-heading font-semibold">The problem</h2>
+          <p class="mt-4 text-lg leading-relaxed text-fg-muted">{data.problem}</p>
+        </div>
+        <div class="grid gap-6">
+          {
+            data.goals.length > 0 && (
+              <div class="card p-5">
+                <h3 class="flex items-center gap-2 text-sm font-semibold">
+                  <Icon name="target" size={16} class="text-accent-fg" /> Business goals
+                </h3>
+                <ul class="mt-3 grid gap-2 text-sm leading-relaxed text-fg-muted">
+                  {data.goals.map((g) => (
+                    <li class="flex gap-2">
+                      <span aria-hidden="true" class="mt-2 size-1 shrink-0 rounded-full bg-accent" />
+                      {g}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+          {
+            data.constraints.length > 0 && (
+              <div class="card p-5">
+                <h3 class="flex items-center gap-2 text-sm font-semibold">
+                  <Icon name="shield" size={16} class="text-fg-subtle" /> Constraints
+                </h3>
+                <ul class="mt-3 grid gap-2 text-sm leading-relaxed text-fg-muted">
+                  {data.constraints.map((c) => (
+                    <li class="flex gap-2">
+                      <span aria-hidden="true" class="mt-2 size-1 shrink-0 rounded-full bg-line-strong" />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+        </div>
+      </section>
+
+      {
+        data.architecture && (
+          <section aria-labelledby="architecture" class="mt-16">
+            <h2 id="architecture" class="text-heading font-semibold">
+              Architecture
+            </h2>
+            <p class="mt-2 text-fg-muted">Select any component, or walk through the flow step by step.</p>
+            <ArchitectureDiagram diagram={data.architecture} id={`dg-${study.id}`} />
+          </section>
+        )
+      }
+
+      <div class="prose mt-16 max-w-3xl">
+        <Content components={mdxComponents} />
+      </div>
+
+      {
+        data.decisions.length > 0 && (
+          <section aria-labelledby="decisions" class="mt-16 max-w-3xl">
+            <h2 id="decisions" class="text-heading font-semibold">
+              Key decisions
+            </h2>
+            <p class="mt-2 mb-6 text-fg-muted">The options I weighed, what I chose, and what it cost.</p>
+            <DecisionLog decisions={data.decisions} />
+          </section>
+        )
+      }
+
+      {
+        data.lessons.length > 0 && (
+          <section aria-labelledby="lessons" class="mt-16 max-w-3xl">
+            <h2 id="lessons" class="text-heading font-semibold">
+              Lessons learned
+            </h2>
+            <ul class="mt-6 grid gap-3">
+              {data.lessons.map((l) => (
+                <li class="flex gap-3 rounded-xl border border-line-subtle bg-surface px-4 py-3 leading-relaxed text-fg-muted">
+                  <Icon name="lightbulb" size={18} class="mt-0.5 text-accent-fg" />
+                  {l}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        related.length > 0 && (
+          <section aria-labelledby="related" class="mt-16">
+            <h2 id="related" class="text-heading font-semibold">
+              Related projects
+            </h2>
+            <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((p) => (
+                <ProjectCard project={p} />
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {
+        next.id !== study.id && (
+          <nav aria-label="Next case study" class="mt-20 border-t border-line pt-8">
+            <a href={href(`/case-study/${next.id}/`)} class="group block">
+              <span class="eyebrow">Next case study</span>
+              <span class="mt-2 flex items-center gap-2 text-xl font-semibold tracking-tight group-hover:text-accent-fg">
+                {next.data.title}
+                <Icon name="arrow-right" size={20} class="transition-transform group-hover:translate-x-1" />
+              </span>
+            </a>
+          </nav>
+        )
+      }
+    </article>
+
+    <aside class="hidden xl:block">
+      <div class="sticky top-24">
+        <Toc items={toc} />
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

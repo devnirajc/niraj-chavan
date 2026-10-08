@@ -1,0 +1,28 @@
+# DRAFT — the problem statement and results restate my experience entry
+# (Xpanxion: "designed and shipped a secure JWT-based authentication and
+# session-management system"). Challenge and analysis are a typical account;
+# rewrite them with what actually happened before publishing.
+title: Sign-in that every app could share, and nobody could steal
+draft: true
+order: 1
+domain: auth-security
+context: Xpanxion · enterprise Angular applications
+problem: >-
+  Several enterprise Angular applications needed secure sign-in and session
+  handling, and each was at risk of implementing it slightly differently.
+challenge: >-
+  TODO: The constraints — existing APIs, security review, users who keep a
+  tab open all day.
+analysis: >-
+  TODO: How you worked out what the design had to protect against — where
+  tokens could leak, what happened at expiry.
+solution: >-
+  A shared JWT-based authentication and session layer — TODO: describe it
+  (token storage, interceptor, refresh, guards).
+stack: [Angular, TypeScript, RxJS, JWT]
+results:
+  - Shipped a secure JWT-based authentication and session-management system.
+  - TODO — a measurable outcome.
+lessons:
+  - TODO
+caseStudy: authentication-platform

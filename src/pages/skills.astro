@@ -1,0 +1,118 @@
+---
+/**
+ * Expertise — by area, with proficiency stated in words and the context and
+ * evidence for each skill. No percentage bars: "Expert" next to "where I
+ * proved it" says more than 92%.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import SubNav from '@/components/ui/SubNav.astro';
+import Toc from '@/components/ui/Toc.astro';
+import { ABOUT_NAV } from '@/data/nav';
+import { published, visibleRefs } from '@/lib/drafts';
+import { href } from '@/lib/url';
+
+const areas = (await published('skills')).sort((a, b) => a.data.order - b.data.order);
+
+const resolved = await Promise.all(
+  areas.map(async (area) => ({
+    area,
+    skills: await Promise.all(
+      area.data.skills.map(async (skill) => ({
+        ...skill,
+        roles: await visibleRefs(skill.roles),
+        projects: await visibleRefs(skill.projects),
+        caseStudies: await visibleRefs(skill.caseStudies),
+      }))
+    ),
+  }))
+);
+
+const LEVELS = { Expert: 3, Advanced: 2, Intermediate: 1 } as const;
+---
+
+<BaseLayout title="Expertise" description="What I'm good at, how well, and the roles and projects where I proved it.">
+  <PageHeader
+    eyebrow="Expertise"
+    title="Skills, in context"
+    lede="Every skill below says how strong I am at it and where I used it — linked to the role, project or case study that backs it up."
+  />
+  <SubNav items={ABOUT_NAV} label="About sections" />
+
+  <div class="container-page grid gap-12 pt-14 lg:grid-cols-[13rem_1fr]">
+    <div class="hidden lg:block">
+      <div class="sticky top-24">
+        <Toc items={areas.map((a) => ({ id: a.id, label: a.data.area }))} label="Areas" />
+        <dl class="mt-8 grid gap-2 border-t border-line pt-6 text-xs text-fg-subtle">
+          {
+            Object.entries(LEVELS).map(([label, n]) => (
+              <div class="flex items-center gap-2">
+                <dt class="flex gap-0.5" aria-hidden="true">
+                  {[1, 2, 3].map((i) => (
+                    <span class:list={['h-2.5 w-1 rounded-full', i <= n ? 'bg-accent-solid' : 'bg-line']} />
+                  ))}
+                </dt>
+                <dd>{label}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+
+    <div class="grid min-w-0 gap-16">
+      {
+        resolved.map(({ area, skills }) => (
+          <section aria-labelledby={area.id}>
+            <h2 id={area.id} class="text-heading font-semibold">
+              {area.data.area}
+            </h2>
+            <p class="mt-2 text-fg-muted">{area.data.summary}</p>
+            <ul class="mt-6 grid gap-px overflow-hidden rounded-2xl border border-line bg-line">
+              {skills.map((skill) => (
+                <li class="grid gap-2 bg-surface px-5 py-4 md:grid-cols-[14rem_1fr] md:gap-6">
+                  <div>
+                    <h3 class="font-medium text-fg">{skill.name}</h3>
+                    {skill.level && (
+                      <p class="mt-1 flex items-center gap-2 text-sm text-fg-subtle">
+                        <span class="flex gap-0.5" aria-hidden="true">
+                          {[1, 2, 3].map((i) => (
+                            <span class:list={['h-2.5 w-1 rounded-full', i <= LEVELS[skill.level!] ? 'bg-accent-solid' : 'bg-line']} />
+                          ))}
+                        </span>
+                        {skill.level}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    {skill.context && <p class="text-[0.9375rem] leading-relaxed text-fg-muted">{skill.context}</p>}
+                    {(skill.roles.length > 0 || skill.projects.length > 0 || skill.caseStudies.length > 0) && (
+                      <p class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                        <span class="text-fg-subtle">Evidence:</span>
+                        {skill.roles.map((r) => (
+                          <a class="link" href={href(`/experience/#${r.id}`)}>
+                            {r.data.company}
+                          </a>
+                        ))}
+                        {skill.projects.map((p) => (
+                          <a class="link" href={href(`/projects/${p.id}/`)}>
+                            {p.data.title}
+                          </a>
+                        ))}
+                        {skill.caseStudies.map((c) => (
+                          <a class="link" href={href(`/case-study/${c.id}/`)}>
+                            Case study: {c.data.title}
+                          </a>
+                        ))}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
