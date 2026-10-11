@@ -133,7 +133,7 @@ Body: a short intro paragraph.
       caseStudies: [case study id]
 ```
 
-A skill with no `context` and no visible evidence renders as a small chip in the area's "Also" row instead of a full row (so there are no empty half rows). Giving it context — confirmed by Niraj — promotes it to a full row automatically.
+A skill with no `context` and no visible evidence renders as a small chip in a compact row at the end of its area instead of a full row (so there are no empty half rows). Giving it context — confirmed by Niraj — promotes it to a full row automatically.
 
 ## now and radar
 

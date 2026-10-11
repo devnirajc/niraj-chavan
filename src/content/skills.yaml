@@ -72,19 +72,24 @@
   summary: >-
     Accessibility built in from the start, and tests that make change safe.
   skills:
+    # JP Morgan Chase evidence for both accessibility rows and end-to-end
+    # testing confirmed by Niraj.
     - name: Web accessibility (WCAG)
       level: Advanced
-      context: Led WCAG 2.0 compliance at Xpanxion; this site targets WCAG 2.2 AA with an automated contrast audit in the build.
-      roles: [xpanxion]
+      context: Accessible enterprise travel platforms at JP Morgan Chase; led WCAG 2.0 compliance at Xpanxion. This site targets WCAG 2.2 AA with an automated contrast audit in the build.
+      roles: [jpmc, xpanxion]
     - name: Accessibility testing
       level: Expert
-      context: Auditing with axe DevTools.
+      context: Accessibility testing on JP Morgan Chase's enterprise travel platforms. I audit with axe DevTools.
+      roles: [jpmc]
     - name: Unit testing
       level: Expert
       context: Jasmine and Karma in Angular, Jest in React — test suites that raised coverage and cut production defects.
       roles: [jpmc]
     - name: End-to-end testing
       level: Advanced
+      context: End-to-end tests for the enterprise travel platforms at JP Morgan Chase.
+      roles: [jpmc]
 
 - id: performance
   order: 4
