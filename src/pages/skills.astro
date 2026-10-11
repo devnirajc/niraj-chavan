@@ -25,8 +25,8 @@ const resolved = await Promise.all(
       }))
     );
     // A skill with neither context nor evidence would leave an empty half
-    // row; those go in a compact "Also" row of chips instead, and move up to
-    // a full row as soon as they gain context or a reference.
+    // row; those go in a compact row of chips at the end of the area instead,
+    // and move up to a full row as soon as they gain context or a reference.
     const hasDetail = (s: (typeof skills)[number]) =>
       Boolean(s.context) || s.roles.length + s.projects.length + s.caseStudies.length > 0;
     return { area, skills: skills.filter(hasDetail), brief: skills.filter((s) => !hasDetail(s)) };
@@ -115,9 +115,8 @@ const LEVELS = { Expert: 3, Advanced: 2, Intermediate: 1 } as const;
                 </li>
               ))}
               {brief.length > 0 && (
-                <li class="grid gap-3 bg-surface px-5 py-4 md:grid-cols-[14rem_1fr] md:items-center md:gap-6">
-                  <p class="text-sm text-fg-subtle">Also</p>
-                  <ul class="flex flex-wrap gap-1.5" aria-label={`Also in ${area.data.area}`}>
+                <li class="bg-surface px-5 py-4">
+                  <ul class="flex flex-wrap gap-1.5" aria-label={`More ${area.data.area} skills`}>
                     {brief.map((skill) => (
                       <li class="chip gap-2">
                         <span class="font-medium text-fg">{skill.name}</span>
