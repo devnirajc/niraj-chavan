@@ -1,11 +1,12 @@
 ---
 /**
- * The home page reads as a guided tour in numbered chapters. On wide screens
- * this rail sits in the left margin, showing where you are in the story
+ * The home page reads as a guided tour in chapters. On wide screens this
+ * rail sits in the left margin, showing where you are in the story
  * (aria-current="true" on the chapter in view) and letting you jump ahead.
+ * A short line marks each chapter and grows to show the current one.
  */
 interface Props {
-  chapters: { id: string; index: string; label: string }[];
+  chapters: { id: string; label: string }[];
 }
 
 const { chapters } = Astro.props;
@@ -24,7 +25,6 @@ const { chapters } = Astro.props;
             href={`#${c.id}`}
             class="group flex items-center gap-3 rounded-md py-1 pr-2 text-xs text-fg-subtle transition-colors hover:text-fg aria-[current=true]:text-fg"
           >
-            <span class="font-mono tabular-nums group-aria-[current=true]:text-accent-fg">{c.index}</span>
             <span
               aria-hidden="true"
               class="h-px w-4 bg-line transition-all group-hover:w-6 group-aria-[current=true]:w-8 group-aria-[current=true]:bg-accent-solid"
@@ -41,18 +41,30 @@ const { chapters } = Astro.props;
   const rail = document.querySelector<HTMLElement>('[data-chapter-rail]');
   if (rail) {
     const links = [...rail.querySelectorAll<HTMLAnchorElement>('a')];
-    const sections = links.map((a) => document.getElementById(a.hash.slice(1))).filter(Boolean) as HTMLElement[];
+
+    // Watch each chapter's whole <section>, not just its heading. A heading is
+    // a thin strip that only "crosses" the middle band while scrolling past
+    // it, so jumping straight to a chapter (a rail click under reduced
+    // motion, a deep link) never marked anything current.
+    const chapterOf = new Map<Element, string>();
+    for (const a of links) {
+      const id = a.hash.slice(1);
+      const section = document.getElementById(id)?.closest('section');
+      if (section) chapterOf.set(section, id);
+    }
+
+    const setCurrent = (id: string) =>
+      links.forEach((a) => a.setAttribute('aria-current', String(a.hash === `#${id}`)));
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          links.forEach((a) => a.setAttribute('aria-current', String(a.hash === `#${entry.target.id}`)));
+          if (entry.isIntersecting) setCurrent(chapterOf.get(entry.target)!);
         }
       },
-      // A chapter is "current" while it crosses the middle band of the screen.
+      // A chapter is "current" while it occupies the middle band of the screen.
       { rootMargin: '-45% 0px -50% 0px' }
     );
-    sections.forEach((s) => observer.observe(s));
+    chapterOf.forEach((_, section) => observer.observe(section));
   }
 </script>
