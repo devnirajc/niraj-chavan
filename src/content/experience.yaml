@@ -17,7 +17,7 @@
     - Introduced testing frameworks and thorough unit-test suites, raising coverage and cutting production defects.
     - Led performance work that produced faster load times and a more reliable platform.
     - Contribute to platform architecture decisions, design patterns and technical standards with cross-functional teams.
-  stack: [Angular, React, TypeScript, RxJS, Design systems, Accessibility, Unit testing, End-to-end testing, MongoDB, MySQL, GraphQL]
+  stack: [Angular, React, TypeScript, RxJS, Design systems, Accessibility, Unit testing, End-to-end testing, MongoDB, MySQL, GraphQL, AWS, Azure, Kubernetes]
   caseStudies: [microfrontend-architecture]
 
 - id: slb

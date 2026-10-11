@@ -158,7 +158,12 @@
       level: Intermediate
       context: Used in Nexpenso, my personal finance tracker.
       projects: [nexpenso]
+    # AWS, Azure and Kubernetes at JP Morgan Chase confirmed by Niraj.
     - name: AWS & Azure
       level: Intermediate
+      context: Used at JP Morgan Chase.
+      roles: [jpmc]
     - name: Kubernetes
       level: Intermediate
+      context: Used at JP Morgan Chase.
+      roles: [jpmc]
