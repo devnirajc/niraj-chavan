@@ -15,17 +15,22 @@ import { href } from '@/lib/url';
 const areas = (await published('skills')).sort((a, b) => a.data.order - b.data.order);
 
 const resolved = await Promise.all(
-  areas.map(async (area) => ({
-    area,
-    skills: await Promise.all(
+  areas.map(async (area) => {
+    const skills = await Promise.all(
       area.data.skills.map(async (skill) => ({
         ...skill,
         roles: await visibleRefs(skill.roles),
         projects: await visibleRefs(skill.projects),
         caseStudies: await visibleRefs(skill.caseStudies),
       }))
-    ),
-  }))
+    );
+    // A skill with neither context nor evidence would leave an empty half
+    // row; those go in a compact "Also" row of chips instead, and move up to
+    // a full row as soon as they gain context or a reference.
+    const hasDetail = (s: (typeof skills)[number]) =>
+      Boolean(s.context) || s.roles.length + s.projects.length + s.caseStudies.length > 0;
+    return { area, skills: skills.filter(hasDetail), brief: skills.filter((s) => !hasDetail(s)) };
+  })
 );
 
 const LEVELS = { Expert: 3, Advanced: 2, Intermediate: 1 } as const;
@@ -62,7 +67,7 @@ const LEVELS = { Expert: 3, Advanced: 2, Intermediate: 1 } as const;
 
     <div class="grid min-w-0 gap-16">
       {
-        resolved.map(({ area, skills }) => (
+        resolved.map(({ area, skills, brief }) => (
           <section aria-labelledby={area.id}>
             <h2 id={area.id} class="text-heading font-semibold">
               {area.data.area}
@@ -109,6 +114,28 @@ const LEVELS = { Expert: 3, Advanced: 2, Intermediate: 1 } as const;
                   </div>
                 </li>
               ))}
+              {brief.length > 0 && (
+                <li class="grid gap-3 bg-surface px-5 py-4 md:grid-cols-[14rem_1fr] md:items-center md:gap-6">
+                  <p class="text-sm text-fg-subtle">Also</p>
+                  <ul class="flex flex-wrap gap-1.5" aria-label={`Also in ${area.data.area}`}>
+                    {brief.map((skill) => (
+                      <li class="chip gap-2">
+                        <span class="font-medium text-fg">{skill.name}</span>
+                        {skill.level && (
+                          <span class="flex items-center gap-1.5 text-fg-subtle">
+                            <span class="flex gap-0.5" aria-hidden="true">
+                              {[1, 2, 3].map((i) => (
+                                <span class:list={['h-2 w-[3px] rounded-full', i <= LEVELS[skill.level!] ? 'bg-accent-solid' : 'bg-line']} />
+                              ))}
+                            </span>
+                            {skill.level}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              )}
             </ul>
           </section>
         ))
