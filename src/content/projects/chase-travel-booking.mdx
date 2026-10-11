@@ -210,6 +210,7 @@ Each decision below compares the approach I chose with the state it replaced.
         { name: 'Micro-frontend boundaries with Webpack Module Federation', chosen: true, reason: 'Each squad builds and deploys its part independently, while customers still get one Chase Travel. Four squads now deploy on their own schedule.' },
         { name: 'One front end, released together (the existing model)', chosen: false, reason: 'Every release needed cross-team coordination, so one squad\'s timing held up the others.' },
       ],
+      tradeoff: 'Independent deployment moves integration from build time to run time: shared dependencies such as Angular and the component library have to be versioned and shared deliberately across remotes.',
     },
     {
       title: 'Who owns promotion UI',
@@ -218,6 +219,7 @@ Each decision below compares the approach I chose with the state it replaced.
         { name: 'A shared Angular component library for promotion rendering', chosen: true, reason: 'One implementation of every promotion pattern. Three downstream squads adopted it, with about 40% less duplicated UI and new features a sprint sooner.' },
         { name: 'Each squad builds its own promotion UI (the existing model)', chosen: false, reason: 'Duplicated effort, and promotions that look and behave differently from page to page.' },
       ],
+      tradeoff: 'A shared library is a product with consumers: changes need versioning and backward compatibility for every squad that depends on it.',
     },
     {
       title: 'Where offer data gets trimmed',
@@ -226,19 +228,14 @@ Each decision below compares the approach I chose with the state it replaced.
         { name: 'Redesign the offers REST API with the back-end teams', chosen: true, reason: 'Pages receive only what they render, which ended the over-fetching and cut average page load time by about 30%.' },
         { name: 'Keep the existing responses (the existing model)', chosen: false, reason: 'Every offers page kept paying for data it never showed.' },
       ],
+      tradeoff: 'An API shaped around its UI couples the two more closely, so changing what a page shows can mean changing the API with it.',
     },
   ]}
 />
 
-<Draft note="Other options you weighed, and the trade-offs in your words">
+<Draft note="Other options you weighed">
 
 TODO — The cards above compare each choice with the state it replaced. If you also evaluated other options, add them: for micro-frontends, single-spa, Nx libraries in a monorepo or iframes; for the API, GraphQL (you have used it at JP Morgan Chase) or a backend-for-frontend; for the library, extending an existing design system.
-
-TODO — The cards are live without trade-off lines until you confirm them. Claude's suggestions, to confirm or rewrite so each says what actually cost you something, then add back to its card as `tradeoff`:
-
-- **How squads ship into one front end:** Independent deployment moves integration from build time to run time: shared dependencies such as Angular and the component library have to be versioned and shared deliberately across remotes.
-- **Who owns promotion UI:** A shared library is a product with consumers: changes need versioning and backward compatibility for every squad that depends on it.
-- **Where offer data gets trimmed:** An API shaped around its UI couples the two more closely, so changing what a page shows can mean changing the API with it.
 
 </Draft>
 

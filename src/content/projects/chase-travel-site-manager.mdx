@@ -117,6 +117,7 @@ Each decision below compares the approach I chose with the state it replaced.
         { name: 'A dynamic, self-service settings platform', chosen: true, reason: 'Authorised business users change settings themselves, within the permissions of their business unit, and a change takes effect as soon as it is saved. What used to take days now takes as long as making the change.' },
         { name: 'Settings changed by engineers through releases (the existing model)', chosen: false, reason: 'Every change, however small, waited for an engineer and a release cycle.' },
       ],
+      tradeoff: 'Settings now change outside the release process, so the safeguards move from code review into the platform itself: who can change what has to be enforced by access control and visible through audit-friendly workflows.',
     },
     {
       title: 'How access to settings is controlled',
@@ -125,18 +126,14 @@ Each decision below compares the approach I chose with the state it replaced.
         { name: 'RBAC scoped per business unit, with sensitive operations restricted', chosen: true, reason: 'Least privilege: each user can change only their own business unit\'s settings, and sensitive operations need the right entitlement. The APIs enforce the same entitlements the screens reflect, so hiding a control is never the only safeguard. Zero privilege-escalation incidents since launch.' },
         { name: 'The existing access model', chosen: false, reason: 'It lacked the fine-grained controls per business unit that self-service configuration needs.' },
       ],
+      tradeoff: 'Entitlements become something to administer: roles and business-unit scopes have to be defined, kept current and reviewed as teams change.',
     },
   ]}
 />
 
-<Draft note="Other options you weighed, and the trade-offs in your words">
+<Draft note="Other options you weighed">
 
 TODO — The cards compare each choice with the state it replaced. Did you also evaluate other options: feature-specific settings pages instead of one centralised platform, static configuration files edited by business users, a third-party feature-flag or configuration service? If so, add them, and say why the centralised platform won.
-
-TODO — The cards are live without trade-off lines until you confirm them. Claude's suggestions, to confirm or rewrite in your own words, then add back to its card as `tradeoff`:
-
-- **How travel product settings change:** Settings now change outside the release process, so the safeguards move from code review into the platform itself: who can change what has to be enforced by access control and visible through audit-friendly workflows.
-- **How access to settings is controlled:** Entitlements become something to administer: roles and business-unit scopes have to be defined, kept current and reviewed as teams change.
 
 </Draft>
 
