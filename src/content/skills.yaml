@@ -129,12 +129,19 @@
     - name: Microservices
       level: Advanced
       context: Designing and building services myself, not only the front ends that call them.
+    # Where these were used confirmed by Niraj (JP Morgan Chase, Xpanxion).
     - name: MongoDB
       level: Expert
+      context: Used at JP Morgan Chase and Xpanxion.
+      roles: [jpmc, xpanxion]
     - name: MySQL
       level: Advanced
+      context: Used at JP Morgan Chase and Xpanxion.
+      roles: [jpmc, xpanxion]
     - name: GraphQL
       level: Intermediate
+      context: Used at JP Morgan Chase and Xpanxion.
+      roles: [jpmc, xpanxion]
 
 - id: cloud
   order: 6
@@ -146,8 +153,11 @@
       level: Advanced
       context: GitHub Actions — this site builds, audits its colour contrast and deploys on every push. Side projects ship to Vercel and Netlify.
       projects: [rxbit, shredtrack, nexpenso]
+    # Docker in Nexpenso confirmed by Niraj.
     - name: Docker
       level: Intermediate
+      context: Used in Nexpenso, my personal finance tracker.
+      projects: [nexpenso]
     - name: AWS & Azure
       level: Intermediate
     - name: Kubernetes
