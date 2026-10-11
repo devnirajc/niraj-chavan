@@ -1,8 +1,8 @@
 ---
 /**
  * Home — a guided tour in chapters. Each chapter is shown only when it has
- * published content, and the numbering is assigned after that filter, so the
- * sequence stays 01, 02, 03… whatever is still in draft.
+ * published content, and the chapter rail lists only the chapters shown, so
+ * nothing in draft leaves a gap or a dead link.
  */
 import { getImage } from 'astro:assets';
 import { render } from 'astro:content';
@@ -54,7 +54,7 @@ const candidates = [
   { id: 'kind-words', label: 'Kind words', show: testimonials.length > 0 },
   { id: 'contact', label: 'Contact', show: true },
 ];
-const chapters = candidates.filter((c) => c.show).map((c, i) => ({ ...c, index: String(i + 1).padStart(2, '0') }));
+const chapters = candidates.filter((c) => c.show);
 const chapter = Object.fromEntries(chapters.map((c) => [c.id, c])) as Record<string, (typeof chapters)[number]>;
 
 const portraitImage = await getImage({ src: portrait, width: 800, height: 800, format: 'webp' });
@@ -87,7 +87,6 @@ const personLd = {
   <section class="container-page pt-24" aria-labelledby="story">
     <SectionHeading
       id="story"
-      index={chapter.story.index}
       eyebrow="Story"
       title="The short version"
       lede={`I started out building e-commerce storefronts in 2014. ${profile.years} years later, I work on enterprise travel platforms used by thousands of people a day. The job hasn't really changed: take a complicated set of business requirements and turn it into something people can use without stopping to think about it.`}
@@ -114,7 +113,6 @@ const personLd = {
       <section class="container-page pt-28" aria-labelledby="approach">
         <SectionHeading
           id="approach"
-          index={chapter.approach.index}
           eyebrow="How I think"
           title="The method behind the work"
           lede="Frameworks change every few years. The way I approach a problem, a bug, a slow page or a pull request hasn't — and it's what I'd bring to your team."
@@ -145,7 +143,6 @@ const personLd = {
       <section class="container-page pt-28" aria-labelledby="problems">
         <SectionHeading
           id="problems"
-          index={chapter.problems.index}
           eyebrow="Problems solved"
           title="Enterprise problems, and how I solved them"
           lede="Each one told the same way: the problem, the constraint, how I found the cause, what I built, and what it changed."
@@ -165,7 +162,6 @@ const personLd = {
       <section class="container-page pt-28" aria-labelledby="case-studies">
         <SectionHeading
           id="case-studies"
-          index={chapter['case-studies'].index}
           eyebrow="Case studies"
           title="The long version"
           lede="Architecture, decisions, trade-offs and outcomes — the full story of the work I'm proudest of."
@@ -185,7 +181,6 @@ const personLd = {
       <section class="container-page pt-28" aria-labelledby="projects">
         <SectionHeading
           id="projects"
-          index={chapter.projects.index}
           eyebrow="Projects"
           title="Things I've built"
           lede="Products I build on my own time, and enterprise work for clients across energy, travel, security and retail."
@@ -205,7 +200,6 @@ const personLd = {
       <section class="container-page pt-28" aria-labelledby="expertise">
         <SectionHeading
           id="expertise"
-          index={chapter.expertise.index}
           eyebrow="Expertise"
           title="What I'm good at, and where I proved it"
           lede="Not a wall of logos — each skill is tied to the roles and projects where I used it."
@@ -237,7 +231,6 @@ const personLd = {
       <section class="container-page pt-28" aria-labelledby="writing">
         <SectionHeading
           id="writing"
-          index={chapter.writing.index}
           eyebrow="Writing"
           title="Engineering notes"
           lede="Things I've learned, written down so others don't have to learn them the hard way."
@@ -257,7 +250,6 @@ const personLd = {
       <section class="container-page pt-28" aria-labelledby="now">
         <SectionHeading
           id="now"
-          index={chapter.now.index}
           eyebrow="Now"
           title="What I'm building now"
           link={{ label: 'Changelog & tech radar', href: '/now/' }}
@@ -289,7 +281,7 @@ const personLd = {
   {
     chapter['kind-words'] && (
       <section class="container-page pt-28" aria-labelledby="kind-words">
-        <SectionHeading id="kind-words" index={chapter['kind-words'].index} eyebrow="Kind words" title="What people I've worked with say" />
+        <SectionHeading id="kind-words" eyebrow="Kind words" title="What people I've worked with say" />
         <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t) => (
             <TestimonialCard testimonial={t} />
@@ -302,9 +294,7 @@ const personLd = {
   <section class="container-page pt-28" aria-labelledby="contact">
     <div class="relative overflow-hidden rounded-3xl border border-line bg-surface px-6 py-14 text-center shadow-md sm:px-12">
       <div aria-hidden="true" class="bg-glow pointer-events-none absolute inset-0"></div>
-      <p class="eyebrow relative">
-        <span class="text-accent-fg">{chapter.contact.index}</span> · Contact
-      </p>
+      <p class="eyebrow relative">Contact</p>
       <h2 id="contact" class="relative mx-auto mt-3 max-w-3xl text-title font-semibold">
         Have a hard front-end problem? I'd like to hear about it.
       </h2>
