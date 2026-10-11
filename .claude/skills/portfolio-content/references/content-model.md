@@ -133,6 +133,8 @@ Body: a short intro paragraph.
       caseStudies: [case study id]
 ```
 
+A skill with no `context` and no visible evidence renders as a small chip in the area's "Also" row instead of a full row (so there are no empty half rows). Giving it context — confirmed by Niraj — promotes it to a full row automatically.
+
 ## now and radar
 
 `src/content/now/*.md`: `date` (YYYY-MM-DD), `title`, `kind` (shipped | building | learning | writing | milestone), `link` (site path or URL, optional), body = 1–2 sentences.
