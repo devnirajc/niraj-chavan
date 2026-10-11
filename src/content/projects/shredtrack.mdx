@@ -2,18 +2,18 @@
 title: ShredTrack
 tagline: Calories, macros and workouts in one place
 summary: Calorie and macro tracker with food logging, workouts and an AI meal planner.
-featured: true
-order: 3
+order: 6
 kind: personal
 category: Fitness and nutrition tracker
 industry: Health & fitness
 status: live
-cover: ../../assets/projects/shredtrack.png
-coverAlt: "ShredTrack's dark dashboard: calories, protein, carbs and fat against daily targets, macro rings, today's food log by meal, and a tip suggesting more protein."
+cover: ../../assets/projects/shredtrack-cover-light.png
+coverDark: ../../assets/projects/shredtrack-cover-dark.png
+coverAlt: "Abstract illustration of a nutrition tracker: calories against a daily target, rings for protein, carbs and fat, a food log by meal, a five-day streak and an AI planner card. It is not a screenshot of ShredTrack."
 links:
   live: https://shred-track-livid.vercel.app/
   liveLabel: Open ShredTrack
-stack: [Next.js, React, PWA]
+stack: [Next.js, React, IndexedDB (Dexie), PWA]
 features:
   - Daily calories, protein, carbs and fat tracked against personal targets
   - Food log grouped by meal, with day-by-day navigation
@@ -21,35 +21,95 @@ features:
   - Workout logging
   - An AI meal planner
   - Contextual tips based on the day so far, such as how much protein is left to hit
+  - Sign-in with email and password
   - Light and dark themes
 ---
 
 ShredTrack tracks what goes into a cut. Each day shows calories, protein, carbs and fat against personal targets, the food logged so far by meal, and a tip based on what is left: "Protein at 69g/210g — add chicken, paneer, or a whey shake." Workouts, progress and goals sit alongside, along with an AI meal planner.
 
-## Under the hood
+It is my own side project, which I designed and built.
 
-ShredTrack is built with Next.js and deployed on Vercel, with a web app manifest so it installs to a phone's home screen.
+- **Who it's for:** someone on a cut who needs to hit calorie and protein targets every day
+- **Shape:** an installable Next.js app on Vercel, with sign-in and storage on the device
+- **My role:** designer and engineer
 
-<Draft note="Fill in — not visible from the outside">
+<Draft note="Why you built it — only you know this">
 
-## Architecture
-
-TODO: Where does data live? Which model powers the AI planner, and how are prompts built from the day's log?
-
-## Challenges solved
-
-TODO
-
-## Performance
-
-TODO
-
-## Accessibility
-
-TODO: The dashboard is chart-heavy — how are macro rings exposed to screen readers?
-
-## What's next
-
-TODO
+TODO — Why did you build ShredTrack: your own cut, frustration with existing trackers (what was wrong with them), a way to learn Next.js? Does anyone else use it? Have you used it through a whole cut, and what did it change?
 
 </Draft>
+
+## The business problem
+
+A cut is won or lost on daily numbers: calories under target, protein at target, day after day. A tracker that only records what you ate leaves the question that matters to you: *what should I eat next?*
+
+ShredTrack answers that question. Its tips work from what is left for the day, and the AI meal planner works ahead.
+
+<Draft note="Confirm the framing">
+
+TODO — Is that how you would put it? What did you use before, and where did it fall short: food databases full of Western foods, no paneer or dal, too many taps to log a meal, no guidance?
+
+</Draft>
+
+## Architecture and design
+
+ShredTrack is a Next.js application using the App Router, deployed on Vercel, with a web app manifest so it installs to a phone's home screen. Users sign in with an email and password, and the app uses IndexedDB, through Dexie, for storage on the device.
+
+<Draft note="Architecture detail">
+
+TODO — Where does the food data come from: your own database, an API such as USDA or Open Food Facts, entries the user adds?
+
+TODO — Which model powers the AI meal planner, and how are prompts built from the day's log and targets? Does it run in a Next.js route handler so the API key stays on the server?
+
+</Draft>
+
+<Draft note="Challenges — fill in two or three real ones">
+
+## Key technical challenges
+
+TODO — Two or three real problems, each as: the challenge, how you found the cause, what you did, and what changed. Candidates:
+
+- **Logging fast enough to keep doing it:** how many taps to log a meal, and how you cut them.
+- **Tips that are actually useful:** how a tip is chosen from the day's remaining macros.
+- **AI meal plans that fit the numbers:** how you make the model respect calorie and protein targets, and what happens when it doesn't.
+- **Working offline:** what happens when you log a meal with no signal.
+
+</Draft>
+
+<Draft note="Engineering decisions — answer these and they become decision cards">
+
+## Engineering decisions
+
+TODO — For each, what you chose, what else you considered and what it cost:
+
+1. **Next.js versus a React single-page app** (Nexpenso and Rxbit are Vite single-page apps; why Next.js here?)
+2. **Where data lives:** on the device in IndexedDB, on a server, or both with sync?
+3. **Which AI model and provider for the meal planner**, and how you keep its cost and latency in check.
+
+</Draft>
+
+<Draft note="Performance, accessibility and security — fill in">
+
+## Performance, accessibility and security
+
+TODO — Performance: Lighthouse scores on mobile, time to log a meal, how the dashboard loads?
+
+TODO — Accessibility: the dashboard is chart-heavy. How are the macro rings exposed to screen readers (text values beside them, `aria` labels)? Keyboard support? Contrast in the dark theme?
+
+TODO — Security: how are passwords stored, how are sessions handled, and is the AI provider's key kept on the server?
+
+</Draft>
+
+<Draft note="Lessons and roadmap — only you can write these">
+
+## Lessons learned and what's next
+
+TODO — What would you do differently? What did building with Next.js teach you compared with Angular at work? What's next: barcode scanning, weekly reports, syncing between devices, sharing plans with a coach?
+
+</Draft>
+
+## Outcome summary
+
+- **What it is:** a live, installable tracker for calories, macros, meals and workouts, with an AI meal planner.
+- **Product focus:** guidance as well as logging, with tips that start from what is left for the day.
+- **Technical approach:** Next.js on Vercel, with IndexedDB storage on the device.

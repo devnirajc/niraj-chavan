@@ -1,30 +1,81 @@
 ---
 title: VDC
 tagline: Website for a chartered-accountancy firm
-summary: Corporate website for Deshmukh & Deshpande Associates, a firm of chartered accountants.
-order: 8
+summary: Corporate website for Deshmukh & Deshpande Associates, a firm of chartered accountants, which I built on WordPress at Whitecode early in my career.
+order: 10
 kind: client
 category: Corporate website
 industry: Professional services
 company: Deshmukh & Deshpande Associates
-status: live
-cover: ../../assets/projects/vdc.png
-coverAlt: "The Deshmukh & Deshpande Associates home page, with a 'Let us worry about the complexity' banner and links to services, blogs, careers and a knowledge base."
-links:
-  live: http://ddca.net.in/
-  liveLabel: Visit ddca.net.in
+status: archived
+cover: ../../assets/projects/vdc-cover-light.png
+coverDark: ../../assets/projects/vdc-cover-dark.png
+coverAlt: "Abstract illustration of a corporate website in a browser window beside an accounting ledger whose debits and credits balance. It is not a screenshot of the firm's site."
+stack:
+  - WordPress
+  - PHP
+  - jQuery
+features:
+  - Service pages for the firm's practice areas
+  - News and events
+  - Blog and articles
+  - Knowledge base
+  - Careers page
+  - Contact form
+  - Firm profile — leadership, team, offices, ethics and staff policies
 ---
 
-The corporate website for Deshmukh & Deshpande Associates, a firm of chartered accountants — services, news, careers and a knowledge base for their clients.
+The corporate website for Deshmukh & Deshpande Associates, a firm of chartered accountants: its services, news, articles, careers and a knowledge base for clients. I built it at Whitecode between late 2014 and 2015, in the first year of my career. The site is no longer online.
 
-<Draft note="Fill in — when, and what you built">
+- **Client:** Deshmukh & Deshpande Associates, chartered accountants
+- **Industry:** accounting and professional services
+- **Product:** the firm's public website
+- **Users:** prospective clients looking for services, existing clients reading articles and the knowledge base, job applicants, and the firm's own staff publishing content
+- **My role:** Software Developer at Whitecode. I built the site on WordPress
+- **When:** 2014 – 2015
 
-## My role
+## The business problem
 
-TODO
+A chartered-accountancy firm is judged on trust and expertise before a client ever calls. The firm needed a website that did four jobs:
 
-## Stack
+- **Explain what the firm does**, with a page for each practice area.
+- **Show its expertise**, through news, events, articles and a knowledge base clients could come back to.
+- **Show who it is**: its leadership, team, offices, and its ethics and staff policies.
+- **Turn interest into contact**: a contact form for enquiries and a careers page for applicants.
 
-TODO
+Much of that content changes all the time. News, articles and knowledge-base entries are written by the firm, not by a developer, so the firm's staff had to be able to publish it themselves.
+
+## Architecture and design
+
+The site runs on **WordPress**, on the Spacious theme by ThemeGrill, with plugins for the contact form, team pages, tabbed content and a photo gallery. It is organised into seven sections:
+
+- Service pages for each practice area
+- News and events
+- Blog and articles
+- A knowledge base
+- Careers
+- Contact
+- The firm's profile: leadership, team, offices, ethics and staff policies
+
+### Why WordPress
+
+The site is mostly content that the firm itself keeps adding to. WordPress gave the firm's staff an editor they could publish news, articles and knowledge-base entries in, without asking a developer. An established theme and well-used plugins covered the presentation, contact form, team pages and gallery.
+
+<Draft note="Only if there was more than the website">
+
+TODO — Your first brief described a custom admin with payment reminders, due-date notifications and email templates. The archived site shows only the WordPress website, so this page describes that. If you also built a client portal or reminder system for the firm, tell me in a sentence or two and I'll add it.
 
 </Draft>
+
+## Looking back
+
+This was one of my first projects, and I'd approach parts of it differently today:
+
+- **Accessibility from the first commit.** I would test the theme, forms and tabbed content with a keyboard and a screen reader, and aim for WCAG 2.2 AA, as I do on what I build now.
+- **A plan for maintenance.** A WordPress site depends on regular core, theme and plugin updates. Today I would agree who owns those updates before handover, so the site stays secure after the project ends.
+- **Performance budgets.** Image optimisation, caching and a measured page weight for a site whose visitors judge the firm on first impression.
+- **Search over the knowledge base**, so clients can find an answer without browsing article by article.
+
+## Outcome summary
+
+The firm got a website that presented its practice areas, team and expertise, took enquiries and applications, and let its own staff publish news, articles and knowledge-base content. For me, projects like this at Whitecode were the start of a path that runs through e-commerce, enterprise Angular applications and, today, Chase Travel at JP Morgan Chase.

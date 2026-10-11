@@ -59,7 +59,8 @@ category: string              # "Prescription builder"
 industry: string
 company: string               # client or employer, optional
 status: live | archived | in-progress
-cover: ../../assets/projects/<file>   # required
+cover: ../../assets/projects/<name>-cover-light.png   # required — light-theme cover
+coverDark: ../../assets/projects/<name>-cover-dark.png # optional — dark-theme cover; without it, cover shows in both
 coverAlt: string                       # required — describe what the image shows
 links: { live?: url, liveLabel?: string, repo?: url }
 stack: [string]
@@ -70,7 +71,9 @@ timeline: [{ date, title, note? }]   # "how it evolved"
 caseStudy: case study id      # optional
 ```
 
-Body: Overview prose first (rendered under an "Overview" heading), then optional sections. Unverified sections go in `<Draft>`.
+Body: written as an engineering case study. Overview prose first (rendered under an "Overview" heading), with a short bold-label list — client, product, users, role, when — then `##` sections in this order, keeping only those that apply: The business problem · Discovery and requirements · Architecture and design · Key technical challenges (`###` per challenge, with **Challenge.** / **Analysis.** / **Solution.** / **Outcome.**) · Engineering decisions (`<Decisions>`) · Performance · Accessibility · Security · Automation · Admin · Business impact · Leadership and collaboration · Lessons learned · Outcome summary. Verified text sits outside `<Draft>`; anything unconfirmed goes inside one as `TODO —` questions.
+
+The page renders `metrics` as "Outcomes at a glance" above the body, and builds an "On this page" nav from the body's `##` headings (skipping those inside `<Draft>` when drafts are hidden). Don't name a body heading Overview, Features, Outcomes or Architecture — the template already uses those ids; use "Architecture and design".
 
 ## problems
 
@@ -137,7 +140,7 @@ A skill with no `context` and no visible evidence renders as a small chip in a c
 
 ## now and radar
 
-`src/content/now/*.md`: `date` (YYYY-MM-DD), `title`, `kind` (shipped | building | learning | writing | milestone), `link` (site path or URL, optional), body = 1–2 sentences.
+`src/content/now/*.md`: `date` (YYYY-MM-DD), `title`, `kind` (shipped | building | learning | writing | milestone), `link` (site path or URL, optional), body = 1–2 sentences. The newest date across these entries and Medium articles is the page's "Last updated", so every content change adds or extends today's entry. Keep site links in `link`; body Markdown links don't get the base path.
 
 `src/content/radar.yaml`: `id, name, ring (adopt | trial | assess | hold), quadrant (languages-frameworks | tools | platforms | techniques), note`. Adopt/Trial notes should say where he uses it.
 
@@ -189,3 +192,4 @@ Available in every `.mdx` entry without importing:
 - `<Callout kind="note | tradeoff | lesson" title?>…</Callout>`
 - `<Steps label="…" steps={[{ title, detail }]} />`
 - `<Figure src={img} alt="…" caption="…" />` — import the image at the top of the MDX file: `import shot from '../../assets/case-studies/x.png';`
+- `<Decisions decisions={[{ title, context, options: [{ name, chosen, reason }], tradeoff }]} />` — ADR-style decision cards (the same component as a case study's `decisions`), for a project body. Put it inside `<Draft>` until Niraj has confirmed the reasoning. A card built only from confirmed facts (the choice against the state it replaced) can go live without `tradeoff`; keep the suggested trade-off in a `<Draft>` below it until he confirms it.

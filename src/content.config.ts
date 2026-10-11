@@ -126,6 +126,8 @@ const projects = defineCollection({
       company: z.string().optional(),
       status: z.enum(['live', 'archived', 'in-progress']).default('live'),
       cover: image(),
+      /** Dark-theme version of the cover; without one, `cover` shows in both themes. */
+      coverDark: image().optional(),
       coverAlt: z.string(),
       links: z
         .object({

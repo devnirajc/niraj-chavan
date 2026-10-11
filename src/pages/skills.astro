@@ -8,6 +8,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import SubNav from '@/components/ui/SubNav.astro';
 import Toc from '@/components/ui/Toc.astro';
+import LevelDots from '@/components/ui/LevelDots.astro';
 import { ABOUT_NAV } from '@/data/nav';
 import { published, visibleRefs } from '@/lib/drafts';
 import { href } from '@/lib/url';
@@ -52,10 +53,8 @@ const LEVELS = { Expert: 3, Advanced: 2, Intermediate: 1 } as const;
           {
             Object.entries(LEVELS).map(([label, n]) => (
               <div class="flex items-center gap-2">
-                <dt class="flex gap-0.5" aria-hidden="true">
-                  {[1, 2, 3].map((i) => (
-                    <span class:list={['h-2.5 w-1 rounded-full', i <= n ? 'bg-accent-solid' : 'bg-line']} />
-                  ))}
+                <dt aria-hidden="true">
+                  <LevelDots filled={n} />
                 </dt>
                 <dd>{label}</dd>
               </div>
@@ -80,11 +79,7 @@ const LEVELS = { Expert: 3, Advanced: 2, Intermediate: 1 } as const;
                     <h3 class="font-medium text-fg">{skill.name}</h3>
                     {skill.level && (
                       <p class="mt-1 flex items-center gap-2 text-sm text-fg-subtle">
-                        <span class="flex gap-0.5" aria-hidden="true">
-                          {[1, 2, 3].map((i) => (
-                            <span class:list={['h-2.5 w-1 rounded-full', i <= LEVELS[skill.level!] ? 'bg-accent-solid' : 'bg-line']} />
-                          ))}
-                        </span>
+                        <LevelDots filled={LEVELS[skill.level]} />
                         {skill.level}
                       </p>
                     )}
@@ -122,11 +117,7 @@ const LEVELS = { Expert: 3, Advanced: 2, Intermediate: 1 } as const;
                         <span class="font-medium text-fg">{skill.name}</span>
                         {skill.level && (
                           <span class="flex items-center gap-1.5 text-fg-subtle">
-                            <span class="flex gap-0.5" aria-hidden="true">
-                              {[1, 2, 3].map((i) => (
-                                <span class:list={['h-2 w-[3px] rounded-full', i <= LEVELS[skill.level!] ? 'bg-accent-solid' : 'bg-line']} />
-                              ))}
-                            </span>
+                            <LevelDots filled={LEVELS[skill.level]} size="sm" />
                             {skill.level}
                           </span>
                         )}

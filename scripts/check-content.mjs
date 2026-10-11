@@ -10,7 +10,9 @@
  * those blocks are not rendered in production anyway.
  *
  * --report prints every draft and every TODO, published or not, as a
- * to-do list for finishing the site's content. It always exits 0.
+ * to-do list for finishing the site's content, and flags a "Now" changelog
+ * with no entry for today (every content change should log one). It always
+ * exits 0.
  *
  * Runs before `astro build` (see package.json), alongside the contrast audit.
  */
@@ -38,6 +40,8 @@ const countTodos = (text) => (text.match(/\bTODO\b/g) ?? []).length;
 
 /** @type {{ file: string, label: string, draft: boolean, todos: number }[]} */
 const entries = [];
+/** Dates (YYYY-MM-DD) of published "Now" changelog entries. */
+const nowDates = [];
 
 for (const path of walk(CONTENT)) {
   const file = relative(ROOT, path).replaceAll('\\', '/');
@@ -48,6 +52,9 @@ for (const path of walk(CONTENT)) {
     if (!match) continue;
     const [, frontmatter, body] = match;
     const data = parse(frontmatter) ?? {};
+    if (file.startsWith('src/content/now/') && data.date && data.draft !== true) {
+      nowDates.push(data.date instanceof Date ? data.date.toISOString().slice(0, 10) : String(data.date));
+    }
     entries.push({
       file,
       label: data.title ?? file,
@@ -104,6 +111,13 @@ if (report) {
     console.log('\nBLOCKING — published entries that still contain TODO:');
     for (const e of blocking) console.log(`  ${e.todos} TODO  ${e.file}`);
   }
+
+  const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
+  const lastNow = nowDates.sort().at(-1);
+  console.log(
+    `\nNow page: newest changelog entry ${lastNow ?? 'none'}` +
+      (lastNow === today ? ' (today)' : ' — if content changed today, log it in src/content/now/')
+  );
   console.log('');
   process.exit(0);
 }

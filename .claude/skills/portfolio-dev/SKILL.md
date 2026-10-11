@@ -35,6 +35,7 @@ public/sw.js            retires the old site's service worker — keep until ear
 
 - **Links go through `href()`** from `@/lib/url`. The site lives under a base path with trailing slashes; a hand-written `/about` 404s locally and redirects in production.
 - **Content goes through `published()`**, never `getCollection()` + a hand-written draft filter, and references through `visibleRefs()`. That is the single rule deciding what production shows.
+- **A change visitors can read also updates `/now/`.** If the work changes site copy, adds a page or section, or publishes something, add or extend today's entry in `src/content/now/` so the page's "Last updated" date moves. The rules are in the `portfolio-content` skill (*Every content update also updates the Now page*).
 - **A section index that can be empty is a rest route** — `src/pages/<section>/[...index].astro` with `export const getStaticPaths = () => pathsWhenVisible('<collection>')`. A plain `.astro` page can't opt out of being built, so it would ship (and enter the sitemap) empty while its entries are drafts. Nav items for such sections set `requires:` in `src/data/nav.ts`.
 - **Colour only via semantic utilities** — `bg-surface`, `text-fg-muted`, `border-line`, `text-accent-fg`, etc. Tailwind's default palette is deliberately cleared. New colour = new token in `tokens.css` (both themes) **plus** a pair in `scripts/check-contrast.mjs`; the build fails if any pair drops below its WCAG threshold. Text uses `accent-fg`, never `accent` (decorative only).
 - **Icons**: `<Icon name="…" />` (inline SVG, always `aria-hidden`). Add new glyphs to `src/components/ui/Icon.astro` (Lucide geometry). Every icon-only control needs an `sr-only` label.
@@ -45,7 +46,7 @@ public/sw.js            retires the old site's service worker — keep until ear
   - don't disable a button that may hold focus — use `aria-disabled` (see `ArchitectureDiagram.astro`)
 - **Headings**: one `<h1>` per page (PageHeader or the hero); never skip levels — components that render sub-headings take a `headingLevel` prop.
 - **Motion**: compositor-only, subtle, and off under `prefers-reduced-motion`. Reveals use the `.reveal` class (CSS scroll-driven animation — no JS). Page transitions are native cross-document View Transitions. No parallax, particles or animation libraries.
-- **Images**: masters in `src/assets/`, rendered with `<Image>` from `astro:assets` with `widths`/`sizes`. Above-the-fold images get `loading="eager" fetchpriority="high"`; everything else stays lazy. Decorative images get `alt=""`.
+- **Images**: masters in `src/assets/`, rendered with `<Image>` from `astro:assets` with `widths`/`sizes`. Above-the-fold images get `loading="eager" fetchpriority="high"`; everything else stays lazy. Decorative images get `alt=""`. An image with light and dark versions (project covers) goes through `ThemeImage.astro`, which fetches only the copy for the current theme. Pass `priority` rather than `loading` for above-the-fold use.
 - **Hairline grids** (`gap-px` on a `bg-line` container) show a grey hole when the last row is short — size columns to the item count, or add `span-odd-last` for two-column layouts.
 
 ## Astro 7 specifics that bite

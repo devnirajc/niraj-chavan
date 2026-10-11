@@ -37,8 +37,8 @@ const stats = highlights.map((h) => (h.label.startsWith('companies') ? { ...h, v
       </h1>
 
       <p class="mt-6 max-w-xl text-lg leading-relaxed text-fg-muted">
-        I'm {profile.name} — a senior UI engineer with {profile.years} years across banking, energy, cybersecurity
-        and e-commerce. Today I build enterprise travel platforms at {profile.current.company}, where the work is less
+        I'm {profile.name} — a senior software engineer with {profile.years} years across banking, energy, cybersecurity
+        and e-commerce. Today I lead front-end work on Chase Travel at {profile.current.company}, where the work is less
         about frameworks and more about making complicated things feel obvious.
       </p>
 
@@ -78,8 +78,9 @@ const stats = highlights.map((h) => (h.label.startsWith('companies') ? { ...h, v
       </p>
     </div>
 
-    <!-- Inspector: the same facts as a structured panel. -->
-    <aside class="card overflow-hidden shadow-lg" aria-label="Profile at a glance">
+    <!-- Inspector: the same facts as a structured panel. A named group, not an
+         <aside>: a complementary landmark may not sit inside the hero section. -->
+    <div class="card overflow-hidden shadow-lg" role="group" aria-label="Profile at a glance">
       <div class="flex items-center gap-2 border-b border-line bg-sunken/60 px-4 py-2.5" aria-hidden="true">
         <span class="size-2.5 rounded-full bg-line"></span>
         <span class="size-2.5 rounded-full bg-line"></span>
@@ -116,7 +117,7 @@ const stats = highlights.map((h) => (h.label.startsWith('companies') ? { ...h, v
             ['Currently', `${profile.current.title}, ${profile.current.company}`],
             ['Experience', `${profile.years} years · since ${profile.careerStart.slice(0, 4)}`],
             ['Based in', `${profile.location} · ${profile.timezone}`],
-            ['Focus', 'Angular · React · TypeScript · Design systems · Accessibility'],
+            ['Focus', 'Angular · React · TypeScript · Micro-frontends · Accessibility'],
           ].map(([term, value]) => (
             <div class="grid grid-cols-[6.5rem_1fr] gap-3 border-b border-line-subtle px-5 py-2.5">
               <dt class="text-fg-subtle">{term}</dt>
@@ -145,7 +146,7 @@ const stats = highlights.map((h) => (h.label.startsWith('companies') ? { ...h, v
           {domains.map((d) => <li class="chip min-h-6 px-2 text-xs">{d.name}</li>)}
         </ul>
       </div>
-    </aside>
+    </div>
   </div>
 
   <div class="container-page relative pb-14">

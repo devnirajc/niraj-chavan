@@ -1,9 +1,9 @@
-# DRAFT — solution restates my experience entry (Connect | 91).
+# DRAFT — solution restates my experience entry (Connect 91).
 title: Styling a large e-commerce front end without it collapsing under its own weight
 draft: true
 order: 7
 domain: legacy-modernisation
-context: Connect | 91 · e-commerce platforms
+context: Connect 91 · e-commerce platforms
 problem: >-
   TODO: What the CSS looked like before, and what that cost each new page.
 challenge: >-

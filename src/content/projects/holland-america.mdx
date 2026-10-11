@@ -1,34 +1,193 @@
 ---
 title: Holland America Line
-tagline: Cruise booking e-commerce
-summary: E-commerce application for cruise bookings and travel experiences.
-order: 5
+tagline: Front-end performance and booking UI for a cruise line's e-commerce site
+summary: Holland America Line's cruise booking site, which I worked on as a Senior UI Engineer at Xpanxion — performance optimisation, cruise search and booking UI, reusable components, and responsive, accessible pages.
+order: 7
 kind: client
-category: E-commerce
+category: E-commerce · Cruise booking
 industry: Travel & hospitality
 company: Holland America Line
 status: live
-cover: ../../assets/projects/holland.png
-coverAlt: "Holland America Line's home page: an Alaska cruise hero image of a ship in a glacier bay, under the site's main navigation."
+cover: ../../assets/projects/holland-cover-light.png
+coverDark: ../../assets/projects/holland-cover-dark.png
+coverAlt: "Abstract illustration of a cruise-booking interface: a seven-night itinerary, a calendar with a date range selected, and three voyage cards with prices. It is not a screenshot of Holland America Line's site."
 links:
   live: https://www.hollandamerica.com/en_US.html
   liveLabel: Visit hollandamerica.com
+features:
+  - Cruise search and booking-flow screens
+  - Faster page loads through lazy loading and code splitting
+  - Optimised images
+  - Smaller JavaScript and CSS bundles
+  - Less unnecessary re-rendering
+  - Responsive layouts across devices and browsers
+  - Accessibility to WCAG
 ---
 
-Holland America Line's cruise booking site — the e-commerce application where travellers plan voyages, browse destinations and book. This was client work, so there is no public repository.
+Holland America Line is a cruise line in the Carnival Corporation & plc group, and hollandamerica.com is its e-commerce site, where travellers browse voyages and destinations, search for a cruise and book it. I worked on the site's front end as a Senior UI Engineer at Xpanxion. My work had three parts: making a photo-heavy site fast, building the cruise search and booking screens, and raising the standard of the front-end code through reusable components, unit tests, code review and mentoring. This was client work, so there is no public repository.
 
-<Draft note="Fill in — which employer, when, and what you built">
+- **Client:** Holland America Line, cruise travel
+- **Product:** the cruise booking site, from browsing destinations to completing a booking
+- **Users:** travellers researching and booking cruises, on desktop and mobile
+- **My role:** Senior UI Engineer at Xpanxion. I built cruise search and booking UI, worked on performance, built shared components, wrote unit tests, reviewed code and mentored developers
+- **When:** between 2017 and 2019, during my time at Xpanxion
 
-## My role
+<Draft note="Project scale and team — fill in from memory">
 
-TODO: Which company were you with for this engagement, and when? What did you own?
+TODO — Roughly when, and for how long, did you work on this? How big was the front-end team, and how many developers did you review and mentor? Were there other vendors or an in-house Holland America team you worked alongside?
 
-## Stack
-
-TODO
-
-## Challenges solved
-
-TODO
+TODO — Which framework and version was the front end (Angular? AngularJS? something on top of a CMS such as Adobe Experience Manager)? TypeScript? Which unit-test tools (Jasmine and Karma, Jest)? Once confirmed, these go in the `stack` list and the page's sidebar.
 
 </Draft>
+
+## The business problem
+
+The site is built around large destination photography, and it had performance problems. The work that fixed them shows what the causes were:
+
+- Pages loaded JavaScript they didn't need.
+- Images were heavier than they had to be.
+- JavaScript and CSS bundles had grown large.
+- Components re-rendered more often than necessary.
+
+On a booking site, each of those slows the path from browsing a voyage to booking it.
+
+<Draft note="What the slowness cost — only you know this">
+
+TODO — How did the performance problem show up: complaints from the client, analytics showing drop-off, a failing audit, slow search results? Which pages were slowest: the home page's hero images, search results, voyage details, the booking flow?
+
+</Draft>
+
+<Draft note="Discovery and requirements — whole section is unconfirmed">
+
+## Discovery and requirements
+
+TODO — How did work reach you: from Holland America's product team, through an Xpanxion lead, as designs from an agency? How did you find out where the time went: Chrome DevTools, Lighthouse, WebPageTest, the client's analytics?
+
+TODO — Did requirements for the search or booking screens change while you built them? How did you handle it?
+
+</Draft>
+
+<Draft note="Architecture — nothing here is public">
+
+## Architecture and design
+
+TODO — How was the front end put together: a single-page app, or components rendered into CMS-managed pages? Where did cruise search results and pricing come from (REST APIs, a booking engine)? How did shared components get from your code into other developers' features: a component library, a style guide, copy and paste?
+
+</Draft>
+
+## Key technical challenges
+
+### Making a photo-heavy site fast
+
+**Challenge.** Pages shipped more code and image weight than they needed, and did more rendering work than they needed to.
+
+**Solution.** I worked through it in four parts:
+
+- **Lazy loading and code splitting**, so each page loads only the code it needs.
+- **Image optimisation** for the large photographs the pages are built around.
+- **Smaller bundles and assets**, cutting the JavaScript and CSS each page ships.
+- **Less rendering work**, removing unnecessary re-renders so pages stay responsive while people use them.
+
+<Draft note="Analysis and outcome — the numbers make this section">
+
+TODO — Analysis: which of the four mattered most, and how did you know? For example, responsive `srcset` images or modern formats, route-level lazy loading, removing unused libraries, fewer re-renders on the results list.
+
+TODO — Outcome: anything you can stand behind, before → after: page-load time, Lighthouse score, bundle size, image weight, conversion or bounce rate. Approximate is fine ("roughly 40% faster") if that is how you remember it. Which tool did you measure with? Numbers go in the `metrics` list in the frontmatter.
+
+</Draft>
+
+### Cruise search and booking screens
+
+**Challenge.** Search and booking are the screens where a traveller turns into a customer, and they have to work on every device and browser the audience uses.
+
+**Solution.** I built UI for cruise search and the booking flow, with responsive layouts that stay consistent across devices and browsers.
+
+<Draft note="Which screens, and what was hard">
+
+TODO — Which screens did you build: the search form and filters, the voyage results list, voyage details, stateroom selection, guest details, payment? What was hard about them: filter state, pricing that changes as options are picked, validation across a multi-step form, browser support (Internet Explorer 11)?
+
+</Draft>
+
+### One set of components for the whole team
+
+**Challenge.** Several developers were building features on the same site, so the same patterns were needed in many places.
+
+**Solution.** I built reusable components that other developers on the team built their features on.
+
+<Draft note="Which components, and how they spread">
+
+TODO — Which components were they (cards, carousels, date pickers, filters, form fields)? How did you get the team to use them? Did they speed up delivery or reduce defects in a way you can describe?
+
+</Draft>
+
+<Draft note="Engineering decisions — answer these and they become decision cards">
+
+## Engineering decisions
+
+TODO — For each, say what you chose, what else you considered, and what it cost:
+
+1. **Where to split the code:** by route, by component, or by feature below the fold?
+2. **How to deliver images:** responsive sizes, a new format, a CDN image service, lazy loading below the fold?
+3. **Shared components versus per-feature code:** what did you make reusable, what did you deliberately leave alone, and why?
+
+</Draft>
+
+## Performance
+
+The four parts of the performance work are described under *Making a photo-heavy site fast* above.
+
+<Draft note="Measurement">
+
+TODO — How did you measure progress and keep it from regressing: Lighthouse runs, a performance budget, checks in code review? Any Core Web Vitals or load-time numbers?
+
+</Draft>
+
+## Accessibility
+
+I did accessibility work to WCAG across the pages I worked on, alongside making layouts responsive and consistent across devices and browsers.
+
+<Draft note="Standard and testing">
+
+TODO — Which WCAG version and level (2.0 AA?), and how did you test it: keyboard only, a screen reader (NVDA, JAWS, VoiceOver), axe? Your Xpanxion record says you led WCAG 2.0 compliance across all application features. Was Holland America part of that? What was the hardest part to make accessible: a date picker, a carousel, the booking form?
+
+</Draft>
+
+<Draft note="Security — delete this section if it doesn't apply to your part of the site">
+
+## Security
+
+TODO — Did your work touch payment or personal details in the booking flow? If so, how was it protected: payment handled by a third-party gateway, input validation, no card data in the front end?
+
+</Draft>
+
+<Draft note="Business impact — only claim what you can stand behind">
+
+## Business impact
+
+TODO — What changed for Holland America: faster pages, better conversion, fewer support issues, faster delivery for the team thanks to shared components? Approximate numbers are fine if they are yours.
+
+</Draft>
+
+## Leadership and collaboration
+
+I built reusable components that other developers on the team used in their features, wrote unit tests for the UI, reviewed other developers' code and mentored them.
+
+<Draft note="How you led">
+
+TODO — How many developers did you mentor, and on what: performance, accessibility, component design? What did you look for in code review? Did you write documentation or guidelines the team followed?
+
+</Draft>
+
+<Draft note="Lessons — only you can write these">
+
+## Lessons learned
+
+TODO — What would you do differently? What surprised you about performance on a photo-heavy site? Is what you built still live, or has the site been rebuilt since? If it has been rebuilt, change `status` to archived.
+
+</Draft>
+
+## Outcome summary
+
+- **Key achievements:** faster pages through lazy loading, code splitting, image optimisation, smaller bundles and less re-rendering; cruise search and booking UI; reusable components used across the team.
+- **Business benefit:** faster pages on the path from browsing a cruise to booking it, with layouts that work across devices and browsers.
+- **Long-term value:** shared components and unit tests that other developers built on, backed by code review and mentoring.

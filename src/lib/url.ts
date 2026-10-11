@@ -17,6 +17,9 @@ export function href(path = '/'): string {
   return `${BASE}${withSlash}${suffix}`;
 }
 
+/** True for an off-site URL; site paths are root-relative. */
+export const isExternal = (url: string) => /^https?:\/\//.test(url);
+
 /** Absolute URL for canonical tags, Open Graph and JSON-LD. */
 export function absolute(path: string, site: URL | undefined): string {
   return new URL(href(path), site).toString();

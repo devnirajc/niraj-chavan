@@ -25,7 +25,9 @@ const relationship = { manager: 'Manager', client: 'Client', peer: 'Peer', repor
     <p class="mt-1 font-mono text-xs text-fg-subtle uppercase">
       {relationship}
       {data.source === 'linkedin' && ' · via LinkedIn'}
-      {data.url && <a class="link ml-2 normal-case" href={data.url}>View</a>}
+      {data.url && (
+        <a class="link ml-2 normal-case" href={data.url} target="_blank" rel="noopener">View<span class="sr-only"> (opens in a new tab)</span></a>
+      )}
     </p>
   </figcaption>
 </figure>

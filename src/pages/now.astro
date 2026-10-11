@@ -10,7 +10,7 @@ import DraftBadge from '@/components/ui/DraftBadge.astro';
 import TechRadar from '@/components/content/TechRadar.astro';
 import { render } from 'astro:content';
 import { published } from '@/lib/drafts';
-import { href } from '@/lib/url';
+import { href, isExternal } from '@/lib/url';
 import { formatDate, isoDate } from '@/lib/dates';
 import { profile } from '@/data/profile';
 
@@ -20,8 +20,6 @@ const projects = await published('projects');
 const studies = await published('caseStudies');
 const problems = await published('problems');
 const radar = await published('radar');
-
-const isExternal = (link: string) => /^https?:\/\//.test(link);
 
 /**
  * Changelog: hand-written entries plus every article, newest first. Entry
@@ -125,9 +123,14 @@ const kindIcon = { shipped: 'check', building: 'code', learning: 'book-open', wr
                 </p>
                 <h3 class="mt-1.5 font-semibold">
                   {item.link ? (
-                    <a class="hover:text-accent-fg" href={item.link} rel={item.external ? 'noopener' : undefined}>
+                    <a
+                      class="hover:text-accent-fg"
+                      href={item.link}
+                      target={item.external ? '_blank' : undefined}
+                      rel={item.external ? 'noopener' : undefined}
+                    >
                       {item.title}
-                      {item.external && <span class="sr-only"> (external site)</span>}
+                      {item.external && <span class="sr-only"> (external site, opens in a new tab)</span>}
                     </a>
                   ) : (
                     item.title
@@ -160,7 +163,7 @@ const kindIcon = { shipped: 'check', building: 'code', learning: 'book-open', wr
             </div>
             <div>
               <dt class="text-fg-subtle">Focus</dt>
-              <dd class="font-medium text-fg">Enterprise travel platforms</dd>
+              <dd class="font-medium text-fg">Chase Travel</dd>
             </div>
             <div>
               <dt class="text-fg-subtle">Availability</dt>

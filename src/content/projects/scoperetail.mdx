@@ -1,34 +1,181 @@
 ---
-title: Scoperetail
-tagline: Inventory and sales for retailers
-summary: Retail application for inventory and sales management.
-order: 7
+title: Scope Retail — Order Management System
+tagline: An Angular order, inventory and catalogue system for a retail supply-chain company, built from scratch
+summary: At Xpanxion I designed and built the full UI of Scope Retail's order management system, an Angular application built from scratch. Its real-time dashboards replaced spreadsheet tracking, and manual data-entry errors halved.
+order: 9
 kind: client
-category: Retail application
+category: Retail order management · Admin application
 industry: Retail
-company: Scoperetail
+company: Scope Retail
 status: live
-cover: ../../assets/projects/scope.jpg
-coverAlt: "A warehouse with racks of stacked pallets and a forklift — an illustrative photo, not a screenshot of the application."
+cover: ../../assets/projects/scoperetail-cover-light.png
+coverDark: ../../assets/projects/scoperetail-cover-dark.png
+coverAlt: "Abstract illustration of a retail admin: a 30-day sales chart, a product catalogue grid, stock levels by barcode and a low-stock reorder alert. It is not a screenshot of the application."
 links:
   live: https://scoperetail.com/ourproducts.html
   liveLabel: Visit scoperetail.com
+stack:
+  - Angular
+  - TypeScript
+  - RxJS
+  - Chart.js
+  - REST APIs
+features:
+  - Order management
+  - Inventory oversight and stock management
+  - Product catalogue management
+  - Real-time dashboards for inventory and order monitoring
+  - User accounts with roles and permissions
+  - Reports
+metrics:
+  - label: Manual data-entry errors
+    after: "50% fewer"
+    note: Over the three months after launch.
+  - label: Operations tracking
+    before: Spreadsheets
+    after: Live dashboards
+    note: Adopted by the operations team as their primary daily tool.
+  - label: Junior engineers mentored
+    after: "2"
+    note: On Angular architecture, component composition and REST API integration.
 ---
 
-Scoperetail builds software for retailers to manage inventory and sales. This was client work, so there is no public repository — the photo above is illustrative.
+Scope Retail builds supply-chain software for large retailers. At Xpanxion I designed and built the UI of an order management system we built for them in Angular, from scratch. It is one admin application where retail teams manage orders, inventory and the product catalogue, control who can do what through users and roles, and follow the business on real-time dashboards and reports. This was client work, so there is no public demo or repository. The photo above is illustrative.
 
-<Draft note="Fill in — which employer, when, and what you built">
+- **Client:** Scope Retail, supply-chain software for large retailers
+- **Product:** a greenfield order management system covering orders, inventory, catalogue, users and reporting
+- **Users:** retail teams, including the operations team, who adopted its dashboards as their primary daily tool
+- **My role:** Senior UI Engineer at Xpanxion. I designed and built the full UI for inventory oversight and order management, including its real-time dashboards, and mentored two junior engineers on the team
+- **When:** between 2017 and 2019, during my time at Xpanxion (now UST Global)
 
-## My role
+<Draft note="Project scale and team — fill in from memory">
 
-TODO
-
-## Stack
-
-TODO
-
-## Challenges solved
-
-TODO
+TODO — How big was the team (front end, back end, QA), and who built the REST APIs? Roughly how many orders, stores or users did it handle?
 
 </Draft>
+
+## The business problem
+
+Before this system, the operations team tracked inventory and orders in **manual spreadsheets**. That had two costs:
+
+- **Manual data entry produced errors.** Orders and stock were keyed in by hand, and errors crept in.
+- **No live picture.** A spreadsheet is a snapshot. Inventory and orders change all day, so the team's view was only as current as the last update.
+
+<Draft note="What it cost — only you know this">
+
+TODO — What did the spreadsheet errors cost: wrong stock levels, missed or duplicated orders, time spent reconciling? Who felt it most?
+
+</Draft>
+
+<Draft note="Discovery and requirements — whole section is unconfirmed">
+
+## Discovery and requirements
+
+TODO — How were requirements gathered: workshops with Scope Retail and its operations team, a product owner, specifications? Which spreadsheet workflows did you study first? What changed during the build, and how did you handle it with the client?
+
+</Draft>
+
+## Architecture and design
+
+The application is written in Angular and TypeScript, talks to REST APIs, and covers five business areas: orders, inventory, catalogue, users and roles, and reporting.
+
+- **Real-time dashboards.** Inventory and order monitoring dashboards, with charts built in Chart.js, give the operations team a live view instead of a spreadsheet snapshot.
+- **Role-based access.** User accounts with roles and permissions control who can see and change what.
+
+<Draft note="Architecture detail — needed for the interactive diagram">
+
+TODO — How was the app structured: one lazy-loaded feature module per area? A shared module of components? Which Angular version did you start on?
+
+TODO — How was client-side state handled: RxJS services, component state? How were dashboards kept "real time": polling, WebSockets?
+
+TODO — Did it use the JWT authentication and session management you designed at Xpanxion (the authentication-platform case study)? Were permissions enforced on the server as well as in the UI?
+
+Answer these and I'll turn them into the interactive diagram (the `architecture:` block in the frontmatter).
+
+</Draft>
+
+## Key technical challenges
+
+### Replacing the spreadsheets
+
+**Challenge.** Move the operations team off manual spreadsheet tracking for inventory and orders, onto an application they would actually rely on.
+
+**Solution.** I designed and built the full UI for inventory oversight and order management, with real-time dashboards for inventory and order monitoring.
+
+**Outcome.** The operations team adopted the dashboards as their primary daily tool, replacing spreadsheet tracking. Manual data-entry errors fell by 50% over the three months after launch.
+
+<Draft note="Analysis — how the UI prevented errors">
+
+TODO — Which design choices cut data-entry errors: validation, dropdowns instead of free text, fewer fields re-keyed, defaults, confirmation steps? How were the errors counted before and after?
+
+</Draft>
+
+## Engineering decisions
+
+The decision below compares the approach I chose with the process it replaced.
+
+<Decisions
+  decisions={[
+    {
+      title: 'How operations follows inventory and orders',
+      context: 'The operations team tracked inventory and orders in manual spreadsheets, with errors from manual data entry and no live view.',
+      options: [
+        { name: 'Real-time dashboards in the application', chosen: true, reason: 'A live view built on the same data the system runs on. The team adopted it as their primary daily tool.' },
+        { name: 'Manual spreadsheets (the existing approach)', chosen: false, reason: 'Snapshots typed by hand, prone to entry errors and out of date as soon as they were saved.' },
+      ],
+    },
+  ]}
+/>
+
+<Draft note="Other options you weighed, and the trade-offs in your words">
+
+TODO — Which charting libraries did you compare with Chart.js (ngx-charts, Highcharts, D3)? Were there other decisions worth a card, such as how screens share orders and inventory data?
+
+TODO — The card is live without a trade-off line until you confirm one. Claude's suggestion, to confirm or rewrite in your own words, then add back to the card as `tradeoff`: Once a team runs its day from the dashboards, the application's availability and data accuracy matter as much as its features.
+
+</Draft>
+
+## Users, roles and the admin experience
+
+Access to the system is controlled through user accounts with roles and permissions, so each person sees and changes only what their role allows.
+
+<Draft note="How permissions worked">
+
+TODO — Which roles were there (admin, store manager, warehouse, operations, read-only)? How were permissions enforced in the UI: route guards, hiding or disabling actions by role?
+
+</Draft>
+
+<Draft note="Reporting, performance and accessibility — fill in or delete">
+
+## Reporting, performance and accessibility
+
+TODO — Was the CSV, Excel and PDF export from your Xpanxion record part of this app? Your Xpanxion record also mentions lazy loading, change-detection tuning, WCAG 2.0 compliance and REST integration with retry. Which of these were done here?
+
+</Draft>
+
+## Business impact
+
+- **Fewer errors:** manual data-entry errors fell by 50% over the three months after launch.
+- **A new daily tool:** the operations team adopted the real-time dashboards as their primary daily tool, replacing spreadsheet tracking.
+
+## Leadership and collaboration
+
+I designed and built the UI for the application's core workflows, inventory oversight and order management, and mentored two junior engineers on Angular architecture, component composition and REST API integration patterns.
+
+<Draft note="How you led">
+
+TODO — How did you work with Scope Retail's operations team and the back-end developers? Which standards did you set: shared components, code review, unit tests?
+
+</Draft>
+
+<Draft note="Lessons — only you can write these">
+
+## Lessons learned
+
+TODO — What would you do differently if you started again? What technical debt did you leave behind? Is the system still in use, as far as you know?
+
+</Draft>
+
+## Outcome summary
+
+I designed and built the full UI of Scope Retail's order management system, built in Angular from scratch. It replaced the operations team's spreadsheets with real-time dashboards they adopted as their primary daily tool, and manual data-entry errors halved within three months of launch. I also mentored two junior engineers along the way.

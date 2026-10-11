@@ -1,21 +1,28 @@
-# DRAFT — solution and results restate my experience entry (JP Morgan Chase).
-title: Fewer defects reaching production
+# DRAFT — solution and results restate my résumé (Schlumberger, Field
+# Logistics Module). Problem, challenge, analysis and lessons need my words.
+title: A three-day regression cycle cut to under six hours
 draft: true
 order: 6
 domain: quality-cicd
-context: JP Morgan Chase & Co. · enterprise travel platforms
+context: Schlumberger · Field Logistics Module
 problem: >-
-  TODO: What escaped to production before, and how often.
+  A full QA regression pass on FLM, an inventory application used by 500+
+  engineers, took three days.
+  TODO — what that cost: fewer releases, fixes waiting days to ship, testers tied up?
 challenge: >-
-  TODO
+  TODO: e.g. mostly manual test scripts, feature work continuing in parallel,
+  an Angular upgrade on the way.
 analysis: >-
-  TODO
+  TODO: What made regression slow, and how you split coverage between unit
+  and end-to-end tests.
 solution: >-
-  Introduced testing frameworks and thorough unit-test suites, and made
-  them part of how features were delivered.
-stack: [Jasmine, Karma, Jest, TypeScript]
+  Unit-test coverage taken to about 80% with Jasmine and Karma, and a full
+  end-to-end suite in WebDriver with results reported through Allure.
+stack: [Angular, TypeScript, Jasmine, Karma, WebDriver, Allure]
 results:
-  - Higher code coverage and fewer production defects.
-  - TODO — coverage and defect numbers.
+  - QA regression cycle cut from three days to under six hours.
+  - About 80% unit-test coverage, plus a full end-to-end suite.
+  - TODO — did the suites act as the safety net for the Angular 8 → 11 upgrade?
 lessons:
   - TODO
+caseStudy: flm-regression-and-upgrade
