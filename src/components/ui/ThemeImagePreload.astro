@@ -1,0 +1,46 @@
+---
+/**
+ * The head half of an above-the-fold <ThemeImage priority>: preloads only the
+ * copy the current theme shows, so its download starts while the head is
+ * still being parsed. ThemeImage alone can't do that: both its copies are
+ * lazy (the hidden one must never load), and its promoting script sits in the
+ * body, where it waits for the stylesheet. Render this in BaseLayout's "head"
+ * slot — after the theme bootstrap, before any stylesheet — with the same
+ * widths and sizes as the image (from @/lib/covers), or the preload goes
+ * unused. Without a dark copy it renders nothing: ThemeImage is then a plain
+ * eager <Image>, which the browser finds by itself.
+ */
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  light: ImageMetadata;
+  dark?: ImageMetadata;
+  widths: number[];
+  sizes: string;
+}
+
+const { light, dark, widths, sizes } = Astro.props;
+
+const candidates = async (src: ImageMetadata) => {
+  const image = await getImage({ src, widths, sizes });
+  return { href: image.src, srcset: image.srcSet.attribute };
+};
+const copies = dark ? { light: await candidates(light), dark: await candidates(dark) } : undefined;
+---
+
+{
+  copies && (
+    <script is:inline define:vars={{ copies, sizes }}>
+      const copy = copies[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'];
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = copy.href;
+      link.imageSrcset = copy.srcset;
+      link.imageSizes = sizes;
+      link.fetchPriority = 'high';
+      document.head.append(link);
+    </script>
+  )
+}

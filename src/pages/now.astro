@@ -7,6 +7,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import Icon from '@/components/ui/Icon.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
 import TechRadar from '@/components/content/TechRadar.astro';
 import { render } from 'astro:content';
 import { published } from '@/lib/drafts';
@@ -122,15 +123,13 @@ const kindIcon = { shipped: 'check', building: 'code', learning: 'book-open', wr
                   <DraftBadge draft={item.draft} />
                 </p>
                 <h3 class="mt-1.5 font-semibold">
-                  {item.link ? (
-                    <a
-                      class="hover:text-accent-fg"
-                      href={item.link}
-                      target={item.external ? '_blank' : undefined}
-                      rel={item.external ? 'noopener' : undefined}
-                    >
+                  {item.link && item.external ? (
+                    <ExternalLink class="hover:text-accent-fg" href={item.link} note="external site, opens in a new tab">
                       {item.title}
-                      {item.external && <span class="sr-only"> (external site, opens in a new tab)</span>}
+                    </ExternalLink>
+                  ) : item.link ? (
+                    <a class="hover:text-accent-fg" href={item.link}>
+                      {item.title}
                     </a>
                   ) : (
                     item.title

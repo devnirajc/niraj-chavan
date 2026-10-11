@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Icon from '@/components/ui/Icon.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
 
 interface Props {
@@ -26,7 +27,7 @@ const relationship = { manager: 'Manager', client: 'Client', peer: 'Peer', repor
       {relationship}
       {data.source === 'linkedin' && ' · via LinkedIn'}
       {data.url && (
-        <a class="link ml-2 normal-case" href={data.url} target="_blank" rel="noopener">View<span class="sr-only"> (opens in a new tab)</span></a>
+        <ExternalLink class="link ml-2 normal-case" href={data.url}>View</ExternalLink>
       )}
     </p>
   </figcaption>

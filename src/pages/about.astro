@@ -9,6 +9,7 @@ import PageHeader from '@/components/ui/PageHeader.astro';
 import SubNav from '@/components/ui/SubNav.astro';
 import Icon from '@/components/ui/Icon.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
 import Draft from '@/components/mdx/Draft.astro';
 import portrait from '@/assets/portrait.jpg';
 import { ABOUT_NAV } from '@/data/nav';
@@ -277,7 +278,7 @@ const values = [
                   <li>
                     <p class="flex items-center gap-2 font-medium text-fg">
                       {c.data.url ? (
-                        <a class="link" href={c.data.url} target="_blank" rel="noopener">{c.data.title}<span class="sr-only"> (opens in a new tab)</span></a>
+                        <ExternalLink class="link" href={c.data.url}>{c.data.title}</ExternalLink>
                       ) : (
                         c.data.title
                       )}

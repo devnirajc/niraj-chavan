@@ -12,13 +12,16 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs.astro';
 import Icon from '@/components/ui/Icon.astro';
 import TechList from '@/components/ui/TechList.astro';
 import ThemeImage from '@/components/ui/ThemeImage.astro';
+import ThemeImagePreload from '@/components/ui/ThemeImagePreload.astro';
 import Toc from '@/components/ui/Toc.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
 import ArchitectureDiagram from '@/components/diagram/ArchitectureDiagram.astro';
 import MetricGrid from '@/components/content/MetricGrid.astro';
 import { mdxComponents } from '@/components/mdx';
 import { published, isVisible, headingsOutsideDrafts } from '@/lib/drafts';
 import { href } from '@/lib/url';
+import { coverSizes } from '@/lib/covers';
 
 export async function getStaticPaths() {
   const projects = (await published('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -54,6 +57,7 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
 ---
 
 <BaseLayout title={data.title} description={data.summary} type="article">
+  <ThemeImagePreload slot="head" light={data.cover} dark={data.coverDark} {...coverSizes.hero} />
   <div class="relative overflow-hidden border-b border-line-subtle">
     <div aria-hidden="true" class="bg-grid pointer-events-none absolute inset-0"></div>
     <div class="container-page relative pt-10">
@@ -70,20 +74,18 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
         <div class="flex flex-wrap gap-3 lg:justify-end">
           {
             data.links.live && (
-              <a href={data.links.live} class="btn btn-primary" target="_blank" rel="noopener">
+              <ExternalLink href={data.links.live} class="btn btn-primary">
                 {data.links.liveLabel ?? 'Open live demo'}
                 <Icon name="arrow-up-right" size={16} />
-                <span class="sr-only"> (opens in a new tab)</span>
-              </a>
+              </ExternalLink>
             )
           }
           {
             data.links.repo && (
-              <a href={data.links.repo} class="btn btn-secondary" target="_blank" rel="noopener">
+              <ExternalLink href={data.links.repo} class="btn btn-secondary">
                 <Icon name="github" size={16} />
                 Source code
-                <span class="sr-only"> (opens in a new tab)</span>
-              </a>
+              </ExternalLink>
             )
           }
         </div>
@@ -93,8 +95,7 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
           light={data.cover}
           dark={data.coverDark}
           alt={data.coverAlt}
-          widths={[640, 960, 1280, 1600, 2200]}
-          sizes="(min-width: 72rem) 69rem, 100vw"
+          {...coverSizes.hero}
           class="w-full"
           priority
         />

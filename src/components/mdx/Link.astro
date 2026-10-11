@@ -1,0 +1,22 @@
+---
+/**
+ * Markdown links in MDX bodies (mapped to `a` in ./index.ts): off-site URLs
+ * open in a new tab like every other external link; the rest stay plain.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import { isExternal } from '@/lib/url';
+
+type Props = HTMLAttributes<'a'>;
+
+const { href, ...attrs } = Astro.props;
+const url = href ? String(href) : '';
+---
+
+{
+  isExternal(url) ? (
+    <ExternalLink href={url} {...attrs}><slot /></ExternalLink>
+  ) : (
+    <a href={href} {...attrs}><slot /></a>
+  )
+}
