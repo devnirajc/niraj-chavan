@@ -8,6 +8,7 @@ import PageHeader from '@/components/ui/PageHeader.astro';
 import Icon from '@/components/ui/Icon.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
 import ContactForm from '@/components/content/ContactForm.astro';
 import { profile } from '@/data/profile';
 import { SHOW_DRAFTS } from '@/lib/drafts';
@@ -45,12 +46,11 @@ const toneClass = {
           </div>
         </div>
         <p class="mt-5 text-lg font-medium break-all">
-          <a class="link" href={`mailto:${profile.email}`} target="_blank" rel="noopener">{profile.email}<span class="sr-only"> (opens in a new tab)</span></a>
+          <a class="link" href={`mailto:${profile.email}`}>{profile.email}</a>
         </p>
         <div class="mt-4 flex flex-wrap gap-2">
-          <a href={`mailto:${profile.email}`} class="btn btn-primary btn-sm" target="_blank" rel="noopener">
+          <a href={`mailto:${profile.email}`} class="btn btn-primary btn-sm">
             <Icon name="mail" size={15} /> Write an email
-            <span class="sr-only"> (opens in a new tab)</span>
           </a>
           <CopyButton value={profile.email} label="Copy address" />
         </div>
@@ -69,10 +69,9 @@ const toneClass = {
                 <p class="text-sm text-fg-subtle">Pick a time that suits you</p>
               </div>
             </div>
-            <a href={calendlyUrl} class="btn btn-secondary btn-sm mt-5" target="_blank" rel="noopener">
+            <ExternalLink href={calendlyUrl} class="btn btn-secondary btn-sm mt-5">
               Choose a time on Calendly <Icon name="arrow-up-right" size={15} />
-              <span class="sr-only"> (opens in a new tab)</span>
-            </a>
+            </ExternalLink>
           </section>
         ) : (
           SHOW_DRAFTS && (
@@ -121,12 +120,11 @@ const toneClass = {
           {
             profile.socials.map((s) => (
               <li>
-                <a href={s.url} target="_blank" rel="me noopener" class="group -mx-2 flex min-h-11 items-center gap-3 rounded-lg px-2 hover:bg-sunken">
+                <ExternalLink href={s.url} rel="me" class="group -mx-2 flex min-h-11 items-center gap-3 rounded-lg px-2 hover:bg-sunken">
                   <Icon name={s.id as 'github'} size={18} class="text-fg-subtle group-hover:text-fg" />
                   <span class="font-medium text-fg">{s.label}</span>
-                  <span class="sr-only"> (opens in a new tab)</span>
                   <span class="ml-auto font-mono text-sm text-fg-subtle">{s.handle}</span>
-                </a>
+                </ExternalLink>
               </li>
             ))
           }

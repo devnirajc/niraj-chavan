@@ -4,10 +4,12 @@ import Icon from '@/components/ui/Icon.astro';
 import ThemeImage from '@/components/ui/ThemeImage.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
 import { href } from '@/lib/url';
+import { coverSizes } from '@/lib/covers';
 
 interface Props {
   project: CollectionEntry<'projects'>;
   headingLevel?: 'h2' | 'h3';
+  /** Above the fold: also render a ThemeImagePreload in the page's head slot. */
   eager?: boolean;
 }
 
@@ -21,8 +23,7 @@ const { data } = project;
       light={data.cover}
       dark={data.coverDark}
       alt=""
-      widths={[400, 640, 960]}
-      sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"
+      {...coverSizes.card}
       class="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.02]"
       priority={eager}
     />

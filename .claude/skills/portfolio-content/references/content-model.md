@@ -140,7 +140,7 @@ A skill with no `context` and no visible evidence renders as a small chip in a c
 
 ## now and radar
 
-`src/content/now/*.md`: `date` (YYYY-MM-DD), `title`, `kind` (shipped | building | learning | writing | milestone), `link` (site path or URL, optional), body = 1–2 sentences. The newest date across these entries and Medium articles is the page's "Last updated", so every content change adds or extends today's entry. Keep site links in `link`; body Markdown links don't get the base path.
+`src/content/now/*.md`: `date` (YYYY-MM-DD), `title`, `kind` (shipped | building | learning | writing | milestone), `link` (site path or URL, optional), body = 1–2 sentences. The newest date across these entries and Medium articles is the page's "Last updated", so every content change adds or extends today's entry. Keep links in `link`: body Markdown links in a `.md` entry get neither the base path nor the new-tab behaviour that MDX bodies have.
 
 `src/content/radar.yaml`: `id, name, ring (adopt | trial | assess | hold), quadrant (languages-frameworks | tools | platforms | techniques), note`. Adopt/Trial notes should say where he uses it.
 

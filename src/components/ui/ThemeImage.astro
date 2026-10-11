@@ -4,9 +4,10 @@
  * attribute. Both copies are lazy, so the hidden one is never fetched (a lazy
  * image with display: none never reaches the viewport) until the theme
  * changes. With `priority`, a one-line inline script promotes the visible copy
- * to an eager, high-priority fetch as soon as it is parsed — the head
- * bootstrap has set data-theme by then. Without a `dark` master it is a plain
- * <Image>.
+ * to an eager, high-priority fetch — the head bootstrap has set data-theme by
+ * then. That script waits for the stylesheet, so pair a priority image with a
+ * ThemeImagePreload in the layout's head slot to start the download sooner.
+ * Without a `dark` master it is a plain <Image>.
  */
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';

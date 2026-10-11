@@ -43,6 +43,13 @@ const seo = Astro.props;
       })();
     </script>
 
+    <!--
+      Page additions to the head. They sit after the bootstrap, so data-theme
+      is set, and before the stylesheet, so an inline script here runs at once
+      instead of waiting for CSS (see ThemeImagePreload).
+    -->
+    <slot name="head" />
+
     <Font cssVariable="--font-geist" preload />
     <Font cssVariable="--font-geist-mono" />
 

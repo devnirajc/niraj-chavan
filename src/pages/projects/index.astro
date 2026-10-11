@@ -3,16 +3,25 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import FilterBar from '@/components/ui/FilterBar.astro';
 import ProjectCard from '@/components/cards/ProjectCard.astro';
+import ThemeImagePreload from '@/components/ui/ThemeImagePreload.astro';
 import { published } from '@/lib/drafts';
+import { coverSizes } from '@/lib/covers';
 
 const projects = (await published('projects')).sort((a, b) => a.data.order - b.data.order);
 const count = (kind: string) => projects.filter((p) => p.data.kind === kind).length;
+/** The first row of cards is above the fold. */
+const EAGER = 3;
 ---
 
 <BaseLayout
   title="Projects"
   description="Products I build on my own time and enterprise work for clients in energy, travel, cybersecurity, retail and professional services."
 >
+  {
+    projects
+      .slice(0, EAGER)
+      .map((p) => <ThemeImagePreload slot="head" light={p.data.cover} dark={p.data.coverDark} {...coverSizes.card} />)
+  }
   <PageHeader
     eyebrow="Projects"
     title="Things I've built"
@@ -32,7 +41,7 @@ const count = (kind: string) => projects.filter((p) => p.data.kind === kind).len
       {
         projects.map((project, i) => (
           <li data-filter-item data-filter-tags={project.data.kind} class="grid">
-            <ProjectCard project={project} headingLevel="h2" eager={i < 3} />
+            <ProjectCard project={project} headingLevel="h2" eager={i < EAGER} />
           </li>
         ))
       }

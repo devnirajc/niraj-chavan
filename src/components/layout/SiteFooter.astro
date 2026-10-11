@@ -1,5 +1,6 @@
 ---
 import Icon from '@/components/ui/Icon.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
 import { FOOTER_NAV } from '@/data/nav';
 import { visibleNav } from '@/lib/nav';
 import { href } from '@/lib/url';
@@ -22,17 +23,17 @@ const year = new Date().getFullYear();
         {
           profile.socials.map((s) => (
             <li>
-              <a href={s.url} class="icon-btn" target="_blank" rel="me noopener">
+              <ExternalLink href={s.url} class="icon-btn" rel="me">
                 <Icon name={s.id as 'github'} size={18} />
-                <span class="sr-only">{s.label} (opens in a new tab)</span>
-              </a>
+                <span class="sr-only">{s.label}</span>
+              </ExternalLink>
             </li>
           ))
         }
         <li>
-          <a href={`mailto:${profile.email}`} class="icon-btn" target="_blank" rel="noopener">
+          <a href={`mailto:${profile.email}`} class="icon-btn">
             <Icon name="mail" size={18} />
-            <span class="sr-only">Email (opens in a new tab)</span>
+            <span class="sr-only">Email</span>
           </a>
         </li>
       </ul>
