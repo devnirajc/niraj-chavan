@@ -3,49 +3,332 @@ title: Nexpenso
 tagline: Personal finance from your bank statements
 summary: Personal finance tracker that imports bank statements, categorises spending and tracks bills, goals and investments.
 featured: true
-order: 2
+order: 4
 kind: personal
 category: Personal finance tracker
 industry: Personal finance
 status: live
-cover: ../../assets/projects/nexpenso.png
-coverAlt: "Nexpenso's upload screen: a drag-and-drop area for CSV, XLSX, XLS and TXT statements beside the required column format and a sample table, with the app's navigation down the left."
+cover: ../../assets/projects/nexpenso-cover-light.png
+coverDark: ../../assets/projects/nexpenso-cover-dark.png
+coverAlt: "Abstract illustration of a personal-finance app: a statement upload, spending broken down by category, a weekly bar chart and a list of categorised transactions. It is not a screenshot of Nexpenso."
 links:
   live: https://nexpenso.netlify.app/
   liveLabel: Open Nexpenso
-stack: [React, Redux, React Router, Vite, Docker, PWA]
+stack: [React, Redux, React Router, Vite, Chart.js, Node.js, Express, PostgreSQL, Docker, PWA]
 features:
   - Import bank statements as CSV, XLSX, XLS or TXT
+  - Imports run as background jobs that can be tracked and cancelled
   - Automatic, AI-assisted categorisation of transactions, plus rules for future uploads
+  - Categorisation rules that can be reordered, exported and imported
+  - A category tree, with categories that can be merged
   - Duplicate detection using each transaction's reference — UTR, UPI ref or cheque number
+  - Transfers between your own accounts recorded as linked transactions
   - Overview dashboard, spending by category, and insights and trends over time
-  - Account balances per bank, and upcoming bills and subscriptions
-  - Savings goals and an investment portfolio tracker
-  - Sign-in, search and filters across every view
+  - Account balances per bank, and upcoming bills and subscriptions, with recurring bills detected
+  - Savings goals with milestones, contributions and projections
+  - An investment portfolio tracker with value history
+  - Sign-in with a password or Google, with password reset and account deletion
+  - Search and filters across every view
+architecture:
+  title: How Nexpenso's app talks to its API
+  caption: >-
+    A React single-page app on Netlify calls a REST API on the same origin
+    under /api. One API client owns everything about the network: tokens,
+    CSRF, retries, timeouts and cold starts, so the screens don't have to.
+  layers:
+    - id: browser
+      label: Browser
+    - id: edge
+      label: Netlify
+    - id: api
+      label: API
+    - id: data
+      label: Data
+  nodes:
+    - id: ui
+      label: React UI
+      sublabel: React Router · Chart.js
+      layer: browser
+      detail: >-
+        Upload, transactions, categories, bills, goals, investments and
+        insights. Vendor code (React, Redux, charts and data handling) ships
+        in separate chunks that the page preloads in parallel, so a change to
+        application code doesn't invalidate the cached libraries.
+    - id: store
+      label: Redux store
+      sublabel: application state
+      layer: browser
+      detail: Application state, managed with Redux.
+    - id: client
+      label: API client
+      sublabel: tokens · CSRF · retries
+      layer: browser
+      detail: >-
+        One axios instance for every request. It attaches the bearer token,
+        adds a CSRF token to every state-changing request, retries network
+        failures and gateway errors with growing delays, wakes the server
+        before signing in, and turns every failure into a plain-language
+        message.
+    - id: route
+      label: /api route
+      sublabel: same origin
+      layer: edge
+      detail: >-
+        The app calls a relative /api path, so API requests go to the app's
+        own origin, served through Netlify, rather than to a separate
+        cross-origin host.
+    - id: auth
+      label: Auth endpoints
+      sublabel: password · Google · CSRF
+      layer: api
+      detail: >-
+        Sign-in with a username and password or with Google, registration,
+        password reset and change, account deletion (which asks for the
+        password again), CSRF token issue and session verification. The API
+        also exposes a liveness probe.
+    - id: finance
+      label: Finance API
+      sublabel: Node.js · Express
+      layer: api
+      detail: >-
+        REST resources for transactions and transfers, categories and
+        categorisation rules, bills and their payments, goals with milestones
+        and contributions, investments with value history, analytics and
+        preferences. One call can load the initial data together with
+        analytics.
+    - id: jobs
+      label: Upload jobs
+      sublabel: background · cancellable
+      layer: api
+      detail: >-
+        Statement imports are tracked as jobs that the app can list, check
+        and cancel. Separate endpoints check new transactions for duplicates
+        and post-process them.
+    - id: db
+      label: PostgreSQL
+      sublabel: application data
+      layer: data
+      detail: The application database.
+  edges:
+    - from: ui
+      to: store
+    - from: ui
+      to: client
+    - from: client
+      to: route
+      label: HTTPS
+    - from: route
+      to: auth
+    - from: route
+      to: finance
+    - from: finance
+      to: jobs
+    - from: auth
+      to: db
+    - from: finance
+      to: db
+    - from: jobs
+      to: db
+  steps:
+    - title: Signing in
+      nodes: [ui, client, route, auth]
+      detail: >-
+        Before the first auth call, the client probes a liveness endpoint, up
+        to three times with growing delays, so a sleeping server is awake
+        before the user's request reaches it. Sign-in returns a token that the
+        client keeps in sessionStorage, and the client then fetches a CSRF
+        token for later writes.
+    - title: Every write
+      nodes: [client, route, finance]
+      detail: >-
+        The client attaches the bearer token and, on POST, PUT, PATCH and
+        DELETE, a CSRF token that it caches for up to 55 minutes. If the
+        server rejects the CSRF token, the client fetches a fresh one and
+        retries once. A second failure asks the user to refresh.
+    - title: When the network fails
+      nodes: [client, route]
+      detail: >-
+        Network errors and 502, 503 and 504 responses are retried up to three
+        times with growing delays, but only while the browser reports it is
+        online. Long-running calls opt out. A rate-limited request becomes a
+        message telling the user how long to wait.
+    - title: Importing a statement
+      nodes: [ui, client, finance, jobs, db]
+      detail: >-
+        Statement imports are tracked as upload jobs that can be checked and
+        cancelled, and transactions can be created in bulk. Duplicate checks
+        have their own endpoint, with a longer timeout than everyday
+        requests, and post-processing runs as a separate call.
 ---
 
 Nexpenso turns bank statements into a picture of where the money goes. Upload a statement — CSV, Excel or plain text — and it categorises every transaction, flags duplicates by their reference number, and rolls everything up into dashboards: spending by category, balances per bank, upcoming bills and subscriptions, savings goals and investments.
 
-## Under the hood
+It is my own side project: a React single-page app with a Node.js and Express API over PostgreSQL. I designed and built it.
 
-Nexpenso is a React app with Redux for state and React Router for navigation, built with Vite. Vendor code is split into separate chunks — React, Redux, charting and data handling — which the page preloads in parallel, so changing application code does not invalidate the cached libraries.
+- **Who it's for:** people tracking money across accounts at several Indian banks. Duplicates are matched on UTR, UPI reference or cheque number
+- **Shape:** a React app on Netlify, calling a REST API on the same origin under `/api`; the API is deployed on Northflank, with CI/CD through GitHub Actions
+- **My role:** designer and engineer: product, front end, API, data model and deployment
 
-<Draft note="Fill in — not visible from the outside">
+<Draft note="Why you built it — only you know this">
 
-## Architecture
+TODO — Why did you build Nexpenso: your own finances, frustration with existing apps, a way to go deeper on the back end? Does anyone besides you use it? How many statements or transactions has it handled? Real usage, even your own, is the most convincing thing this page could add.
 
-TODO: Where does categorisation run, and which AI service does it call? How are statements parsed in the browser? Where is the data stored?
+</Draft>
 
-## Challenges solved
+## The business problem
 
-TODO: e.g. normalising statement formats across banks; deduplicating same-day transactions.
+Bank statements are the most complete record of where money goes, but a statement is a list of transactions, not an answer. Turning a year of statements from several banks into answers means:
+
+- importing whatever format each bank exports,
+- categorising hundreds of transactions without doing it by hand every month,
+- not double-counting when statements overlap,
+- recognising money moved between your own accounts, so it isn't counted as spending,
+- spotting the bills and subscriptions that recur.
+
+Nexpenso does each of these.
+
+## Architecture and design
+
+Nexpenso is a React single-page app with Redux for state and React Router for navigation, built with Vite and charted with Chart.js. Vendor code is split into separate chunks — React, Redux, charting and data handling — which the page preloads in parallel, so changing application code does not invalidate the cached libraries.
+
+All network behaviour lives in **one API client**. Screens call functions such as "create transactions in bulk" or "check for duplicates", and the client deals with tokens, CSRF, timeouts, retries and cold starts. The diagram below shows the moving parts.
+
+The API is organised by resource: transactions and transfers, categories and categorisation rules, bills and their payments, goals, investments, analytics and preferences. One request can load the app's initial data together with its analytics.
+
+<Draft note="Back-end detail — not visible from outside">
+
+TODO — How is the API structured inside: Express routers per resource, a service layer, an ORM or query builder? How are upload jobs processed: in the request, in a worker, on a queue? Where does categorisation run, and which model or service does it call? How is `/api` routed to Northflank: a Netlify proxy rewrite?
+
+</Draft>
+
+## Key technical challenges
+
+### A server that might be asleep
+
+**Challenge.** The API can be idle when a user arrives, and the app's own error messages allow for it: "the server may be waking up". A cold start looks like a failed request: a timeout, a 502 or 503.
+
+**Solution.** Before signing in, the client sends a liveness probe, up to three attempts with growing delays. The probe is shared by concurrent callers and skipped if one succeeded in the last 30 seconds. Gateway errors and network failures are retried up to three times with growing delays, only while the browser is online. Every failure that gets through becomes a specific, plain-language message: no internet connection, the request timed out, the server is starting up, the browser blocked the connection, or too many attempts with a wait time.
+
+<Draft note="Outcome">
+
+TODO — How long is a typical cold start? Did failed first sign-ins stop once the probe went in? Is the API on a plan that sleeps, and was that a cost decision?
+
+</Draft>
+
+### Importing messy statements without double-counting
+
+**Challenge.** Statements from different banks overlap and arrive in different formats, and importing the same transaction twice corrupts every total built on it.
+
+**Solution.** Nexpenso accepts CSV, XLSX, XLS and TXT against a published column format, and matches duplicates on each transaction's own reference: UTR, UPI reference or cheque number. New transactions are checked for duplicates before they are kept. There is a full rescan of existing data, a way to mark a false positive as not a duplicate, and a backfill that adds references to older transactions. Imports are tracked as background jobs that can be checked and cancelled. Transfers between your own accounts are recorded as linked transactions, with a repair tool for links that break.
+
+<Draft note="Analysis and outcome">
+
+TODO — What did real statements throw at you: inconsistent date formats, merged cells, reference numbers missing on some rows? What happens to a transaction with no reference? How big an import does it handle, and how long does it take?
+
+</Draft>
+
+### Categorisation that improves with use
+
+**Challenge.** Categorising hundreds of transactions by hand every month is slow and tedious.
+
+**Solution.** AI-assisted categorisation, with endpoints for user feedback, retraining and statistics, alongside user-defined rules for future uploads. Rules can be reordered, exported and imported, and categories form a tree whose branches can be merged.
+
+<Draft note="How categorisation works">
+
+TODO — What is the categoriser: a model you train per user on their corrections, a hosted LLM, a mix with rules? What does "train" do, and how does feedback flow back? How accurate is it on your own data?
+
+</Draft>
+
+<Draft note="Reconstructed from the live app by Claude — confirm the reasoning was yours, then move these out of the Draft block">
+
+## Engineering decisions
+
+<Decisions
+  decisions={[
+    {
+      title: 'Where network behaviour lives',
+      context: 'Every screen talks to the API, and the API can be slow, asleep, rate-limited or rejecting a stale CSRF token.',
+      options: [
+        { name: 'One API client with interceptors', chosen: true, reason: 'Tokens, CSRF, retries, timeouts and error messages are handled once, and every screen behaves the same way.' },
+        { name: 'Handle errors in each screen or slice', chosen: false, reason: 'More control per call, but the same logic repeated and drifting apart across the app.' },
+      ],
+      tradeoff: 'TODO — what the central client cost you, for example per-call opt-outs (_skipNetworkRetry) and longer timeouts for heavy endpoints.',
+    },
+    {
+      title: 'Calling the API on the same origin',
+      context: 'The front end is on Netlify and the API is deployed separately.',
+      options: [
+        { name: 'A relative /api path on the app origin', chosen: true, reason: 'No cross-origin requests for the browser to police, and cookies stay first-party.' },
+        { name: 'Calling the API host directly', chosen: false, reason: 'Simpler routing, but CORS configuration and third-party cookie rules to manage.' },
+      ],
+      tradeoff: 'TODO — confirm how /api reaches the API, and what it costs (an extra hop, proxy timeouts).',
+    },
+  ]}
+/>
+
+TODO — Retries: the client retries POST requests too on network errors and gateway responses. If the first attempt reached the server, can a retried bulk import create duplicates? Is the server idempotent there, or is server-side duplicate detection the safety net? Either way it's a strong decision to write up.
+
+</Draft>
+
+## Security
+
+- **Tokens:** the bearer token is held in `sessionStorage`, so it is cleared when the tab closes.
+- **CSRF:** every state-changing request (POST, PUT, PATCH, DELETE) outside the sign-in, registration and password-reset endpoints carries a CSRF token. A rejected token is refreshed and the request retried once. A second failure asks the user to refresh.
+- **Abuse:** rate-limited responses (HTTP 429) are surfaced with how long to wait.
+- **Destructive actions:** deleting an account asks for the password again.
+- **Logs:** console output is filtered so passwords, tokens, API keys and card details are redacted, and logged request details show the `Authorization` header as redacted.
+
+<Draft note="Server side, and one thing to check">
+
+TODO — Server side: how are passwords hashed? How are tokens signed and how long do they live? Where are the rate limits set? How is uploaded statement data validated?
+
+TODO — The client checks `document.cookie` for an `authToken` cookie. That only works if the cookie isn't HttpOnly, which would make it readable by any script on the page. Worth checking. If it is HttpOnly, the check is dead code.
+
+</Draft>
+
+## Performance
+
+- Vendor code (React, Redux, charts and data handling) is split into long-cached chunks that the page preloads in parallel.
+- Initial data and analytics can arrive in one request rather than several.
+- Heavy calls get their own timeouts: up to 60 seconds for duplicate scans, 90 seconds for bulk imports and 120 seconds for reference backfills. Everyday requests stay at 30 seconds.
+
+<Draft note="Numbers">
+
+TODO — Lighthouse scores, bundle size, time to first dashboard? How does the dashboard perform with tens of thousands of transactions?
+
+</Draft>
+
+## Automation and monitoring
+
+- **Background imports:** statements are processed as upload jobs the app can track and cancel.
+- **Recurring bills:** the API detects bills and subscriptions that recur.
+- **Import telemetry:** after an import, the client posts a summary to a telemetry endpoint. The call is fire-and-forget, with a five-second timeout and errors ignored, so instrumentation can never block or break an import.
+- **Delivery:** the API is deployed on Northflank with CI/CD through GitHub Actions.
+
+<Draft note="Fill in">
+
+TODO — What does the telemetry tell you, and where do you look at it? Is there alerting when the API is down? What does the GitHub Actions pipeline run: tests, lint, a Docker build?
+
+</Draft>
+
+<Draft note="Accessibility — fill in">
 
 ## Accessibility
 
-TODO
-
-## What's next
-
-TODO
+TODO — Keyboard support, screen-reader labels for charts, contrast, testing with axe? How are charts made understandable without seeing them (data tables, text summaries)?
 
 </Draft>
+
+<Draft note="Lessons and roadmap — only you can write these">
+
+## Lessons learned and what's next
+
+TODO — What would you do differently? What did building a back end on your own teach you that front-end work at a bank didn't? What's next: budget alerts and month-over-month trends (your résumé mentions both), open banking instead of statements?
+
+</Draft>
+
+## Outcome summary
+
+- **What it is:** a working personal-finance product, from statement import to dashboards, bills, goals and investments, on a front end and API I built.
+- **Engineering depth:** server-side duplicate detection on payment references, background import jobs, and categorisation that takes feedback.
+- **Production habits in a side project:** CSRF protection, retries with back-off, cold-start handling, redacted logs and fire-and-forget telemetry.

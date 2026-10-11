@@ -74,7 +74,7 @@ const card = `
   </g>
 
   <text x="80" y="300" font-family="${FONT}" font-size="84" font-weight="600" letter-spacing="-2" fill="${FG}">Niraj Chavan</text>
-  <text x="80" y="368" font-family="${FONT}" font-size="40" font-weight="500" fill="${INDIGO_300}">Senior UI Engineer</text>
+  <text x="80" y="368" font-family="${FONT}" font-size="40" font-weight="500" fill="${INDIGO_300}">Senior Software Engineer</text>
 
   <text x="80" y="450" font-family="${FONT}" font-size="28" fill="${MUTED}">Fast, accessible interfaces for enterprise teams</text>
   <text x="80" y="494" font-family="${FONT}" font-size="28" fill="${MUTED}">${years} years · Angular · React · TypeScript · Design systems</text>

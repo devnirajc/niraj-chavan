@@ -1,20 +1,23 @@
 ---
 /**
- * Project detail: overview, screenshot, features, stack and links from the
- * frontmatter; architecture, challenges, performance, accessibility and
- * future work from the MDX body (or the frontmatter diagram).
+ * Project detail, laid out as a case study: outcomes at a glance from the
+ * frontmatter metrics, then the MDX body (overview, problem, architecture,
+ * challenges, decisions, impact, lessons), then features, the frontmatter
+ * diagram and the timeline. Long bodies get an "On this page" nav built from
+ * their headings — minus any inside <Draft> blocks when drafts are hidden.
  */
-import { Image } from 'astro:assets';
 import { getEntry, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/ui/Breadcrumbs.astro';
 import Icon from '@/components/ui/Icon.astro';
 import TechList from '@/components/ui/TechList.astro';
+import ThemeImage from '@/components/ui/ThemeImage.astro';
+import Toc from '@/components/ui/Toc.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
 import ArchitectureDiagram from '@/components/diagram/ArchitectureDiagram.astro';
 import MetricGrid from '@/components/content/MetricGrid.astro';
 import { mdxComponents } from '@/components/mdx';
-import { published, isVisible } from '@/lib/drafts';
+import { published, isVisible, headingsOutsideDrafts } from '@/lib/drafts';
 import { href } from '@/lib/url';
 
 export async function getStaticPaths() {
@@ -33,9 +36,20 @@ interface Props {
 
 const { project, prev, next } = Astro.props;
 const { data } = project;
-const { Content } = await render(project);
+const { Content, headings } = await render(project);
 const study = data.caseStudy ? await getEntry(data.caseStudy) : undefined;
 const showStudy = study && isVisible(study);
+
+const toc = [
+  data.metrics.length && { id: 'outcomes', label: 'Outcomes' },
+  { id: 'overview', label: 'Overview' },
+  ...headingsOutsideDrafts(project.body, headings)
+    .filter((h) => h.depth === 2)
+    .map((h) => ({ id: h.slug, label: h.text })),
+  data.features.length && { id: 'features', label: 'Features' },
+  data.architecture && { id: 'architecture', label: 'Architecture diagram' },
+  data.timeline.length && { id: 'evolution', label: 'How it evolved' },
+].filter(Boolean) as { id: string; label: string }[];
 const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In progress' }[data.status];
 ---
 
@@ -56,31 +70,33 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
         <div class="flex flex-wrap gap-3 lg:justify-end">
           {
             data.links.live && (
-              <a href={data.links.live} class="btn btn-primary" rel="noopener">
+              <a href={data.links.live} class="btn btn-primary" target="_blank" rel="noopener">
                 {data.links.liveLabel ?? 'Open live demo'}
                 <Icon name="arrow-up-right" size={16} />
+                <span class="sr-only"> (opens in a new tab)</span>
               </a>
             )
           }
           {
             data.links.repo && (
-              <a href={data.links.repo} class="btn btn-secondary" rel="noopener">
+              <a href={data.links.repo} class="btn btn-secondary" target="_blank" rel="noopener">
                 <Icon name="github" size={16} />
                 Source code
+                <span class="sr-only"> (opens in a new tab)</span>
               </a>
             )
           }
         </div>
       </div>
       <div class="mt-10 overflow-hidden rounded-t-2xl border border-b-0 border-line bg-sunken shadow-lg">
-        <Image
-          src={data.cover}
+        <ThemeImage
+          light={data.cover}
+          dark={data.coverDark}
           alt={data.coverAlt}
-          widths={[640, 960, 1280, 1600]}
+          widths={[640, 960, 1280, 1600, 2200]}
           sizes="(min-width: 72rem) 69rem, 100vw"
-          loading="eager"
-          fetchpriority="high"
-          class="block w-full"
+          class="w-full"
+          priority
         />
       </div>
     </div>
@@ -88,8 +104,19 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
 
   <div class="container-page grid gap-12 pt-14 lg:grid-cols-[1fr_18rem]">
     <article class="min-w-0">
+      {
+        data.metrics.length > 0 && (
+          <section aria-labelledby="outcomes" class="mb-14">
+            <h2 id="outcomes" class="eyebrow mb-4">
+              Outcomes at a glance
+            </h2>
+            <MetricGrid metrics={data.metrics} />
+          </section>
+        )
+      }
+
       <div class="prose max-w-3xl">
-        <h2 class="!mt-0">Overview</h2>
+        <h2 id="overview" class="!mt-0">Overview</h2>
         <Content components={mdxComponents} />
       </div>
 
@@ -112,23 +139,10 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
       }
 
       {
-        data.metrics.length > 0 && (
-          <section aria-labelledby="results" class="mt-14">
-            <h2 id="results" class="text-heading font-semibold">
-              Results
-            </h2>
-            <div class="mt-6">
-              <MetricGrid metrics={data.metrics} />
-            </div>
-          </section>
-        )
-      }
-
-      {
         data.architecture && (
           <section aria-labelledby="architecture" class="mt-14">
             <h2 id="architecture" class="text-heading font-semibold">
-              Architecture
+              Architecture diagram
             </h2>
             <ArchitectureDiagram diagram={data.architecture} id={`dg-${project.id}`} />
           </section>
@@ -169,8 +183,10 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
       }
     </article>
 
+    {/* A block, not a grid: a sticky grid item is confined to its own
+        auto-sized grid area, so the TOC below would never stick. */}
     <aside class="lg:pt-1">
-      <div class="card sticky top-24 p-5">
+      <div class="card p-5">
         <dl class="grid gap-4 text-sm">
           <div>
             <dt class="text-fg-subtle">Category</dt>
@@ -210,6 +226,9 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
             )
           }
         </dl>
+      </div>
+      <div class="sticky top-24 mt-8 hidden lg:block">
+        <Toc items={toc} />
       </div>
     </aside>
   </div>

@@ -12,21 +12,24 @@
   skills:
     - name: Angular
       level: Expert
-      context: Enterprise applications at JP Morgan Chase, Schlumberger and Xpanxion — modular component architecture, JWT auth, lazy-loaded features.
+      context: Chase Travel at JP Morgan Chase — the purchase flow from trip cart to confirmation, micro-frontends, a shared promotion component library and the Site Manager admin platform — plus enterprise applications at Schlumberger and Xpanxion.
       roles: [jpmc, slb, xpanxion]
+      projects: [chase-travel-booking, chase-travel-site-manager, scoperetail, k7-security]
       caseStudies: [authentication-platform]
     - name: TypeScript
       level: Expert
-      context: Typed Angular and React codebases at JP Morgan Chase and Xpanxion.
+      context: Typed Angular codebases at JP Morgan Chase, where I mentor engineers on TypeScript best practices, and at Xpanxion.
       roles: [jpmc, xpanxion]
+      projects: [chase-travel-booking]
     - name: RxJS
       level: Expert
-      context: Async data flows and state in Angular applications.
+      context: Async data flows and state in Angular applications, including K7 Computing's consumer console and antivirus dashboard.
       roles: [jpmc, xpanxion]
+      projects: [k7-security]
     - name: React
       level: Advanced
-      context: Product work at JP Morgan Chase and Schlumberger, and my own Rxbit and Nexpenso; ShredTrack is built on Next.js.
-      roles: [jpmc, slb]
+      context: My side projects — Rxbit and Nexpenso are React single-page apps, and ShredTrack is built on Next.js — and earlier, product work at Schlumberger.
+      roles: [slb]
       projects: [rxbit, nexpenso, shredtrack]
     - name: State management
       level: Advanced
@@ -36,13 +39,15 @@
       level: Expert
       context: Semantic, accessible markup converted from PSD and Sketch designs for large e-commerce sites.
       roles: [connect91]
+    # Holland America Line evidence on this and the rows below confirmed by Niraj.
     - name: Responsive design
       level: Expert
-      context: Led responsive implementation across devices at Schlumberger; mobile-first layouts at Connect | 91.
+      context: Led responsive implementation across devices at Schlumberger; responsive, cross-browser pages for Holland America Line's cruise site at Xpanxion; mobile-first layouts at Connect 91.
       roles: [slb, connect91]
+      projects: [holland-america]
     - name: Sass / SCSS
       level: Expert
-      context: Built the Sass framework and token system behind large e-commerce front ends at Connect | 91.
+      context: Built the Sass framework and token system behind large e-commerce front ends at Connect 91.
       roles: [connect91]
     - name: Tailwind CSS
       level: Advanced
@@ -55,16 +60,28 @@
     Structure that lets many people ship into one codebase without slowing each other down.
   skills:
     - name: Design systems & component libraries
-      context: Reusable component libraries at JP Morgan Chase that several teams build features on.
+      context: The Angular component library that renders promotions across Chase Travel, adopted by three downstream squads (about 40% less duplicated UI); reusable components for Holland America Line's cruise site at Xpanxion.
       roles: [jpmc]
+      projects: [chase-travel-booking, holland-america]
       caseStudies: [microfrontend-architecture]
+    - name: Micro-frontends
+      context: Webpack Module Federation boundaries in Chase Travel's front end, so four squads deploy independently.
+      roles: [jpmc]
+      projects: [chase-travel-booking]
+      caseStudies: [microfrontend-architecture]
+    - name: Role-based access control
+      context: Designed and implemented role-based access control for Chase Travel's Site Manager, with permissions scoped per business unit, shown in the Angular layer and enforced by the APIs. Zero privilege-escalation incidents since launch.
+      roles: [jpmc]
+      projects: [chase-travel-site-manager]
     - name: Scalable application structure
-      context: Modular Angular architecture at Xpanxion that cut the time it took to build new features.
-      roles: [xpanxion]
+      context: Configuration-driven, modular Angular architecture for Chase Travel's Site Manager; modular Angular architecture at Xpanxion that cut the time it took to build new features.
+      roles: [jpmc, xpanxion]
+      projects: [chase-travel-site-manager]
     - name: Code review
       level: Expert
-      context: As much of my week now goes on architecture decisions, reviews and mentoring as on writing features.
-      roles: [jpmc]
+      context: Weekly design and code reviews for a team of six engineers on Chase Travel, and code review on Holland America Line's cruise site at Xpanxion.
+      roles: [jpmc, xpanxion]
+      projects: [chase-travel-booking, holland-america]
 
 - id: quality
   order: 3
@@ -75,21 +92,26 @@
     # JP Morgan Chase evidence for both accessibility rows and end-to-end
     # testing confirmed by Niraj.
     - name: Web accessibility (WCAG)
-      level: Advanced
-      context: Accessible enterprise travel platforms at JP Morgan Chase; led WCAG 2.0 compliance at Xpanxion. This site targets WCAG 2.2 AA with an automated contrast audit in the build.
+      level: Expert
+      context: Led the WCAG 2.1 AA audit and remediation across Chase Travel at JP Morgan Chase; led WCAG 2.0 compliance at Xpanxion. This site targets WCAG 2.2 AA with an automated contrast audit in the build.
       roles: [jpmc, xpanxion]
+      projects: [chase-travel-booking, holland-america]
     - name: Accessibility testing
       level: Expert
-      context: Accessibility testing on JP Morgan Chase's enterprise travel platforms. I audit with axe DevTools.
+      context: Accessibility testing on Chase Travel at JP Morgan Chase — keyboard navigation, ARIA landmarks and screen-reader support. I audit with axe DevTools.
       roles: [jpmc]
+      projects: [chase-travel-booking]
     - name: Unit testing
       level: Expert
-      context: Jasmine and Karma in Angular, Jest in React — test suites that raised coverage and cut production defects.
-      roles: [jpmc]
+      context: About 80% coverage with Jasmine and Karma on Schlumberger's Field Logistics Module, which with the end-to-end suite cut a three-day regression cycle to under six hours. Jasmine and Karma in Angular and Jest in React elsewhere.
+      roles: [slb, jpmc]
+      projects: [flm-field-logistics, holland-america]
+      caseStudies: [flm-regression-and-upgrade]
     - name: End-to-end testing
       level: Advanced
-      context: End-to-end tests for the enterprise travel platforms at JP Morgan Chase.
-      roles: [jpmc]
+      context: A full WebDriver suite reported through Allure on Schlumberger's Field Logistics Module, and end-to-end tests for Chase Travel at JP Morgan Chase.
+      roles: [slb, jpmc]
+      projects: [flm-field-logistics]
 
 - id: performance
   order: 4
@@ -99,13 +121,18 @@
   skills:
     - name: Load-time optimisation
       level: Advanced
-      context: Code splitting, lazy loading and leaner state at Schlumberger; performance initiatives at JP Morgan Chase.
+      context: About 30% faster average page loads on Chase Travel after redesigning the offers API, and 40% better LCP on Site Manager's dashboard at JP Morgan Chase; code splitting, lazy loading and leaner state at Schlumberger; lazy loading, image optimisation and smaller bundles on Holland America Line's cruise site at Xpanxion.
       roles: [slb, jpmc]
-      caseStudies: [enterprise-dashboard]
+      projects: [chase-travel-booking, chase-travel-site-manager, holland-america]
     - name: Angular runtime performance
       level: Advanced
-      context: Change-detection tuning, lazy-loaded modules and bundle-size reduction on large Angular apps.
-      roles: [xpanxion]
+      context: Change-detection and rendering fixes that removed three bottlenecks from Chase Travel's Site Manager dashboard; change-detection tuning, lazy-loaded modules and bundle-size reduction on large Angular apps at Xpanxion.
+      roles: [jpmc, xpanxion]
+      projects: [chase-travel-site-manager]
+    - name: Performance monitoring
+      context: Dynatrace, Kibana and browser profiling to find rendering bottlenecks in Chase Travel's Site Manager.
+      roles: [jpmc]
+      projects: [chase-travel-site-manager]
     - name: Build tooling
       level: Advanced
       context: Webpack and Vite — Rxbit and Nexpenso ship as Vite builds with vendor and feature code split into separate chunks.
@@ -118,8 +145,9 @@
     The APIs and data behind the interfaces I build.
   skills:
     - name: Node.js & Express
-      level: Expert
-      context: REST services that sit behind the front ends I build.
+      level: Advanced
+      context: REST services that sit behind the front ends I build, including the API behind Nexpenso, my personal finance tracker.
+      projects: [nexpenso]
     - name: REST API integration
       level: Expert
       context: Optimised fetching, error handling and retry strategies for reliable integrations.
@@ -131,7 +159,7 @@
       context: Designing and building services myself, not only the front ends that call them.
     # Where these were used confirmed by Niraj (JP Morgan Chase, Xpanxion).
     - name: MongoDB
-      level: Expert
+      level: Advanced
       context: Used at JP Morgan Chase and Xpanxion.
       roles: [jpmc, xpanxion]
     - name: MySQL
@@ -142,6 +170,9 @@
       level: Intermediate
       context: Used at JP Morgan Chase and Xpanxion.
       roles: [jpmc, xpanxion]
+    - name: PostgreSQL
+      context: The database behind Nexpenso's API.
+      projects: [nexpenso]
 
 - id: cloud
   order: 6
@@ -151,7 +182,7 @@
   skills:
     - name: CI/CD
       level: Advanced
-      context: GitHub Actions — this site builds, audits its colour contrast and deploys on every push. Side projects ship to Vercel and Netlify.
+      context: GitHub Actions — this site builds, audits its colour contrast and deploys on every push, and Nexpenso's API deploys to Northflank through it. Side-project front ends ship to Vercel and Netlify.
       projects: [rxbit, shredtrack, nexpenso]
     # Docker in Nexpenso confirmed by Niraj.
     - name: Docker
@@ -161,7 +192,7 @@
     # AWS, Azure and Kubernetes at JP Morgan Chase confirmed by Niraj.
     - name: AWS & Azure
       level: Intermediate
-      context: Used at JP Morgan Chase.
+      context: Used at JP Morgan Chase. AWS Certified Cloud Practitioner since December 2023.
       roles: [jpmc]
     - name: Kubernetes
       level: Intermediate

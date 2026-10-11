@@ -1,7 +1,7 @@
 {
   "name": "niraj-chavan-portfolio",
   "version": "3.0.0",
-  "description": "Portfolio of Niraj Chavan — senior UI engineer. Case studies, projects, writing and the thinking behind them.",
+  "description": "Portfolio of Niraj Chavan — senior software engineer. Case studies, projects, writing and the thinking behind them.",
   "type": "module",
   "private": true,
   "engines": {

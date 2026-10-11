@@ -30,12 +30,12 @@ const lessons: Record<string, { chapter: string; lesson: string }> = {
   whitecode: {
     chapter: 'Learning to ship, end to end',
     lesson:
-      'My first job covered the whole stack: WordPress themes and plugins, PHP on CodeIgniter and Laravel, shopping carts and payment gateways, scheduled jobs and email templates — every project from requirements to deployment.',
+      'My first job covered the whole stack: a plot booking system that replaced paper reservations, WordPress themes and plugins, PHP on CodeIgniter and Laravel, shopping carts and payment gateways, scheduled jobs and email templates — every project from requirements to deployment.',
   },
   connect91: {
     chapter: 'Falling for the front end',
     lesson:
-      'I turned PSD and Sketch designs into pixel-accurate, accessible, cross-browser pages for large e-commerce sites, and built the Sass framework — design tokens and component patterns — that those front ends shared.',
+      'I turned PSD and Sketch designs into pixel-accurate, accessible, cross-browser pages for large e-commerce sites, built the Sass framework — design tokens and component patterns — that those front ends shared, and built an interactive banner system for live product-demo videos.',
   },
   xpanxion: {
     chapter: 'Leading the front end',
@@ -45,12 +45,12 @@ const lessons: Record<string, { chapter: string; lesson: string }> = {
   slb: {
     chapter: 'Enterprise scale, global users',
     lesson:
-      'At Schlumberger I built applications for global enterprise clients, including the Field Logistics Module, improved load times with code splitting, lazy loading and leaner state, and mentored junior developers on responsive layout and CSS.',
+      'At Schlumberger I worked on the Field Logistics Module, an internal inventory application used by 500+ engineers in several regions. I built its real-time inventory dashboard, wrote the unit and end-to-end suites that cut a three-day regression cycle to under six hours, and led its upgrade from Angular 8 to 11.',
   },
   jpmc: {
     chapter: 'Platforms people depend on',
     lesson:
-      'Today I work on enterprise travel platforms at JP Morgan Chase — booking and order-management flows used by thousands of people a day. I spend as much time on architecture decisions, component libraries, testing standards and code review as on features, because that is what keeps a large codebase healthy.',
+      "Today I'm a lead developer on Chase Travel, JP Morgan Chase's travel-booking platform, which serves millions of customers. I own the front-end architecture of its promotions and offers platform, introduced the micro-frontend boundaries that let four squads deploy independently, worked on its purchase flow from trip cart to confirmation, and led Site Manager, the self-service tool its business teams use to configure travel products.",
   },
 };
 
@@ -61,7 +61,7 @@ const values = [
   },
   {
     title: 'Accessible from the first commit',
-    body: 'Accessibility is built in from the start, not patched in before release. It is cheaper, and it is right.',
+    body: 'Leading a WCAG audit and remediation on a live platform showed me how much cheaper it is to build accessibility in from the start than to retrofit it.',
   },
   {
     title: 'Standards outlast sprints',
@@ -69,7 +69,7 @@ const values = [
   },
   {
     title: 'Teach as you go',
-    body: 'I spend as much time on architecture decisions, code reviews and mentoring as on writing features — that is where standards spread.',
+    body: "Design reviews, code reviews and mentoring are where a team's standards actually spread, so I treat them as part of the job, not a distraction from it.",
   },
 ];
 ---
@@ -82,7 +82,7 @@ const values = [
   <PageHeader
     eyebrow="About"
     title="From e-commerce storefronts to enterprise platforms"
-    lede={`I'm ${profile.name}, a senior UI engineer in ${profile.location}. This is the ${profile.years}-year story of how I got here, and how I work now.`}
+    lede={`I'm ${profile.name}, a senior software engineer in ${profile.location}. This is the ${profile.years}-year story of how I got here, and how I work now.`}
   />
   <SubNav items={ABOUT_NAV} label="About sections" />
 
@@ -127,17 +127,17 @@ const values = [
       <section aria-labelledby="intro" class="prose max-w-none">
         <h2 id="intro" class="!mt-0">In short</h2>
         <p>
-          Senior UI engineer with {profile.years} years of experience building web applications that have to stay fast
-          under real traffic. I started out on e-commerce storefronts and now work on enterprise travel platforms at JP
-          Morgan Chase. The job hasn't really changed in that time: take a complicated set of business requirements and
+          Senior software engineer with {profile.years} years of experience building web applications that have to stay fast
+          under real traffic. I started out on e-commerce storefronts and now lead front-end work on Chase Travel at
+          JP Morgan Chase. The job hasn't really changed in that time: take a complicated set of business requirements and
           turn it into something people can use without stopping to think about it.
         </p>
         <p>
           Most of my work is Angular, React and TypeScript on the front end, with Node.js and REST APIs behind it,
-          though I'm strongest in the part users actually see. Across ten-plus enterprise applications, that has meant
-          design systems and shared component libraries, JWT authentication, travel booking and order-management flows
-          used by thousands of people a day, and accessibility built in from the start rather than patched in before
-          release.
+          though I'm strongest in the part users actually see. Across banking, energy, cybersecurity, retail and travel,
+          that has meant shared component libraries, micro-frontends, JWT authentication and role-based access control,
+          offers and the purchase flow for Chase Travel's millions of customers, and a WCAG 2.1 AA audit and remediation
+          across that platform.
         </p>
         <p>
           The longer I do this, the clearer it gets that the code is rarely the hard part. I now spend as much time on
@@ -170,8 +170,8 @@ const values = [
                   <span
                     aria-hidden="true"
                     class:list={[
-                      'relative mt-1 grid size-6 place-items-center rounded-full border bg-canvas font-mono text-[0.625rem]',
-                      role.data.end ? 'border-line-strong text-fg-subtle' : 'border-accent-solid bg-accent-solid text-fg-on-accent',
+                      'relative mt-1 grid size-6 place-items-center rounded-full border font-mono text-[0.625rem]',
+                      role.data.end ? 'border-line-strong bg-canvas text-fg-subtle' : 'border-accent-solid bg-accent-solid text-fg-on-accent',
                     ]}
                   >
                     {i + 1}
@@ -276,7 +276,11 @@ const values = [
                 community.map((c) => (
                   <li>
                     <p class="flex items-center gap-2 font-medium text-fg">
-                      {c.data.url ? <a class="link" href={c.data.url}>{c.data.title}</a> : c.data.title}
+                      {c.data.url ? (
+                        <a class="link" href={c.data.url} target="_blank" rel="noopener">{c.data.title}<span class="sr-only"> (opens in a new tab)</span></a>
+                      ) : (
+                        c.data.title
+                      )}
                       <DraftBadge draft={c.data.draft} />
                     </p>
                     <p class="text-sm text-fg-muted">

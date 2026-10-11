@@ -1,45 +1,71 @@
 ---
-title: One component platform for many teams
-summary: Shared component libraries and front-end architecture that let several product teams ship consistent features faster.
+title: Letting four squads ship Chase Travel independently
+summary: Micro-frontend boundaries with Webpack Module Federation and a shared promotion component library, so squads building Chase Travel release on their own schedule and stop rebuilding the same UI.
 draft: true
 order: 3
-role: Software Engineer
+role: Lead developer, promotions and offers
 company: JP Morgan Chase & Co.
 period: 2021 – present
 domains: [design-systems, scalability]
-industry: Banking · Enterprise travel
-stack: [Angular, React, TypeScript]
+industry: Banking · Travel (Chase Travel)
+stack: [Angular, TypeScript, Webpack Module Federation, Micro-frontends]
 problem: >-
-  TODO: What was happening before the shared libraries — duplicated
-  components, inconsistent UX, slow delivery?
+  Several squads ship into Chase Travel's front end, JP Morgan Chase's
+  travel-booking platform for millions of customers. Releasing together meant
+  coordinating across teams, which became a bottleneck, and squads were each
+  building their own promotion UI.
 goals:
-  - TODO
+  - Each squad deploys its part of Chase Travel without waiting on the others.
+  - One implementation of promotion rendering that every squad builds on.
+  - TODO — any goal for consistency, quality or delivery speed you set up front?
 constraints:
-  - TODO
+  - TODO — e.g. existing pages had to keep working during the migration
+  - TODO — e.g. firm governance, security review and release-management rules
+  - TODO — e.g. one Angular version shared across remotes
+metrics:
+  - label: Squads deploying independently
+    after: "4"
+    note: Micro-frontend boundaries with Webpack Module Federation.
+  - label: Duplicated promotion UI
+    after: "~40% less"
+    note: Shared library adopted by three downstream squads.
+  - label: New-feature delivery
+    after: One sprint sooner
+    note: For squads building on the shared library.
 lessons:
-  - TODO
+  - TODO — What would you do differently?
+  - TODO — What did micro-frontends cost that you didn't expect?
+relatedProjects: [chase-travel-booking]
 ---
 
-<Draft note="Scaffold — confirm scope and what JPMC allows you to publish">
+<Draft note="Facts confirmed from your résumé; the rest is scaffold. Check what JP Morgan Chase lets you publish">
 
-My experience at JP Morgan Chase records building reusable component libraries and design systems that sped up delivery across several teams, and contributing to platform architecture decisions. **It does not mention micro-frontends.** If micro-frontends were part of it, describe how; if not, rename this file to `shared-component-platform.mdx` and drop "micro-frontend" from the title.
-
-Before publishing anything about JP Morgan Chase systems, check it against the firm's policy on public disclosure — describe patterns and outcomes, not internal names, hosts or numbers you are not cleared to share.
+The metrics, problem and first two goals restate your résumé. Everything marked TODO needs you. Before publishing, check the page against the firm's public-disclosure policy: describe patterns and outcomes, not internal names, hosts or numbers you are not cleared to share. The project page *Chase Travel — Offers & Purchase Flow* already covers the same work in summary. This case study is the place for depth: the architecture, the migration and the politics of getting four squads to agree.
 
 </Draft>
 
 ## Context
 
-TODO
+I am the lead developer for Chase Travel's promotions and offers platform. Promotions appear on many squads' pages, so the way squads shared code and releases shaped everything we shipped.
+
+<Draft note="Context">
+
+TODO — How was the front end organised before: one repository and one deployment, shared by every squad? How often did releases slip because of another squad's changes?
+
+</Draft>
+
+<Draft note="Architecture — needed for the interactive diagram">
 
 ## Architecture
 
-TODO: Add an `architecture` block in the frontmatter (see authentication-platform.mdx for the format) — e.g. host app, shared libraries, versioning and release flow.
+TODO — Add an `architecture` block in the frontmatter (see authentication-platform.mdx for the format): the host shell, each squad's remote, the shared promotion library, how shared dependencies are versioned and loaded, and the release flow per remote.
 
 ## Adoption
 
-TODO: How did teams move onto the libraries? Versioning, documentation, support.
+TODO — How did squads move onto the boundaries and the library: a proposal, an architecture review, a pilot squad, migration guides? How is the library versioned, documented and supported?
 
-## Results
+## Challenges
 
-TODO
+TODO — What went wrong: shared-dependency version clashes, runtime integration bugs, styling leaks between remotes, slower local development?
+
+</Draft>

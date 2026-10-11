@@ -15,9 +15,9 @@ export const profile = {
   firstName: 'Niraj',
   initials: 'NC',
   /** How I describe my discipline. */
-  role: 'Senior UI Engineer',
+  role: 'Senior Software Engineer',
   /** My current title and employer, as on the payroll. */
-  current: { title: 'Software Engineer', company: 'JP Morgan Chase & Co.', since: '2021-12' },
+  current: { title: 'Software Development Engineer III', company: 'JP Morgan Chase & Co.', since: '2021-12' },
   location: 'Pune, India',
   timezone: 'IST · UTC+5:30',
   careerStart: CAREER_START,
@@ -84,13 +84,13 @@ export const specialties = [
     icon: 'layers',
   },
   {
-    title: 'Design systems',
-    body: 'Reusable component libraries that several teams build on, so features ship faster and look consistent.',
+    title: 'Shared component libraries',
+    body: 'Angular component libraries that other squads build on. The promotion library I architected on Chase Travel is used by three of them.',
     icon: 'grid',
   },
   {
     title: 'Accessibility',
-    body: 'WCAG built in from the first commit and tested with real assistive technology, not patched before release.',
+    body: 'I led the WCAG 2.1 AA audit and remediation across Chase Travel, covering keyboard navigation, ARIA landmarks and screen-reader support.',
     icon: 'accessibility',
   },
   {
@@ -100,21 +100,20 @@ export const specialties = [
   },
   {
     title: 'Technical leadership',
-    body: 'Code reviews, standards and mentoring that keep a codebase healthy long after the sprint that shipped it.',
+    body: 'Weekly design and code reviews for a team of six on Chase Travel, and mentoring junior engineers on TypeScript and Angular component architecture.',
     icon: 'compass',
   },
 ] as const;
 
 /** Industries I have shipped software for, with where. */
 export const domains = [
-  { name: 'Banking & enterprise travel', where: 'JP Morgan Chase & Co.' },
+  { name: 'Banking & travel', where: 'Chase Travel, JP Morgan Chase & Co.' },
   { name: 'Energy & oilfield logistics', where: 'Schlumberger' },
   { name: 'Cybersecurity', where: 'K7 Security' },
   { name: 'Cruise & travel e-commerce', where: 'Holland America Line' },
-  { name: 'Retail', where: 'Scoperetail' },
-  { name: 'E-commerce', where: 'Connect | 91, WhiteCode' },
+  { name: 'Retail', where: 'Scope Retail' },
+  { name: 'E-commerce', where: 'Connect 91, Whitecode' },
   { name: 'Accounting & professional services', where: 'Deshmukh & Deshpande Associates' },
-  { name: 'Healthcare', where: 'Rxbit (side project)' },
 ] as const;
 
 /**
@@ -125,5 +124,5 @@ export const highlights = [
   { value: '10+', label: 'enterprise applications shipped' },
   { value: `${yearsSince(CAREER_START)} yrs`, label: 'building for the web' },
   { value: '5', label: 'companies, from agency to bank' },
-  { value: 'WCAG', label: 'accessibility led, not bolted on' },
+  { value: 'WCAG', label: '2.1 AA audit and remediation led on Chase Travel' },
 ] as const;

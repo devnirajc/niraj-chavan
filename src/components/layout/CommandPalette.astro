@@ -71,6 +71,8 @@ import { href } from '@/lib/url';
 </style>
 
 <script>
+  import { isExternal } from '@/lib/url';
+
   interface Entry {
     title: string;
     url: string;
@@ -119,6 +121,16 @@ import { href } from '@/lib/url';
     const escape = (text: string) =>
       text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
+    // Off-site results (Medium articles) open in a new tab, like the site's
+    // other external links. The dialog closes first either way: a result on
+    // the current page (/skills/#frontend from /skills/) is only a hash
+    // change, which would otherwise scroll the page behind the open modal.
+    const go = (url: string) => {
+      close();
+      if (isExternal(url)) window.open(url, '_blank', 'noopener');
+      else window.location.href = url;
+    };
+
     const render = () => {
       list.innerHTML = results
         .map(
@@ -127,7 +139,7 @@ import { href } from '@/lib/url';
                 class="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5 aria-selected:bg-accent-quiet">
               <span class="mt-0.5 w-24 shrink-0 font-mono text-[0.6875rem] uppercase tracking-wider text-fg-subtle">${escape(entry.type)}</span>
               <span class="min-w-0">
-                <span class="block truncate font-medium text-fg">${escape(entry.title)}</span>
+                <span class="block truncate font-medium text-fg">${escape(entry.title)}${isExternal(entry.url) ? '<span class="sr-only"> (opens in a new tab)</span>' : ''}</span>
                 <span class="block truncate text-sm text-fg-muted">${escape(entry.summary)}</span>
               </span>
             </li>`
@@ -206,13 +218,13 @@ import { href } from '@/lib/url';
         setActive(active - 1);
       } else if (event.key === 'Enter' && results[active]) {
         event.preventDefault();
-        window.location.href = results[active].url;
+        go(results[active].url);
       }
     });
 
     list.addEventListener('click', (event) => {
       const option = (event.target as HTMLElement).closest<HTMLElement>('[role=option]');
-      if (option?.dataset.url) window.location.href = option.dataset.url;
+      if (option?.dataset.url) go(option.dataset.url);
     });
 
     document.addEventListener('keydown', (event) => {

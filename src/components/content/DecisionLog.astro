@@ -2,7 +2,10 @@
 /**
  * Technical decision journal — each decision written ADR-style: the context,
  * the options weighed, which one was chosen and why, and what it cost.
- * "Chosen" is stated in text, never by colour alone.
+ * "Chosen" is stated in text, never by colour alone. Also available in MDX
+ * as <Decisions decisions={[…]} />, so both lists carry `list-none p-0` and
+ * every item `mt-0`: that keeps the .prose list padding and `li + li` margins
+ * (which would add to the grid gaps) off it.
  */
 import Icon from '@/components/ui/Icon.astro';
 
@@ -11,26 +14,27 @@ interface Props {
     title: string;
     context: string;
     options: { name: string; chosen: boolean; reason: string }[];
-    tradeoff: string;
+    /** Optional in MDX: a card can go live before its trade-off is confirmed. */
+    tradeoff?: string;
   }[];
 }
 
 const { decisions } = Astro.props;
 ---
 
-<ol class="grid gap-5">
+<ol class="grid list-none gap-5 p-0">
   {
     decisions.map((d, i) => (
-      <li class="card p-5 sm:p-6">
+      <li class="card mt-0 p-5 sm:p-6">
         <p class="eyebrow">Decision {String(i + 1).padStart(2, '0')}</p>
         <h3 class="mt-2 text-lg font-semibold">{d.title}</h3>
         <p class="mt-2 leading-relaxed text-fg-muted">{d.context}</p>
 
-        <ul class="mt-5 grid gap-2" aria-label="Options considered">
+        <ul class="mt-5 grid list-none gap-2 p-0" aria-label="Options considered">
           {d.options.map((o) => (
             <li
               class:list={[
-                'grid grid-cols-[auto_1fr] gap-3 rounded-xl border px-4 py-3',
+                'mt-0 grid grid-cols-[auto_1fr] gap-3 rounded-xl border px-4 py-3',
                 o.chosen ? 'border-accent-line bg-accent-quiet/60' : 'border-line bg-sunken/50',
               ]}
             >
@@ -56,13 +60,15 @@ const { decisions } = Astro.props;
           ))}
         </ul>
 
-        <p class="mt-4 flex gap-2 text-sm leading-relaxed text-fg-muted">
-          <Icon name="compass" size={16} class="mt-0.5 text-fg-subtle" />
-          <span>
-            <strong class="font-medium text-fg">Trade-off: </strong>
-            {d.tradeoff}
-          </span>
-        </p>
+        {d.tradeoff && (
+          <p class="mt-4 flex gap-2 text-sm leading-relaxed text-fg-muted">
+            <Icon name="compass" size={16} class="mt-0.5 text-fg-subtle" />
+            <span>
+              <strong class="font-medium text-fg">Trade-off: </strong>
+              {d.tradeoff}
+            </span>
+          </p>
+        )}
       </li>
     ))
   }

@@ -4,20 +4,30 @@
 
 - id: jpmc
   company: JP Morgan Chase & Co.
-  role: Software Engineer
+  role: Software Development Engineer III
   start: 2021-12
   end: null
-  industry: Banking · Enterprise travel
+  industry: Banking · Travel (Chase Travel)
   summary: >-
-    Engineering web applications and services for enterprise travel platforms —
-    booking and order-management flows used by thousands of people a day.
+    Lead developer on Chase Travel, JP Morgan Chase's travel-booking platform
+    for cardmembers, which serves millions of customers. I own the front-end
+    architecture of its promotions and offers platform, worked on its purchase
+    flow from trip cart to confirmation, and led Site Manager, the self-service
+    tool its business teams use to configure travel products.
   achievements:
-    - Architect and deliver Angular, React and TypeScript applications within Agile sprints, consistently on schedule.
-    - Built reusable component libraries and design systems that sped up feature delivery across several teams.
-    - Introduced testing frameworks and thorough unit-test suites, raising coverage and cutting production defects.
-    - Led performance work that produced faster load times and a more reliable platform.
-    - Contribute to platform architecture decisions, design patterns and technical standards with cross-functional teams.
-  stack: [Angular, React, TypeScript, RxJS, Design systems, Accessibility, Unit testing, End-to-end testing, MongoDB, MySQL, GraphQL, AWS, Azure, Kubernetes]
+    - Lead developer for Chase Travel's promotions and offers platform. Delivered personalised offer rendering across the platform; customer bookings rose 20% after it went live.
+    - Worked on Chase Travel's purchase flow, from trip cart and traveller information through payment and review to booking confirmation.
+    - Architected a reusable Angular component library for promotion rendering, adopted by three downstream squads. It cut duplicated promotion UI by about 40%, and promotion features now ship about a sprint sooner.
+    - Introduced micro-frontend boundaries with Webpack Module Federation, so four squads deploy independently, without cross-team release coordination.
+    - Worked with the back-end teams on the offers service's REST API design, ending over-fetching and cutting average page load time by about 30%.
+    - Led the design and implementation of Site Manager, which lets Chase Travel's business teams change travel product settings without engineers. A change takes effect as soon as it is saved, instead of waiting days for an engineer and a release.
+    - Designed and implemented role-based access control for Site Manager, scoping configuration permissions per business unit. The Angular layer shows each role only what it may change, and the APIs enforce the same entitlements. Zero privilege-escalation incidents since launch.
+    - Drove a Dynatrace and Kibana performance audit of Site Manager's dashboard, fixing three rendering bottlenecks and improving LCP by 40%.
+    - Led the WCAG 2.1 AA accessibility audit and remediation across Chase Travel, covering keyboard navigation, ARIA landmarks and screen-reader support.
+    - Run weekly design and code reviews for a team of six engineers, and mentored two junior engineers on TypeScript and Angular component architecture.
+    - Write unit and end-to-end tests for the Chase Travel features I build.
+  stack: [Angular, TypeScript, RxJS, Micro-frontends, Webpack Module Federation, Component libraries, RBAC, Accessibility, Unit testing, End-to-end testing, Dynatrace, Kibana, MongoDB, MySQL, GraphQL, AWS, Azure, Kubernetes]
+  projects: [chase-travel-booking, chase-travel-site-manager]
   caseStudies: [microfrontend-architecture]
 
 - id: slb
@@ -27,20 +37,23 @@
   end: 2021-12
   industry: Energy · Oilfield logistics
   summary: >-
-    Led front-end development for enterprise software used by global clients,
-    including the Field Logistics Module for transport and logistics operations.
+    UI developer on the Field Logistics Module (FLM), Schlumberger's internal
+    application for managing global logistics inventory for field operations,
+    used by 500+ engineers in several regions. I built its real-time inventory
+    dashboard and its test suites, and led its upgrade from Angular 8 to 11.
   achievements:
-    - Built high-performance web applications in Angular, React and modern JavaScript for global enterprise clients.
+    - Built FLM's real-time inventory-tracking dashboard on Kibana-integrated data feeds. Inventory discrepancies fell by about 35% within a quarter of go-live.
+    - Took unit-test coverage to about 80% with Jasmine and Karma and built a full WebDriver end-to-end suite reported through Allure, cutting the QA regression cycle from three days to under six hours.
+    - Led FLM's upgrade from Angular 8 to 11. I planned the migration, coordinated it with QA and rolled it out to production with zero downtime.
     - Improved page-load speed through code splitting, lazy loading and leaner state management.
-    - Led responsive implementation across devices and browsers for a consistent experience.
-    - Mentored junior developers on responsive layout, fluid design and CSS architecture.
+    - Led responsive implementation across devices and browsers, and mentored junior developers on responsive layout, fluid design and CSS architecture.
     - Turned business requirements into interfaces with UX designers and product managers, and ran testing and user-acceptance validation.
-  stack: [Angular, React, JavaScript, SCSS, Responsive design]
+  stack: [Angular, TypeScript, React, Jasmine, Karma, WebDriver, Allure, Kibana, SCSS, Responsive design]
   projects: [flm-field-logistics]
-  caseStudies: [enterprise-dashboard]
+  caseStudies: [flm-regression-and-upgrade]
 
 - id: xpanxion
-  company: Xpanxion International
+  company: Xpanxion International (now UST Global)
   role: Senior UI Engineer
   start: 2017-01
   end: 2019-09
@@ -55,19 +68,26 @@
     - Applied lazy loading, change-detection tuning and bundle-size reduction to speed up large Angular apps.
     - Integrated REST APIs with optimised fetching, error handling and retry for reliability.
     - Built data export to CSV, Excel and PDF.
-  stack: [Angular, TypeScript, RxJS, JWT, REST APIs, WCAG 2.0, MongoDB, MySQL, GraphQL]
+    - Designed and built the full UI for inventory oversight and order management in Scope Retail's order management system. Its real-time dashboards replaced spreadsheet tracking for the operations team, and manual data-entry errors fell 50% in three months.
+    - Mentored two junior engineers on Angular architecture, component composition and REST API integration patterns.
+    - Built the front end of K7 Computing's consumer console and antivirus dashboard, used by thousands of home users.
+    - Worked on Holland America Line's cruise booking site, building cruise search and booking screens and shared components, and speeding up its photo-heavy pages with lazy loading, code splitting, image optimisation and smaller bundles.
+  stack: [Angular, TypeScript, RxJS, Chart.js, JWT, REST APIs, WCAG 2.0, MongoDB, MySQL, GraphQL]
+  projects: [holland-america, scoperetail, k7-security]
   caseStudies: [authentication-platform]
 
 - id: connect91
-  company: Connect | 91 Web Solution
-  role: UI Developer
+  company: Connect 91 Web Solutions (Polyscripts Infotech)
+  role: Frontend Developer
   start: 2015-12
   end: 2017-01
   industry: E-commerce
   summary: >-
     Turned designs into pixel-accurate, accessible, cross-browser front ends,
-    mostly for large e-commerce platforms.
+    mostly for large e-commerce platforms, and built an interactive banner
+    system for live product-demo videos.
   achievements:
+    - Built an interactive in-video banner system for live product demos, with responsive UI components integrated with a video SDK for desktop and mobile playback.
     - Built a scalable Sass architecture for large e-commerce applications, with design tokens and component patterns.
     - Converted PSD and Sketch designs into semantic, accessible HTML5 and CSS3 templates.
     - Delivered mobile-first responsive layouts across desktop, tablet and phone.
@@ -75,17 +95,19 @@
   stack: [HTML5, CSS3, Sass, JavaScript, Responsive design]
 
 - id: whitecode
-  company: WhiteCode Technology Solutions
-  role: Web Developer
+  company: Whitecode IT Solutions Pvt. Ltd.
+  role: Software Developer
   start: 2014-07
   end: 2015-12
   industry: E-commerce · Agency
   summary: >-
-    Full-stack web work from concept to deployment — WordPress, PHP MVC
-    frameworks and e-commerce, end to end.
+    Full-stack web work from concept to deployment — a plot booking system,
+    WordPress sites, PHP MVC frameworks and e-commerce, end to end.
   achievements:
+    - Built an end-to-end plot booking system that replaced a paper-based reservation process, covering requirements, UI, back-end integration, UAT and production deployment.
     - Built e-commerce and retail applications on CodeIgniter and Laravel, including cart and payment-gateway integration.
     - Created custom WordPress themes and plugins for client requirements.
     - Engineered scheduled jobs for email notifications and data synchronisation.
     - Designed responsive email templates that render consistently across Gmail, Outlook and Apple Mail.
   stack: [PHP, Laravel, CodeIgniter, WordPress, jQuery]
+  projects: [vdc]

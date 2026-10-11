@@ -1,7 +1,7 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import Icon from '@/components/ui/Icon.astro';
+import ThemeImage from '@/components/ui/ThemeImage.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
 import { href } from '@/lib/url';
 
@@ -17,14 +17,14 @@ const { data } = project;
 
 <article class="card card-interactive group flex flex-col overflow-hidden">
   <div class="relative aspect-[16/9] overflow-hidden border-b border-line bg-sunken">
-    <Image
-      src={data.cover}
+    <ThemeImage
+      light={data.cover}
+      dark={data.coverDark}
       alt=""
       widths={[400, 640, 960]}
       sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"
       class="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-      loading={eager ? 'eager' : 'lazy'}
-      fetchpriority={eager ? 'high' : 'auto'}
+      priority={eager}
     />
   </div>
   <div class="flex flex-1 flex-col p-5">

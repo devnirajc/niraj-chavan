@@ -2,14 +2,14 @@
 title: Rxbit
 tagline: A prescription builder for doctors' clinics
 summary: Clinic prescription builder with patient records, visit history and printable prescriptions.
-featured: true
-order: 1
+order: 5
 kind: personal
 category: Prescription builder
 industry: Healthcare
 status: live
-cover: ../../assets/projects/rxbit.png
-coverAlt: "Rxbit's patient page: allergy and condition badges, then a visit with complaint, diagnosis, four medicines with dosage and duration, advice, and Preview, Print, PDF and Edit actions."
+cover: ../../assets/projects/rxbit-cover-light.png
+coverDark: ../../assets/projects/rxbit-cover-dark.png
+coverAlt: "Abstract illustration of a prescription builder: a patient header with an allergy badge, four medicines with their dosage schedules, a visit history and a 'Ready to print' confirmation. It is not a screenshot of Rxbit."
 links:
   live: https://rxbit.vercel.app/
   liveLabel: Open Rxbit
@@ -18,37 +18,155 @@ features:
   - Patient records with allergy and existing-condition flags at the top of every page
   - Structured prescriptions — complaint, diagnosis, medicines with dosage and duration, advice
   - Visit history with follow-up dates
+  - Drug library with search, shipped with a starter list that the clinic can extend
+  - Drug-interaction warnings
+  - Protocol templates — save a visit as a template, or start from starter protocols such as hypertension follow-up
+  - Vitals, and a body diagram for pinning and labelling examination findings
+  - Clinic profile with letterhead and header templates for printed prescriptions
   - Preview, print or export any prescription as a PDF
+  - Backup and restore of everything on the device as a JSON file
+  - Keyboard shortcuts, with an in-app list of what each view supports
   - Installable as an app, with a web app manifest and service worker
 ---
 
 Rxbit is a prescription builder for small clinics. The doctor keeps one record per patient, with allergies and existing conditions flagged where they cannot be missed, and writes each visit as a structured prescription: the complaint, the diagnosis, each medicine with its dosage and duration, and the advice to go home with. Any visit can be previewed, printed or saved as a PDF, and the whole history stays on the patient's page.
 
-## Under the hood
+It is my own side project, which I designed and built.
 
-Rxbit is a React single-page app built with Vite. It uses IndexedDB, through Dexie, for storage in the browser, and Zod for validation. PDF generation ships as its own chunk, separate from the main application code.
+- **Who it's for:** doctors running small clinics, writing prescriptions during a consultation
+- **What it saves:** retyping common prescriptions. Repeat cases start from a saved protocol, and medicines come from the clinic's own drug library
+- **Shape:** an installable web app that keeps its data on the clinic's own device
+- **My role:** designer and engineer: product, UX, front end, storage and deployment
 
-<Draft note="Inferred from the production bundle — confirm or rewrite">
+<Draft note="Why you built it — only you know this">
 
-## Architecture decisions
+TODO — Did anyone else work on it, for example a doctor advising on clinical workflow? Why did you build Rxbit: a doctor you know, a gap you saw in clinic software, a way to practise? Has any clinic used it for real? If so, how many doctors, and what did they tell you? That feedback is the strongest thing this page could add.
 
-- **Browser storage first.** TODO: Does any patient data leave the device? Is there backup, export or sync? Why IndexedDB over a hosted database for a clinic?
-- **Validation at the edges.** TODO: Where does Zod run — form input, data import, both?
+</Draft>
 
-## Challenges solved
+## The business problem
 
-TODO: The hardest problem in building Rxbit — e.g. making printed prescriptions match what clinics expect on paper.
+A prescription is written under time pressure, with a patient in the room, and mistakes matter. A small clinic's doctor needs to:
 
-## Performance
+- see allergies and existing conditions before choosing a medicine,
+- write the same kinds of prescription for common cases without retyping them,
+- hand the patient a clear, printed prescription on the clinic's own letterhead,
+- keep each patient's visit history and follow-up dates in one place.
 
-TODO: Bundle size, first load, and how the PDF engine is loaded.
+Rxbit is built around those four needs.
+
+<Draft note="Confirm the framing">
+
+TODO — Is that how you would describe the problem? What did the clinics you had in mind use before: handwritten prescriptions, Word templates, expensive practice-management software?
+
+</Draft>
+
+## Architecture and design
+
+Rxbit is a React single-page application built with Vite, and it is **local-first**: patient records, visits, the drug library and protocol templates live in the browser's IndexedDB, through Dexie, on the clinic's own device. The app is explicit about this. Saved protocols are labelled "saved on this device only", and the backup screen offers to "export a copy of everything on this device" as a JSON file that can be restored later.
+
+Zod handles validation, and PDF generation ships as its own chunk, separate from the main application code. A web app manifest and service worker make Rxbit installable, with an offline mode.
+
+<Draft note="Architecture detail">
+
+TODO — Where does Zod run: form input, backup restore, drug-list import, all three?
+
+TODO — How do drug-interaction warnings work: a list of interacting pairs shipped with the app, or a lookup? Where did the interaction data come from, and how do you keep it accurate? (Clinically, this is the riskiest feature in the app, and readers will ask.)
+
+</Draft>
+
+## Key technical challenges
+
+### Prescriptions that print like the real thing
+
+**Challenge.** A prescription is a physical document the patient takes to a pharmacy. It has to carry the clinic's identity and read clearly on paper.
+
+**Solution.** A clinic profile with letterhead and header templates drives every printed prescription and PDF, and Rxbit won't print or export until the profile is set up. The drug table's layout is configurable, including a compact style with less row spacing and an optional drug-type column. Diagnosis codes can be printed alongside the diagnosis. The layout is print-optimised for physical prescriptions.
+
+<Draft note="What was hard about printing">
+
+TODO — What was hardest: page breaks in long prescriptions, matching the paper sizes clinics use, fonts, browser print differences, generating PDFs in the browser? Which PDF library is in the `pdf-engine` chunk, and why that one?
+
+</Draft>
+
+### Speed in the consultation room
+
+**Challenge.** The doctor writes while the patient waits, so typing the same prescription for common cases is wasted time.
+
+**Solution.** Protocol templates: any visit can be saved as a template and loaded into a new visit, and Rxbit ships with starter protocols such as hypertension follow-up, acute pharyngitis, paediatric fever and antenatal routine. Medicines from a patient's previous visit can be carried over, drug search draws on the clinic's own library, and keyboard shortcuts come with an in-app list of the shortcuts each view supports.
+
+### Patient data that stays on the device
+
+**Challenge.** Patient records are sensitive, and a hosted database means someone has to run and secure a server and hold the clinic's data.
+
+**Solution.** Records stay in IndexedDB on the clinic's own device, and the doctor controls backups: one JSON file holds everything and restores it.
+
+<Draft note="The trade-off you'd want readers to understand">
+
+TODO — Local-first means a lost or wiped device loses the data unless the doctor has exported a backup, and there is no sync between a clinic's devices. Did you weigh that? Is there a reminder to back up? I found no app lock or encryption in the live app. Is that a known gap, or on the roadmap?
+
+</Draft>
+
+<Draft note="Reconstructed from the live app by Claude — confirm the reasoning was yours, then move the decision out of the Draft block">
+
+## Engineering decisions
+
+<Decisions
+  decisions={[
+    {
+      title: 'Where patient data lives',
+      context: 'Clinic software holds sensitive records, and small clinics rarely have anyone to run a server.',
+      options: [
+        { name: 'Local-first: IndexedDB on the device, with JSON backups', chosen: true, reason: 'No server to run or pay for, works offline, and patient data stays with the clinic.' },
+        { name: 'Hosted database behind an API', chosen: false, reason: 'Sync across devices and automatic backups, but a server to secure and run, and patient data held by a third party.' },
+      ],
+      tradeoff: 'TODO — what you gave up: sync between devices, and recovery if the device is lost without a backup.',
+    },
+  ]}
+/>
+
+TODO — Other decisions worth a card: Dexie over raw IndexedDB or localStorage; Zod for validation; generating PDFs in the browser rather than on a server; React and Vite over Next.js for an app with no server.
+
+</Draft>
 
 ## Accessibility
 
-TODO: Keyboard flow through the prescription form, labels, contrast.
+Rxbit is built to WCAG 2.1, with keyboard-navigable forms throughout. The prescription form can be completed without a mouse, and keyboard shortcuts speed up the common actions.
 
-## What's next
+<Draft note="How you validated it">
 
-TODO: Planned features.
+TODO — How did you test it: axe, a screen reader (NVDA, VoiceOver), keyboard-only runs? How are the allergy and condition flags announced to a screen reader? What was hardest to make accessible: the body diagram, the drug search, the interaction warnings?
 
 </Draft>
+
+## Security and privacy
+
+Patient records stay on the device in the browser's IndexedDB, and the app says so where it saves templates and backups. Backups are files the doctor exports and keeps, not copies held by a third party.
+
+<Draft note="Fill in — or move to What's next">
+
+TODO — Anything else: is input sanitised before it is printed? Is the JSON backup validated before restore (Zod?) so a corrupt or tampered file can't break the database? Is encryption at rest or an app lock planned?
+
+</Draft>
+
+<Draft note="Performance — numbers needed">
+
+## Performance
+
+TODO — The PDF engine is a separate chunk. Is it loaded only when a doctor prints or exports? Bundle size, first load, Lighthouse scores? How does the app perform with a large patient list?
+
+</Draft>
+
+<Draft note="Lessons and roadmap — only you can write these">
+
+## Lessons learned and what's next
+
+TODO — What would you do differently? What surprised you about building for doctors? What's next: sync between devices, encrypted backups, an app lock, more starter protocols, multi-doctor clinics?
+
+</Draft>
+
+## Outcome summary
+
+- **What it is:** a working, installable prescription builder: patient records, structured prescriptions, protocols, drug-interaction warnings and print-ready output.
+- **Technical approach:** local-first storage in IndexedDB, Zod validation, PDF generation in its own chunk, and offline support as an installable app.
+- **Quality bar:** keyboard-navigable to WCAG 2.1, with shortcuts for speed and a print layout built for real prescriptions.

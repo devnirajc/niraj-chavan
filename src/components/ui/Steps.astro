@@ -11,10 +11,13 @@ interface Props {
 const { steps, label } = Astro.props;
 ---
 
-<ol class="relative grid gap-0" aria-label={label}>
+<!-- list-none/pl-0/mt-0 undo the .prose list and heading spacing when this
+     renders inside an MDX body; otherwise the title drops below the number
+     and the connector line breaks between steps. -->
+<ol class="relative grid list-none gap-0 pl-0" aria-label={label}>
   {
     steps.map((step, i) => (
-      <li class="relative grid grid-cols-[2.5rem_1fr] gap-4 pb-8 last:pb-0">
+      <li class="relative mt-0 grid grid-cols-[2.5rem_1fr] gap-4 pb-8 last:pb-0">
         {i < steps.length - 1 && <span aria-hidden="true" class="absolute top-10 bottom-0 left-5 w-px bg-line" />}
         <span
           aria-hidden="true"
@@ -23,7 +26,7 @@ const { steps, label } = Astro.props;
           {String(i + 1).padStart(2, '0')}
         </span>
         <div class="pt-2">
-          <h3 class="font-semibold">
+          <h3 class="mt-0 font-semibold">
             <span class="sr-only">Step {i + 1}: </span>
             {step.title}
           </h3>

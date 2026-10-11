@@ -1,0 +1,218 @@
+---
+title: Chase Travel — Site Manager
+tagline: Self-service travel settings for Chase Travel's business teams, with role-based access per business unit
+summary: I led Site Manager, the self-service settings platform behind Chase Travel. Settings changes that took days now apply immediately, my business-unit RBAC has had zero privilege escalations, and dashboard LCP improved 40%.
+featured: true
+order: 2
+kind: client
+category: Configuration platform · Internal admin
+industry: Banking · Travel
+company: JP Morgan Chase & Co.
+status: live
+cover: ../../assets/projects/site-manager-cover-light.png
+coverDark: ../../assets/projects/site-manager-cover-dark.png
+coverAlt: "Abstract illustration of a site-configuration tool: a tree of sites and pages, a page editor with one component selected beside its properties, and a 'Published to 4 sites' confirmation. It is not a screenshot of Site Manager."
+links:
+  live: https://www.chase.com/travel
+  liveLabel: Visit Chase Travel
+stack:
+  - Angular
+  - TypeScript
+  - RBAC
+  - REST APIs
+  - Dynatrace
+  - Kibana
+features:
+  - Dynamic management of Chase Travel's travel product settings
+  - Business-unit-specific configuration controls
+  - Self-service administration for authorised business users
+  - Configuration changes that take effect immediately, without a release
+  - Role-based access control scoped per business unit, with sensitive operations restricted, enforced by the APIs as well as the UI
+  - Fine-grained entitlement management
+  - A centralised governance model with audit-friendly administration workflows
+metrics:
+  - label: Settings change cycle
+    before: Days
+    after: Immediate
+    note: A change takes effect as soon as an authorised business user saves it, with no engineer or release involved.
+  - label: Privilege-escalation incidents
+    after: Zero
+    note: Since launch, with access scoped per business unit.
+  - label: Dashboard LCP
+    after: "40% better"
+    note: Largest Contentful Paint on the settings dashboard, after a Dynatrace and Kibana audit.
+  - label: Rendering bottlenecks fixed
+    after: "3"
+    note: Found through monitoring data and browser profiling.
+---
+
+Site Manager (Travel Settings Customisation) is the centralised configuration platform behind [Chase Travel](https://www.chase.com/travel), JP Morgan Chase's travel-booking platform for Chase cardmembers. Authorised business users manage Chase Travel's travel product settings through it, without engineering intervention.
+
+I led the design and implementation of Site Manager. Business teams now manage travel product configuration themselves, through a secure, role-based administration experience. Configuration changes that used to wait days for an engineer and a release now take effect as soon as they are saved. The platform also brought access governance through role-based access control (RBAC) I designed and implemented, enforced by the APIs as well as the Angular layer, and improved the dashboard's Largest Contentful Paint by 40% after an observability-led optimisation using Dynatrace and Kibana.
+
+Site Manager is internal, so there is no public demo; the image above is an illustration, not a screenshot.
+
+- **Product:** Site Manager, the travel-settings platform for Chase Travel
+- **Organisation:** JP Morgan Chase & Co.
+- **Users:** authorised business users across Chase Travel's business units, including product, operations and support teams
+- **My role:** I led the development of the Angular administration platform, designed and implemented its role-based access control, and drove its performance audit
+- **When:** at JP Morgan Chase since December 2021
+
+<Draft note="Scope and team — fill in what you can say publicly">
+
+TODO — When was Site Manager built, and how long did it take? How big was the team (front end, back end, QA, design), and who owned the back-end APIs? Roughly how many business units and business users use it, and how many kinds of setting does it manage, within what you are allowed to disclose?
+
+</Draft>
+
+## The business problem
+
+Before Site Manager, changing the configuration of Chase Travel's travel products was engineering work:
+
+- **Every change needed an engineer.** Even simple settings updates went through engineering.
+- **Business teams waited on release cycles**, so a configuration change could take days.
+- **Access was coarse.** Access management lacked fine-grained controls per business unit.
+- **The overhead grew with the product.** As Chase Travel's products became more complex, the operational cost of configuration rose with them.
+- **Everyone queued behind the same bottleneck.** Product, operations and support teams all depended on engineers to change settings.
+
+That made it a scaling problem, not just an inconvenience. As Chase Travel's products grew more complex, so did their configuration, and every change still had to go through engineering and a release. The demand on engineers grew with the product, whether or not the work needed an engineer.
+
+<Draft note="Discovery and requirements — whole section is unconfirmed">
+
+## Discovery and requirements
+
+TODO — How did you learn what business teams needed: workshops with product and operations, a backlog of configuration tickets, support-team pain points? Which settings came first? How did you decide what business users could change themselves and what stayed with engineering? How did requirements change during delivery, and how did you manage expectations?
+
+</Draft>
+
+## Architecture and design
+
+Site Manager is an Angular administration platform:
+
+- **Reusable component architecture.** I established a component architecture the platform's screens are built from.
+- **Configuration-driven UI.** Extensible, configuration-driven UI patterns, so the platform can grow with the settings it manages.
+- **Modular features.** Features are designed as modules, which keeps the platform maintainable as it grows.
+- **Access control at both layers.** Role-based access control scopes every user's permissions to their business unit and restricts sensitive operations. The Angular layer shows each role only what it may change, and the APIs enforce the same entitlements.
+- **Live configuration.** A change made through Site Manager takes effect immediately, not through a release.
+
+<Draft note="Architecture detail — needed for the interactive diagram, within disclosure limits">
+
+TODO — What does "configuration-driven" mean here: forms rendered from a settings schema, a registry of setting types, metadata from the API? Give one example of adding a new setting before and after Site Manager.
+
+TODO — Describe the moving parts as patterns, not internal names: the Angular app, the REST APIs it calls and who owns them, where settings are stored, how a change reaches Chase Travel immediately (a push, cache invalidation, polling), and where audit records live. I'll turn it into the interactive diagram.
+
+TODO — CI/CD and environments: how Site Manager is built, tested and promoted to production, and how a settings change is tested before it affects customers (preview, staging, approval)?
+
+</Draft>
+
+## Engineering decisions
+
+Each decision below compares the approach I chose with the state it replaced.
+
+<Decisions
+  decisions={[
+    {
+      title: 'How travel product settings change',
+      context: 'Settings changes needed engineers and a release cycle, took days, and held up product, operations and support teams. The overhead grew as Chase Travel\'s products grew.',
+      options: [
+        { name: 'A dynamic, self-service settings platform', chosen: true, reason: 'Authorised business users change settings themselves, within the permissions of their business unit, and a change takes effect as soon as it is saved. What used to take days now takes as long as making the change.' },
+        { name: 'Settings changed by engineers through releases (the existing model)', chosen: false, reason: 'Every change, however small, waited for an engineer and a release cycle.' },
+      ],
+    },
+    {
+      title: 'How access to settings is controlled',
+      context: 'Self-service makes access control the main safeguard, and the existing access model had no fine-grained controls per business unit.',
+      options: [
+        { name: 'RBAC scoped per business unit, with sensitive operations restricted', chosen: true, reason: 'Least privilege: each user can change only their own business unit\'s settings, and sensitive operations need the right entitlement. The APIs enforce the same entitlements the screens reflect, so hiding a control is never the only safeguard. Zero privilege-escalation incidents since launch.' },
+        { name: 'The existing access model', chosen: false, reason: 'It lacked the fine-grained controls per business unit that self-service configuration needs.' },
+      ],
+    },
+  ]}
+/>
+
+<Draft note="Other options you weighed, and the trade-offs in your words">
+
+TODO — The cards compare each choice with the state it replaced. Did you also evaluate other options: feature-specific settings pages instead of one centralised platform, static configuration files edited by business users, a third-party feature-flag or configuration service? If so, add them, and say why the centralised platform won.
+
+TODO — The cards are live without trade-off lines until you confirm them. Claude's suggestions, to confirm or rewrite in your own words, then add back to its card as `tradeoff`:
+
+- **How travel product settings change:** Settings now change outside the release process, so the safeguards move from code review into the platform itself: who can change what has to be enforced by access control and visible through audit-friendly workflows.
+- **How access to settings is controlled:** Entitlements become something to administer: roles and business-unit scopes have to be defined, kept current and reviewed as teams change.
+
+</Draft>
+
+## Performance optimisation
+
+**Problem.** As the settings platform grew, some dashboard pages rendered slowly and responded sluggishly to users.
+
+**Investigation.** I drove a performance audit using Dynatrace, Kibana, browser performance profiling and application monitoring metrics.
+
+**Findings.** The audit found three rendering bottlenecks on the dashboard. All three came from rendering work the screens didn't need: components re-rendering when nothing they displayed had changed, and more rendering cycles than the UI required. Separately, the audit showed inefficient patterns in how API calls were made, which added load on top.
+
+**Solution.** Rendering and change-detection fixes for the three bottlenecks, plus lazy-loading improvements and leaner API calls.
+
+**Result.** All three rendering bottlenecks were fixed. Largest Contentful Paint on the settings dashboard improved by about 40%, and the dashboard responds noticeably faster for the business users who configure Chase Travel.
+
+<Draft note="The detail that makes this credible">
+
+TODO — For each of the three bottlenecks: what Dynatrace or Kibana showed, the cause you found (for example, default change detection on a large settings table, duplicate API calls on load, a heavy component rendered off-screen), and the fix (OnPush, trackBy, memoised selectors, request de-duplication, deferred loading). What was LCP before and after, in seconds?
+
+</Draft>
+
+## Security and governance
+
+- **Least privilege.** Permissions are scoped per business unit, so a business user can change only the settings that belong to their business unit.
+- **Sensitive operations restricted.** Operations that carry more risk require the matching entitlement.
+- **Fine-grained entitlements.** Access is managed per role and per business unit, not all-or-nothing.
+- **Enforced on the server.** The APIs enforce the same entitlements the Angular layer shows, so a request sent directly to an API by a user without the right entitlement is still refused.
+- **Centralised governance.** One platform and one access model for configuration, with audit-friendly administration workflows.
+- **Outcome.** Zero privilege-escalation incidents since launch.
+
+<Draft note="Fill in — enterprise readers will look for these">
+
+TODO — How do users sign in (firm single sign-on)? Where are entitlements managed: in Site Manager or in a central entitlement system? What does an audit record contain (who, what, before and after, when), and who reviews it? How are inputs validated before a setting goes live?
+
+</Draft>
+
+<Draft note="Reliability and accessibility — fill in or delete">
+
+## Reliability and accessibility
+
+TODO — Reliability: how does Site Manager stop a bad setting reaching customers (validation rules, previews, approvals, rollback)? What does monitoring cover beyond the performance audit: alerts, error tracking, dashboards in Kibana or Dynatrace?
+
+TODO — Accessibility: your WCAG 2.1 AA work covered the Travel platform. Did it include Site Manager? If so, describe keyboard navigation, focus management and accessible form interactions in the admin screens.
+
+</Draft>
+
+## Business impact
+
+- **Operational efficiency:** settings changes that used to take days now take effect immediately, and routine configuration updates no longer need engineering involvement.
+- **Security and governance:** zero privilege-escalation incidents since launch, and configuration ownership controlled per business unit.
+- **Performance:** 40% better Largest Contentful Paint on the settings dashboard, and faster interactions for the business users who rely on it.
+
+<Draft note="Wider impact — only claim what you can stand behind">
+
+TODO — Effects beyond these: engineering time freed for product work, fewer configuration tickets, faster onboarding of new business units or product teams onto the platform, reuse of the architecture elsewhere? Approximate figures are fine if they are yours and you are allowed to share them.
+
+</Draft>
+
+## Leadership and ownership
+
+I led the development of Site Manager's Angular administration platform and set its architecture: reusable components, configuration-driven UI patterns and modular features. I designed and implemented the role-based access control that governs it, with the same entitlements enforced in the Angular layer and by the APIs. When the dashboard slowed as the platform grew, I drove the performance audit and fixed the bottlenecks.
+
+<Draft note="Cross-functional work — confirm for Site Manager">
+
+TODO — Your brief mentions collaboration with product, operations, security and platform teams, architecture reviews, technical design discussions, mentoring and code review. Which of these happened on Site Manager, and how? For example, a security review of the RBAC design, design sessions with operations on which settings to expose, or mentoring engineers who later built on the platform.
+
+</Draft>
+
+<Draft note="Lessons — only you can write these">
+
+## Lessons learned
+
+TODO — What would you do differently? What surprised you once business users had control of configuration? What technical debt remains? What's next on the roadmap: approval workflows, configuration versioning and rollback, support for new business units?
+
+</Draft>
+
+## Outcome summary
+
+Site Manager moved routine configuration of Chase Travel's travel products from engineers to the business teams that own it. Because that took changes out of the release process, access control and audit-friendly workflows became the platform's main safeguards, in place of code review and release approval.

@@ -1,44 +1,236 @@
 ---
 title: FLM — Field Logistics Module
-tagline: Transport and logistics for oilfield operations
-summary: Transport and logistics application for managing field operations at Schlumberger.
+tagline: Global logistics inventory for oilfield operations, used by 500+ engineers
+summary: Schlumberger's Angular application for managing global logistics inventory for field operations, used by 500+ engineers. I built its real-time inventory dashboard and test suites, and led its upgrade from Angular 8 to 11.
 featured: true
-order: 4
+order: 3
 kind: client
-category: Transport and logistics
+category: Logistics inventory · Field operations
 industry: Energy
 company: Schlumberger
 status: live
-cover: ../../assets/projects/flm.jpg
-coverAlt: "An offshore oil and gas platform lit up at dusk — an illustrative photo, not a screenshot of the application."
+cover: ../../assets/projects/flm-cover-light.png
+coverDark: ../../assets/projects/flm-cover-dark.png
+coverAlt: "Abstract illustration of a logistics dashboard: a route map with a unit en route, shipments listed by status, and a schedule timeline. It is not a screenshot of FLM."
 links:
   live: https://www.slb.com/
   liveLabel: Visit slb.com
-caseStudy: enterprise-dashboard
+stack:
+  - Angular
+  - TypeScript
+  - Jasmine
+  - Karma
+  - WebDriver
+  - Allure
+  - Kibana
+features:
+  - Global logistics inventory management for field operations
+  - Real-time inventory-tracking dashboard
+  - Kibana-integrated data feeds
+  - Unit-test suite in Jasmine and Karma
+  - End-to-end test suite in WebDriver, reported with Allure
+  - Upgraded from Angular 8 to Angular 11
+metrics:
+  - label: Inventory discrepancies
+    after: "~35% fewer"
+    note: Within one quarter of the real-time inventory dashboard going live.
+  - label: QA regression cycle
+    before: 3 days
+    after: "< 6 hours"
+    note: With the unit and end-to-end suites in place.
+  - label: Unit-test coverage
+    after: "~80%"
+    note: Jasmine and Karma, alongside a full WebDriver end-to-end suite.
+  - label: Upgrade downtime
+    after: Zero
+    note: Angular 8 → 11, planned with QA and rolled out to production.
+caseStudy: flm-regression-and-upgrade
 ---
 
-The Field Logistics Module (FLM) is the transport and logistics application Schlumberger uses to manage field operations. I worked on it as a UI developer at Schlumberger between 2019 and 2021. It is internal enterprise software, so there is no public demo or repository — the photo above is illustrative.
+The Field Logistics Module (FLM) is the Angular application Schlumberger, now SLB, uses to manage its global logistics inventory for field operations. More than 500 engineers in several regions use it. I worked on it as a UI developer at Schlumberger from 2019 to 2021. Three pieces of work there were mine: the real-time inventory-tracking dashboard, the automated test suites, and the upgrade from Angular 8 to Angular 11.
 
-<Draft note="Fill in from memory — nothing here is public">
+FLM is internal enterprise software, so there is no public demo or repository. The photo above is illustrative, and this write-up describes patterns and outcomes, not internal systems.
 
-## What FLM does
+- **Organisation:** Schlumberger (SLB), oilfield services
+- **Product:** internal logistics-inventory application for field operations
+- **Users:** 500+ engineers across several geographies
+- **My role:** UI Developer. I built the real-time inventory dashboard and the unit and end-to-end test suites, and I led the Angular 8 → 11 upgrade
+- **When:** 2019 – 2021
 
-TODO: Who uses it, and for what? Shipments, crews, equipment, scheduling?
+<Draft note="Project scale and team — fill in from memory">
 
-## My role
+TODO — How big was the FLM team, and who was on it: other front-end developers, back-end, QA, UX, product? Who did you report to? Which parts of FLM did other people own, so the page is clear about where your ownership started and stopped?
 
-TODO: Which parts of the UI did you own? Angular, React, or both?
-
-## Architecture
-
-TODO
-
-## Challenges solved
-
-TODO: Link the performance work (code splitting, lazy loading, state management) if it was on FLM.
-
-## Accessibility and responsiveness
-
-TODO: Field use on tablets? Low-bandwidth sites?
+TODO — Who are the 500+ engineers: field engineers, logistics coordinators, base or warehouse staff? What inventory does FLM manage (equipment, tools, spare parts, consumables), and across which stages: warehouse, transport, well site?
 
 </Draft>
+
+## The business problem
+
+Three problems shaped my work on FLM:
+
+- **Inventory discrepancies.** FLM's inventory records didn't always match what was actually there. This was the measure the real-time dashboard was later judged on.
+- **A three-day regression cycle.** A full QA regression pass took three days.
+- **An ageing framework.** FLM ran on Angular 8. Angular 11 shipped in November 2020, the same month Angular 8's long-term support ended.
+
+<Draft note="What the problems cost — only you know this">
+
+TODO — What did discrepancies cost: duplicate orders, equipment not where a job needed it, delayed jobs, write-offs, audit findings? Who felt it most?
+
+TODO — What did the three-day regression cycle cost: fewer releases, fixes waiting days to ship, testers tied up? Was the testing mostly manual before your suites?
+
+TODO — Why did the upgrade happen when it did: the end of Angular 8 support, security patches, a library that needed a newer Angular, the Ivy renderer's smaller bundles?
+
+</Draft>
+
+<Draft note="Discovery and requirements — whole section is unconfirmed">
+
+## Discovery and requirements
+
+TODO — How did requirements reach you: workshops with logistics coordinators, user stories written by the product manager, feedback from the field? What did users ask the dashboard to show, and did that change once they had used it?
+
+TODO — How did you scope the upgrade: an audit of dependencies and breaking changes, a spike branch, an estimate agreed with QA?
+
+TODO — Your Schlumberger record says you turned business requirements into interfaces with UX designers and product managers, and ran testing and user-acceptance validation. Was that on FLM? If so, say how UAT worked: who signed off, and how many rounds?
+
+</Draft>
+
+## Architecture and design
+
+FLM is an Angular single-page application written in TypeScript. The real-time inventory dashboard is built on Kibana-integrated data feeds. Quality is enforced at two levels: Jasmine and Karma unit tests on components and services, and WebDriver end-to-end tests that drive the running application, with results reported through Allure.
+
+<Draft note="Architecture — needed for the interactive diagram">
+
+TODO — Describe the moving parts so they can become an interactive diagram (the `architecture:` block in this file's frontmatter):
+
+- **Front end:** how FLM was structured: lazy-loaded feature modules per area? Shared component library? State in NgRx, or services with RxJS?
+- **APIs:** what the Angular app called (REST? which back-end stack?), and who owned those services.
+- **Data:** where inventory data came from (an ERP such as SAP? field systems?) and how it reached Elasticsearch and Kibana.
+- **Dashboard:** embedded Kibana visualisations, or your own Angular views over the same Elasticsearch data? How real-time: polling, WebSockets, a refresh interval?
+- **Auth:** company single sign-on? Roles?
+
+</Draft>
+
+## Key technical challenges
+
+### Keeping inventory views close to reality
+
+**Challenge.** FLM's inventory records and the physical stock they described drifted apart.
+
+**Solution.** I built a real-time inventory-tracking dashboard on Kibana-integrated data feeds, so the current state of inventory was visible as it changed.
+
+**Outcome.** Within one quarter of go-live, inventory discrepancies fell by about 35%.
+
+<Draft note="Analysis — how you found the cause and measured the result">
+
+TODO — Analysis: why did discrepancies happen: delayed data entry, transfers between sites not recorded, stale reports? How did you find out? How was the ~35% measured, and by whom?
+
+</Draft>
+
+### Turning a three-day regression cycle into hours
+
+**Challenge.** Every full regression pass took three days.
+
+**Solution.** I took unit-test coverage to about 80% with Jasmine and Karma, and built a full end-to-end suite with WebDriver, with results published as Allure reports.
+
+**Outcome.** With both suites in place, a regression cycle that took three days took under six hours, short enough to finish within a working day.
+
+<Draft note="Analysis and automation detail">
+
+TODO — Analysis: what made regression take three days: manual test scripts, environment setup, the number of user journeys? How did you decide what to cover with unit tests and what with end-to-end tests?
+
+TODO — Did the suites run in a CI pipeline (Jenkins, Azure DevOps, GitLab) on every merge, or nightly? Did a failing test block a merge? How did you deal with flaky end-to-end tests?
+
+TODO — "WebDriver": raw WebDriver, WebdriverIO, or Protractor (built on WebDriver and Angular's default end-to-end tool at the time)? Say which, and why.
+
+</Draft>
+
+### Upgrading Angular 8 to 11 with zero downtime
+
+**Challenge.** Moving a production application with 500+ users across three major Angular versions without disrupting the people who depended on it.
+
+**Solution.** I led the upgrade: I planned the migration, coordinated it with QA and rolled it out to production.
+
+**Outcome.** FLM moved from Angular 8 to Angular 11 with zero production downtime.
+
+<Draft note="The upgrade in detail">
+
+TODO — Did you step through one major version at a time with `ng update` (8 → 9 → 10 → 11)? What broke: the move to the Ivy renderer in Angular 9, third-party libraries that weren't ready, deprecated APIs, test failures?
+
+TODO — Did the test suites come before the upgrade and act as its safety net? If so, that is the most important sentence on this page. Say so.
+
+TODO — How did you roll it out without downtime: a feature branch kept in sync with ongoing work, a release freeze, staged environments, a rollback plan?
+
+</Draft>
+
+<Draft note="Engineering decisions — answer these and they become decision cards">
+
+## Engineering decisions
+
+TODO — For each decision below, say what you chose, what else you considered, and what the choice cost. Each answer becomes a decision card on this page (the `<Decisions>` component).
+
+1. **Upgrade path.** One major version at a time, or a single jump to 11? Upgrade in place, or on a long-running branch?
+2. **Where to invest in testing.** Why ~80% unit coverage plus a full end-to-end suite, rather than mostly one or the other? What did you deliberately not test?
+3. **Dashboard data.** Embed Kibana visualisations, or build Angular views over the same data? What did each option cost in development time, flexibility and look and feel?
+
+</Draft>
+
+<Draft note="Suggested by Claude from your Schlumberger record, not yet confirmed. Your experience lists this work at Schlumberger but doesn't say it was on FLM.">
+
+## Performance
+
+I improved FLM's page-load speed with code splitting, lazy loading and leaner state management.
+
+TODO — Was this on FLM? Any numbers: bundle size, load time, Lighthouse score, before and after? Did field engineers use FLM on slow or remote connections, and did that shape the work? (Your résumé doesn't mention performance work on FLM, so keep this section only if it was.)
+
+## Accessibility and responsive design
+
+I led the responsive implementation so FLM works the same across devices and browsers.
+
+TODO — Was this on FLM? Did engineers use it on tablets or in the field? Any accessibility standard or testing (keyboard, screen reader, contrast)?
+
+## Security
+
+TODO — How did users sign in (company single sign-on)? Were there roles, for example who could adjust inventory and who could only view it? Was there an audit trail of inventory changes?
+
+</Draft>
+
+## Business impact
+
+- **More reliable inventory:** about 35% fewer inventory discrepancies within one quarter of the dashboard going live.
+- **Faster regression testing:** a full regression pass went from three days to under six hours.
+- **A supported platform:** FLM moved to Angular 11 with zero production downtime for its 500+ users.
+
+<Draft note="Wider impact">
+
+TODO — Did release frequency change once regression took hours rather than days? Any effect on support tickets, field delays or cost that you can stand behind?
+
+</Draft>
+
+## Leadership and collaboration
+
+I led the Angular upgrade from start to finish: I planned the migration and coordinated it with QA through to the production rollout.
+
+<Draft note="Suggested by Claude from your Schlumberger record, not yet confirmed for FLM">
+
+I turned business requirements into interfaces with UX designers and product managers, ran testing and user-acceptance validation, and mentored junior developers on responsive layout, fluid design and CSS architecture.
+
+TODO — Was this on FLM? How did you run code reviews? Did you write documentation for the upgrade or the test suites, such as a migration guide or how to write a new end-to-end test?
+
+</Draft>
+
+<Draft note="Lessons — only you can write these">
+
+## Lessons learned
+
+TODO — What would you do differently: build the test suites earlier, upgrade sooner, measure discrepancies before building? What surprised you? What technical debt did you leave or find?
+
+TODO — Is FLM still in use, as far as you know? If not, change `status` to archived.
+
+</Draft>
+
+## Outcome summary
+
+- **Key achievements:** a real-time inventory dashboard, about 80% unit-test coverage plus a full end-to-end suite, and a three-version Angular upgrade with zero downtime.
+- **Business benefit:** fewer inventory discrepancies, and a regression cycle short enough to finish within a working day.
+- **Long-term value:** an automated safety net that every later release could run, on an Angular version that was still supported.

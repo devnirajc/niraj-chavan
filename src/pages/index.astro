@@ -65,11 +65,11 @@ const personLd = {
   name: profile.name,
   url: new URL(href('/'), site).toString(),
   image: new URL(portraitImage.src, site).toString(),
-  jobTitle: profile.role,
+  jobTitle: profile.current.title,
   worksFor: { '@type': 'Organization', name: profile.current.company },
   address: { '@type': 'PostalAddress', addressLocality: 'Pune', addressRegion: 'Maharashtra', addressCountry: 'IN' },
   email: `mailto:${profile.email}`,
-  knowsAbout: ['Angular', 'React', 'TypeScript', 'Design systems', 'Web accessibility', 'Web performance'],
+  knowsAbout: ['Angular', 'React', 'TypeScript', 'Micro-frontends', 'Web accessibility', 'Web performance'],
   sameAs: profile.socials.map((s) => s.url),
 };
 ---
@@ -89,7 +89,7 @@ const personLd = {
       id="story"
       eyebrow="Story"
       title="The short version"
-      lede={`I started out building e-commerce storefronts in 2014. ${profile.years} years later, I work on enterprise travel platforms used by thousands of people a day. The job hasn't really changed: take a complicated set of business requirements and turn it into something people can use without stopping to think about it.`}
+      lede={`I started out building e-commerce storefronts in 2014. ${profile.years} years later, I lead front-end work on Chase Travel, JP Morgan Chase's travel platform for millions of customers. The job hasn't really changed: take a complicated set of business requirements and turn it into something people can use without stopping to think about it.`}
       link={{ label: 'Read the full story', href: '/about/' }}
     />
     <div class="mt-10 reveal">
@@ -305,9 +305,10 @@ const personLd = {
         <a href={href('/contact/')} class="btn btn-primary">
           Get in touch <Icon name="arrow-right" size={16} />
         </a>
-        <a href={`mailto:${profile.email}`} class="btn btn-secondary">
+        <a href={`mailto:${profile.email}`} class="btn btn-secondary" target="_blank" rel="noopener">
           <Icon name="mail" size={16} />
           {profile.email}
+          <span class="sr-only"> (opens in a new tab)</span>
         </a>
       </div>
     </div>

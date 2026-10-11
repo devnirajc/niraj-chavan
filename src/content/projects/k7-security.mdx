@@ -1,34 +1,161 @@
 ---
 title: K7 Security
-tagline: Cybersecurity for business and home
-summary: Security and antivirus application for comprehensive threat protection.
-order: 6
+tagline: Consumer console and antivirus dashboard for K7's security products
+summary: Two parts of K7 Computing's security products, the consumer console used by thousands of users and the antivirus dashboard, which I built as a Senior UI Engineer at Xpanxion (now UST Global).
+order: 8
 kind: client
-category: Security and antivirus
+category: Security console and dashboard
 industry: Cybersecurity
 company: K7 Computing
 status: live
-cover: ../../assets/projects/k7.png
-coverAlt: "K7 Security's home page offering cybersecurity products for business and for home."
+cover: ../../assets/projects/k7-cover-light.png
+coverDark: ../../assets/projects/k7-cover-dark.png
+coverAlt: "Abstract illustration of a security console: a radar around a shield reading 'You're protected', a threat log, protection modules switched on, and the number of threats blocked in 30 days. It is not a screenshot of K7's products."
 links:
   live: https://www.k7computing.com/in/
   liveLabel: Visit k7computing.com
+stack:
+  - Angular
+  - TypeScript
+  - RxJS
+  - REST APIs
+  - SCSS
+  - Responsive design
 ---
 
-K7 Security makes antivirus and threat-protection software for businesses and homes. This was client work, so there is no public repository.
+K7 Computing is an Indian cybersecurity company that makes antivirus and threat-protection software for businesses and homes. As a Senior UI Engineer at Xpanxion, now UST Global, I built the front end of two parts of its consumer products: the **consumer console**, the account area where thousands of home users manage their licences and devices, and the **antivirus dashboard**, the screen that tells a user how well protected they are. This was client work, so there is no public repository.
 
-<Draft note="Fill in — which employer, when, and what you built">
+- **Client:** K7 Computing, cybersecurity
+- **Product:** the consumer console and the antivirus dashboard
+- **Users:** K7's home customers, thousands of them, most of whom are not technical
+- **My role:** Senior UI Engineer at Xpanxion. I built the front end of both, in Angular, TypeScript and RxJS, and worked with K7's back-end team on the APIs behind them
+- **When:** between 2017 and 2019, during my time at Xpanxion (now UST Global)
 
-## My role
+<Draft note="Context — fill in from memory">
 
-TODO: Product UI, the marketing site, or both? Which company were you with?
-
-## Stack
-
-TODO
-
-## Challenges solved
-
-TODO
+TODO — Roughly when within your Xpanxion years (2017 – 2019), and for how long? How big was the team, and who did what: other front-end developers, K7's back-end team, QA, design? Did you lead the front end, or work within it?
 
 </Draft>
+
+## The business problem
+
+These screens do two jobs for people who mostly aren't technical:
+
+- **Tell them, at a glance, whether they are protected**, and what to do if they aren't.
+- **Let them manage what they paid for**: see their plan and expiry date, renew or upgrade, activate a licence key on a new device, and manage the devices a multi-device licence covers.
+
+<Draft note="Business context — only you know this">
+
+TODO — What was wrong before you built these: an older console, a desktop-only interface, support calls about licences or status? Was there a business goal you can name, such as more online renewals or fewer support tickets?
+
+</Draft>
+
+<Draft note="Discovery and requirements — whole section is unconfirmed">
+
+## Discovery and requirements
+
+TODO — Where did requirements come from: K7's product team, designs from a designer, support-ticket themes? How did you agree the API contracts with K7's back-end team? Did requirements change during the build?
+
+</Draft>
+
+## Architecture and design
+
+The front end is Angular and TypeScript, with RxJS handling the asynchronous data from the REST APIs I worked on with K7's back-end team. Styles are in SCSS, with responsive layouts so the same interface works in desktop and mobile browsers.
+
+The two products share one approach to data: every screen that depends on an API call has explicit loading, empty and error states, so a slow or failing back end never leaves a user looking at a broken screen.
+
+<Draft note="Architecture detail — needed for a diagram">
+
+TODO — Were the console and the dashboard one Angular application or two? How did the dashboard get protection status: from the desktop product reporting to a server, then a REST API? Polling, or a refresh on load? How were API contracts agreed and versioned with the back-end team? Did you share components between the two?
+
+</Draft>
+
+## Key technical challenges
+
+### Security status anyone can read
+
+**Challenge.** The dashboard has a lot to report: the last scan and its results, threats found, items in quarantine, whether virus definitions are current, and alerts. Most users are not technical.
+
+**Solution.** The dashboard leads with one overall state, protected or action needed, and keeps the details a click away.
+
+<Draft note="Analysis and outcome">
+
+TODO — How did you settle on one overall state: user feedback, the designer, support calls? How is "action needed" decided: definitions out of date, threats not resolved, a scan overdue? Did it change how users behaved, or how many asked support?
+
+</Draft>
+
+### One interface for every screen size
+
+**Challenge.** Both products have to work in desktop and mobile browsers.
+
+**Solution.** Responsive layouts, so the console and the dashboard work the same in desktop and mobile browsers.
+
+### No broken screens when the back end is slow
+
+**Challenge.** Both products depend on API calls that can be slow, empty or fail.
+
+**Solution.** Every API call has loading, empty and error states, so users always see something meaningful.
+
+<Draft note="Implementation detail">
+
+TODO — How did you implement the states: a shared component or pattern with RxJS that every screen used? Any retry or timeout handling? (Your Xpanxion record mentions REST integration with retry and error handling. Was this the same pattern?)
+
+</Draft>
+
+<Draft note="Engineering decisions — answer these and they become decision cards">
+
+## Engineering decisions
+
+TODO — For each, say what you chose, what else you considered, and what it cost:
+
+1. **One overall status versus a detailed dashboard first.** What did you give up by hiding detail behind a click?
+2. **How state is managed:** RxJS services, NgRx, component state? Why?
+3. **One app or two** for the console and the dashboard?
+
+</Draft>
+
+<Draft note="Security — important for a security product, fill in">
+
+## Security
+
+TODO — How did users sign in (email and password, OTP, single sign-on)? How was the session handled in the front end? How were licence keys protected when entered and displayed? Any specific input validation or XSS hardening in the console?
+
+</Draft>
+
+<Draft note="Performance and accessibility — fill in or delete">
+
+## Performance and accessibility
+
+TODO — Any performance work: load time, bundle size, lazy-loaded routes? Any accessibility standard (WCAG level) or testing? How is the protection status communicated without relying on colour alone (an icon plus text, for example)?
+
+</Draft>
+
+<Draft note="Business impact — only claim what you can stand behind">
+
+## Business impact
+
+TODO — Anything you can stand behind: online renewals, device activations, support tickets, user satisfaction?
+
+</Draft>
+
+<Draft note="Leadership and collaboration">
+
+## Leadership and collaboration
+
+TODO — How did you work with K7's back-end team: API design sessions, shared documentation, contract tests? Did you review code or mentor anyone on this project?
+
+</Draft>
+
+<Draft note="Lessons — only you can write these">
+
+## Lessons learned
+
+TODO — What would you do differently? What did designing for non-technical users teach you?
+
+</Draft>
+
+## Outcome summary
+
+- **Key achievements:** the front end of K7's consumer console and antivirus dashboard, used by thousands of home users.
+- **Design principle:** one clear answer to "am I protected?", with the details a click away.
+- **Reliability:** loading, empty and error states on every API-backed screen, and responsive layouts across desktop and mobile browsers.

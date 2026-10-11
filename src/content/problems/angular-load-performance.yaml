@@ -1,25 +1,27 @@
-# DRAFT — solution and results restate my experience entries (Xpanxion and
-# Schlumberger). Problem, challenge and analysis need the real story.
-title: Large Angular apps that took too long to become usable
+# DRAFT — solution and results restate my résumé (Chase Travel Site Manager
+# at JP Morgan Chase). Check what the firm lets you publish, and fill in the
+# problem, challenge and analysis with what actually happened.
+title: An Angular admin dashboard that slowed down as it grew
 draft: true
 order: 2
 domain: performance
-context: Xpanxion and Schlumberger · enterprise web applications
+context: JP Morgan Chase & Co. · Chase Travel Site Manager
 problem: >-
-  TODO: Which application, what was slow, and who felt it.
+  As Site Manager took on more settings, its dashboard pages rendered slowly
+  and responded sluggishly for the business users who configure Chase Travel.
 challenge: >-
-  TODO: e.g. a large, shared codebase where every feature had been bundled
-  into the first load, with feature work continuing in parallel.
+  TODO: e.g. a large settings table, feature work continuing in parallel,
+  business users relying on the dashboard every day.
 analysis: >-
-  TODO: How you found where the time went — bundle analysis, profiling
-  change detection, field reports.
+  A performance audit using Dynatrace, Kibana and browser profiling.
+  TODO — what each of the three bottlenecks was, and how you found it.
 solution: >-
-  Lazy-loaded feature modules and routes, code splitting, change-detection
-  tuning, bundle-size reduction and leaner state management.
-stack: [Angular, TypeScript, RxJS]
+  Rendering and change-detection fixes, lazy-loading improvements and
+  leaner API calls. TODO — the specific fix for each bottleneck.
+stack: [Angular, TypeScript, RxJS, Dynatrace, Kibana]
 results:
-  - Faster page loads across the applications.
-  - TODO — before/after numbers (bundle size, time to interactive).
+  - Three rendering bottlenecks fixed.
+  - Largest Contentful Paint on the settings dashboard improved by 40%.
+  - TODO — LCP before and after, in seconds.
 lessons:
   - TODO
-caseStudy: enterprise-dashboard

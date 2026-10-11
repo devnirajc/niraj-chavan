@@ -1,0 +1,20 @@
+---
+/**
+ * Proficiency as three small bars, `filled` of them in the accent colour.
+ * Decorative only (aria-hidden): the level is always also written in words.
+ */
+interface Props {
+  filled: number;
+  size?: 'sm' | 'md';
+}
+
+const { filled, size = 'md' } = Astro.props;
+---
+
+<span class="flex gap-0.5" aria-hidden="true">
+  {
+    [1, 2, 3].map((i) => (
+      <span class:list={['rounded-full', size === 'sm' ? 'h-2 w-[3px]' : 'h-2.5 w-1', i <= filled ? 'bg-accent-solid' : 'bg-line']} />
+    ))
+  }
+</span>

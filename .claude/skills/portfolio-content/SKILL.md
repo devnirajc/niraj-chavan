@@ -22,6 +22,16 @@ This is a professional portfolio read by recruiters and hiring managers. A made-
 
 The build enforces part of this: `npm run check:content` fails if a **published** entry contains `TODO` (text inside `<Draft>` blocks is exempt). Don't work around it — finish the content or keep it a draft.
 
+## Every content update also updates the Now page
+
+Niraj's standing instruction: whenever any content on the site changes — a project, case study, problem, skill, experience entry, profile fact, page copy — update `/now/` in the same piece of work. Its header ("What I'm building now … Last updated <date>") shows the date of the newest changelog entry, so a content change without an entry leaves the page saying the site is older than it is.
+
+1. **Changelog entry, dated today.** If `src/content/now/` already has an entry for today, extend its title and body to cover the new change; otherwise create one (see *Log something on the "Now" page* below). One entry per day keeps the changelog readable. Describe what a visitor can now see, in Niraj's voice, and set `link` to the main page it concerns. Small corrections (a typo, a broken link) get a clause in the day's entry, not an entry of their own.
+2. **"Currently" card.** If the change touches his job, title, focus or availability, check the card: company, role and availability come from `src/data/profile.ts`; the *Focus* line is hard-coded in `src/pages/now.astro`.
+3. **Tech radar.** If a technology was added to or dropped from skills or projects, check `src/content/radar.yaml` still agrees (Adopt/Trial notes name real work).
+
+The same never-invent rule applies: only log what was actually published. Drafts and `<Draft>` sections aren't visible to visitors, so don't announce them — log them when they go live. The dashboard counts (projects, case studies, problems, articles) are computed and need no edit.
+
 ## Workflows
 
 ### Write up a case study by interviewing Niraj
@@ -42,8 +52,8 @@ Keep `draft: true` until he has read the full page in `npm run dev` and said it'
 
 ### Add a project
 
-1. Put the screenshot in `src/assets/projects/` (PNG/JPG master, ~1900px wide — Astro generates responsive WebP).
-2. **Look at the screenshot** and write `coverAlt` describing what it actually shows.
+1. Covers are abstract UI illustrations, not screenshots: one 1600×900 board per project, in light and dark, in the Claude Design project *Project Covers v2*. Export both at 2× into `src/assets/projects/<name>-cover-light.png` / `-dark.png` and set `cover` and `coverDark` (Astro generates responsive WebP).
+2. **Look at the cover** and write `coverAlt` describing what it actually shows, ending with "It is not a screenshot of <product>."
 3. Create `src/content/projects/<slug>.mdx`. Verified facts go in frontmatter (`features`, `stack`, `links`); anything inferred or still unknown goes in a `<Draft>` block in the body under headings like *Architecture*, *Challenges solved*, *Performance*, *Accessibility*, *What's next*.
 4. For his own live apps you can verify the stack by fetching the deployed bundle and looking for library fingerprints — state only what you found.
 
@@ -54,6 +64,8 @@ One YAML file per problem in `src/content/problems/`, told in seven beats (probl
 ### Log something on the "Now" page
 
 Create `src/content/now/YYYY-MM-<slug>.md` with `date`, `title`, `kind` (shipped / building / learning / writing / milestone) and a one-or-two sentence body. Medium articles appear in the changelog automatically — don't duplicate them.
+
+Put site links in `link` (a path like `/projects/rxbit/` gets the `/niraj-chavan/` base added), not in the body: Markdown links in the body are printed as written, so a root-relative path there breaks on GitHub Pages.
 
 ### Publish a draft
 
@@ -91,7 +103,7 @@ Diagram, metric and decision objects are strict, so this mistake fails the build
 
 ## Before you finish
 
-Run these and fix anything they report:
+Check that `src/content/now/` has an entry dated today covering this change (see *Every content update also updates the Now page*). Then run these and fix anything they report:
 
 ```bash
 npm run check:content      # published content has no TODO

@@ -63,7 +63,22 @@ export function headingsOutsideDrafts<H extends { text: string }>(body: string |
   if (SHOW_DRAFTS || !body) return headings;
   const hidden = new Set<string>();
   for (const block of body.match(/<Draft\b[\s\S]*?<\/Draft>/g) ?? []) {
-    for (const [, text] of block.matchAll(/^#{2,6}\s+(.+?)\s*$/gm)) hidden.add(text.trim());
+    for (const [, text] of block.matchAll(/^#{2,6}\s+(.+?)\s*$/gm)) hidden.add(comparable(text));
   }
-  return headings.filter((h) => !hidden.has(h.text.trim()));
+  return headings.filter((h) => !hidden.has(comparable(h.text)));
 }
+
+/**
+ * Source headings are raw Markdown; rendered ones have been through
+ * SmartyPants ("what's" → "what’s", "--" → "–") and lost their inline
+ * markup, so compare both in a plain form.
+ */
+const comparable = (text: string) =>
+  text
+    .replace(/[`*_]/g, '')
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/…/g, '...')
+    .replace(/—/g, '---')
+    .replace(/–/g, '--')
+    .trim();
