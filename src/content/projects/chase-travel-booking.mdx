@@ -35,12 +35,12 @@ metrics:
   - label: Customer bookings
     after: "+20%"
     note: After personalised offer rendering went live across Chase Travel. A before-and-after comparison of booking data in Kibana logs.
-  - label: Duplicated promotion UI
-    after: "~40% less"
-    note: Shared component library adopted by three downstream squads.
-  - label: Average page load time
-    after: "~30% lower"
-    note: Offers API redesigned with the back-end teams to stop over-fetching.
+  - label: Promotion UI
+    after: One shared library
+    note: Three downstream squads stopped building their own promotion components and render promotions with the shared Angular library instead.
+  - label: Offers API
+    after: No over-fetching
+    note: Redesigned with the back-end teams, so pages receive only the offer data they render.
   - label: Squads deploying independently
     after: "4"
     note: Micro-frontend boundaries with Webpack Module Federation.
@@ -77,7 +77,7 @@ Offers are central to Chase Travel: the public site leads with them, and how wel
 
 - **Personalised offers weren't available across the platform.** Customers needed to see the offers relevant to them, wherever they were in Chase Travel.
 - **Promotion UI was duplicated.** Squads rendered promotions in their own ways, so the same work was done several times.
-- **The offers API over-fetched.** Pages downloaded more offer data than they displayed, and page load time paid for it.
+- **The offers API over-fetched.** Pages downloaded more offer data than they displayed.
 - **Releases needed cross-team coordination.** Squads working in the same front end had to line up their releases, which became a bottleneck.
 - **Accessibility needed an audit.** The platform had to meet WCAG 2.1 AA, which meant finding and fixing the gaps across Chase Travel.
 
@@ -130,7 +130,7 @@ TODO — Outcomes you can share within JP Morgan Chase's disclosure policy: conv
 
 The promotions work changed Chase Travel's front end in three structural ways:
 
-- **Micro-frontend boundaries.** I introduced module boundaries using Webpack Module Federation, so each squad's part of the front end builds and deploys independently while customers still get one Chase Travel.
+- **Micro-frontend boundaries.** I introduced module boundaries using Webpack Module Federation, so each squad's part of the front end builds and deploys independently while customers still get one Chase Travel. Each micro-app is registered in Site Manager's registry, which holds its bundle address and its configuration for each client, and a dynamic element loader provided by the core team reads the registry and loads each micro-app at run time. Angular upgrades are coordinated through the common platform with all the squads, so every micro-app stays on one Angular version.
 - **A shared promotion-rendering library.** I architected a reusable Angular component library that renders promotions. Three downstream squads build on it rather than maintaining their own.
 - **An offers API shaped around the UI.** I worked with the back-end teams on the REST API design of the offers service, so pages receive the data they render and nothing more.
 
@@ -177,7 +177,7 @@ TODO — Analysis: what made it hard: many offer types, eligibility rules, cachi
 
 **Solution.** Two changes, one per problem: Module Federation boundaries so squads deploy independently, and a shared promotion-rendering library so they stop rebuilding the same components.
 
-**Outcome.** Four squads deploy independently without cross-team release coordination. Promotion UI duplication fell by about 40%, and new features ship a sprint sooner.
+**Outcome.** Four squads deploy independently without cross-team release coordination. Three downstream squads render promotions with the shared library instead of building their own.
 
 <Draft note="How you got four squads to agree">
 
@@ -216,16 +216,16 @@ Each decision below compares the approach I chose with the state it replaced.
       title: 'Who owns promotion UI',
       context: 'Promotions appear on many squads\' pages, and each squad was rendering them its own way.',
       options: [
-        { name: 'A shared Angular component library for promotion rendering', chosen: true, reason: 'One implementation of every promotion pattern. Three downstream squads adopted it, with about 40% less duplicated UI and new features a sprint sooner.' },
+        { name: 'A shared Angular component library for promotion rendering', chosen: true, reason: 'One implementation of every promotion pattern. Three downstream squads adopted it instead of building their own.' },
         { name: 'Each squad builds its own promotion UI (the existing model)', chosen: false, reason: 'Duplicated effort, and promotions that look and behave differently from page to page.' },
       ],
       tradeoff: 'A shared library is a product with consumers: changes need versioning and backward compatibility for every squad that depends on it.',
     },
     {
       title: 'Where offer data gets trimmed',
-      context: 'The offers service returned more data than pages displayed, and average page load time paid for it.',
+      context: 'The offers service returned more data than pages displayed.',
       options: [
-        { name: 'Redesign the offers REST API with the back-end teams', chosen: true, reason: 'Pages receive only what they render, which ended the over-fetching and cut average page load time by about 30%.' },
+        { name: 'Redesign the offers REST API with the back-end teams', chosen: true, reason: 'Pages receive only what they render, which ended the over-fetching.' },
         { name: 'Keep the existing responses (the existing model)', chosen: false, reason: 'Every offers page kept paying for data it never showed.' },
       ],
       tradeoff: 'An API shaped around its UI couples the two more closely, so changing what a page shows can mean changing the API with it.',
@@ -241,11 +241,11 @@ TODO — The cards above compare each choice with the state it replaced. If you 
 
 ## Performance
 
-Average page load time fell by about 30% after I worked with the back-end teams to stop the offers service over-fetching. Pages now download only the offer data they render.
+I worked with the back-end teams to stop the offers service over-fetching. Pages now download only the offer data they render.
 
 <Draft note="Performance detail">
 
-TODO — Which pages, and which metric: LCP, time to interactive, full load? How was it measured: Dynatrace, Lighthouse, real-user monitoring? Any other optimisation in the promotions work, such as lazy loading remotes or caching offers?
+TODO — The site used to claim about 30% lower average page load time, but nobody could say how it was measured, so it was removed on 2026-10-17. If Dynatrace shows the before and after, note which pages, which metric (LCP, full load) and the dates, and the number can come back. Any other optimisation in the promotions work, such as lazy loading remotes or caching offers?
 
 </Draft>
 
@@ -272,14 +272,14 @@ TODO — What enterprise constraints shaped the work: security reviews, change m
 ## Business impact
 
 - **More bookings:** customer bookings rose 20% after personalised offer rendering went live across Chase Travel.
-- **Faster delivery:** about 40% less duplicated promotion UI, and new features a sprint sooner, across three squads.
-- **Faster pages:** average page load time down by about 30%.
+- **Less duplicated work:** three downstream squads render promotions with one shared library instead of building their own.
+- **Leaner pages:** pages download only the offer data they render.
 - **Independent teams:** four squads deploy independently, with no cross-team release coordination.
 - **Accessibility:** a WCAG 2.1 AA audit and remediation across the platform.
 
 ## Leadership and collaboration
 
-As lead developer I own the front-end architecture of the promotions and offers platform, and I worked on the purchase flow from trip cart to confirmation. I run weekly design reviews and code reviews for a team of six engineers, and I have mentored two junior engineers on TypeScript best practices and Angular component architecture. The work also crossed team lines: the component library was adopted by three downstream squads, the micro-frontend boundaries span four squads, and the offers API was redesigned with the back-end teams.
+As lead developer I own the front-end architecture of the promotions and offers platform, and I worked on the purchase flow from trip cart to confirmation. I run weekly design reviews and code reviews for a team of six engineers, lead design reviews across teams, and have mentored two junior engineers on TypeScript best practices and Angular component architecture. The work also crossed team lines: the component library was adopted by three downstream squads, the micro-frontend boundaries span four squads, and the offers API was redesigned with the back-end teams.
 
 <Draft note="Stakeholders and documentation">
 

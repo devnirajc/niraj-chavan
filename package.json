@@ -19,7 +19,8 @@
     "content:status": "node scripts/check-content.mjs --report",
     "sync:medium": "node scripts/sync-medium.mjs",
     "icons": "node scripts/generate-icons.js",
-    "og": "node scripts/generate-og.js"
+    "og": "node scripts/generate-og.js",
+    "resume": "node scripts/build-resume.mjs"
   },
   "author": "Niraj Chavan",
   "license": "MIT",

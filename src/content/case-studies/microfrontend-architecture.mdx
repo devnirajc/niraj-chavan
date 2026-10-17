@@ -26,12 +26,9 @@ metrics:
   - label: Squads deploying independently
     after: "4"
     note: Micro-frontend boundaries with Webpack Module Federation.
-  - label: Duplicated promotion UI
-    after: "~40% less"
-    note: Shared library adopted by three downstream squads.
-  - label: New-feature delivery
-    after: One sprint sooner
-    note: For squads building on the shared library.
+  - label: Promotion UI
+    after: One shared library
+    note: Three downstream squads stopped building their own promotion components and render promotions with the shared Angular library instead.
 lessons:
   - TODO — What would you do differently?
   - TODO — What did micro-frontends cost that you didn't expect?

@@ -20,8 +20,7 @@ solution: >-
   downstream squads build their features on.
 stack: [Angular, TypeScript]
 results:
-  - Adopted by three downstream squads, with about 40% less duplicated UI.
-  - New features delivered one sprint cycle sooner.
+  - Adopted by three downstream squads, which render promotions with it instead of building their own.
 lessons:
   - TODO
 caseStudy: microfrontend-architecture

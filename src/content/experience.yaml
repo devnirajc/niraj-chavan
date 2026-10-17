@@ -9,22 +9,24 @@
   end: null
   industry: Banking · Travel (Chase Travel)
   summary: >-
-    Lead developer on Chase Travel, JP Morgan Chase's travel-booking platform
-    for cardmembers, which serves millions of customers. I own the front-end
-    architecture of its promotions and offers platform, worked on its purchase
-    flow from trip cart to confirmation, and led Site Manager, the self-service
-    tool its business teams use to configure travel products.
+    I work on Chase Travel, JP Morgan Chase's travel-booking platform for
+    cardmembers, which serves millions of customers. As lead developer for its
+    promotions and offers platform I own that platform's front-end
+    architecture. I also worked on Chase Travel's purchase flow from trip cart
+    to confirmation, and led Site Manager, the self-service tool its business
+    teams use to configure travel products.
   achievements:
     - Lead developer for Chase Travel's promotions and offers platform. Delivered personalised offer rendering across the platform; customer bookings rose 20% after it went live.
     - Worked on Chase Travel's purchase flow, from trip cart and traveller information through payment and review to booking confirmation.
-    - Architected a reusable Angular component library for promotion rendering, adopted by three downstream squads. It cut duplicated promotion UI by about 40%, and promotion features now ship about a sprint sooner.
+    - Architected a reusable Angular component library for promotion rendering, adopted by three downstream squads, so they render promotions with one shared library instead of building their own.
     - Introduced micro-frontend boundaries with Webpack Module Federation, so four squads deploy independently, without cross-team release coordination.
-    - Worked with the back-end teams on the offers service's REST API design, ending over-fetching and cutting average page load time by about 30%.
+    - Worked with the back-end teams on the offers service's REST API design, ending over-fetching so pages receive only the offer data they render.
     - Led the design and implementation of Site Manager, which lets Chase Travel's business teams change travel product settings without engineers. A change takes effect as soon as it is saved, instead of waiting days for an engineer and a release.
+    - Worked on Site Manager's registry feature, where Chase Travel's micro-apps are registered with their bundle addresses and configured for each client; the core team's dynamic element loader reads it to load each micro-app independently.
     - Designed and implemented role-based access control for Site Manager, scoping configuration permissions per business unit. The Angular layer shows each role only what it may change, and the APIs enforce the same entitlements. Zero privilege-escalation incidents since launch.
     - Drove a Dynatrace and Kibana performance audit of Site Manager's dashboard, fixing three rendering bottlenecks and improving LCP by 40%.
     - Led the WCAG 2.1 AA accessibility audit and remediation across Chase Travel, covering keyboard navigation, ARIA landmarks and screen-reader support.
-    - Run weekly design and code reviews for a team of six engineers, and mentored two junior engineers on TypeScript and Angular component architecture.
+    - Run weekly design and code reviews for a team of six engineers, lead design reviews across teams, and mentored two junior engineers on TypeScript and Angular component architecture.
     - Write unit and end-to-end tests for the Chase Travel features I build.
   stack: [Angular, TypeScript, RxJS, Micro-frontends, Webpack Module Federation, Component libraries, RBAC, Accessibility, Unit testing, End-to-end testing, Dynatrace, Kibana, MongoDB, MySQL, GraphQL, AWS, Azure, Kubernetes]
   projects: [chase-travel-booking, chase-travel-site-manager]
@@ -45,10 +47,12 @@
     - Built FLM's real-time inventory-tracking dashboard on Kibana-integrated data feeds. Inventory discrepancies fell by about 35% within a quarter of go-live.
     - Took unit-test coverage to about 80% with Jasmine and Karma and built a full WebDriver end-to-end suite reported through Allure, cutting the QA regression cycle from three days to under six hours.
     - Led FLM's upgrade from Angular 8 to 11. I planned the migration, coordinated it with QA and rolled it out to production with zero downtime.
+    - Planned the migration of an internal application from Angular to React, set up the React app (build tooling, routing, state) and rebuilt its screens, running Angular and React side by side until the React version went live in production.
+    - Built an internal API with Node.js and Express.
     - Improved page-load speed through code splitting, lazy loading and leaner state management.
     - Led responsive implementation across devices and browsers, and mentored junior developers on responsive layout, fluid design and CSS architecture.
     - Turned business requirements into interfaces with UX designers and product managers, and ran testing and user-acceptance validation.
-  stack: [Angular, TypeScript, React, Jasmine, Karma, WebDriver, Allure, Kibana, SCSS, Responsive design]
+  stack: [Angular, TypeScript, React, Node.js, Express, Jasmine, Karma, WebDriver, Allure, Kibana, SCSS, Responsive design]
   projects: [flm-field-logistics]
   caseStudies: [flm-regression-and-upgrade]
 

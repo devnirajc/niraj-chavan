@@ -28,7 +28,7 @@
       projects: [k7-security]
     - name: React
       level: Advanced
-      context: My side projects — Rxbit and Nexpenso are React single-page apps, and ShredTrack is built on Next.js — and earlier, product work at Schlumberger.
+      context: My side projects — Rxbit and Nexpenso are React single-page apps, and ShredTrack is built on Next.js — and earlier at Schlumberger, where I planned an internal application's migration from Angular to React and saw it into production.
       roles: [slb]
       projects: [rxbit, nexpenso, shredtrack]
     - name: State management
@@ -60,14 +60,14 @@
     Structure that lets many people ship into one codebase without slowing each other down.
   skills:
     - name: Design systems & component libraries
-      context: The Angular component library that renders promotions across Chase Travel, adopted by three downstream squads (about 40% less duplicated UI); reusable components for Holland America Line's cruise site at Xpanxion.
+      context: The Angular component library that renders promotions across Chase Travel, adopted by three downstream squads; reusable components for Holland America Line's cruise site at Xpanxion.
       roles: [jpmc]
       projects: [chase-travel-booking, holland-america]
       caseStudies: [microfrontend-architecture]
     - name: Micro-frontends
-      context: Webpack Module Federation boundaries in Chase Travel's front end, so four squads deploy independently.
+      context: Webpack Module Federation boundaries in Chase Travel's front end, so four squads deploy independently. The micro-apps are registered per client in Site Manager's registry, a feature I worked on.
       roles: [jpmc]
-      projects: [chase-travel-booking]
+      projects: [chase-travel-booking, chase-travel-site-manager]
       caseStudies: [microfrontend-architecture]
     - name: Role-based access control
       context: Designed and implemented role-based access control for Chase Travel's Site Manager, with permissions scoped per business unit, shown in the Angular layer and enforced by the APIs. Zero privilege-escalation incidents since launch.
@@ -79,7 +79,7 @@
       projects: [chase-travel-site-manager]
     - name: Code review
       level: Expert
-      context: Weekly design and code reviews for a team of six engineers on Chase Travel, and code review on Holland America Line's cruise site at Xpanxion.
+      context: Weekly design and code reviews for a team of six engineers on Chase Travel, design reviews across teams there, and code review on Holland America Line's cruise site at Xpanxion.
       roles: [jpmc, xpanxion]
       projects: [chase-travel-booking, holland-america]
 
@@ -121,7 +121,7 @@
   skills:
     - name: Load-time optimisation
       level: Advanced
-      context: About 30% faster average page loads on Chase Travel after redesigning the offers API, and 40% better LCP on Site Manager's dashboard at JP Morgan Chase; code splitting, lazy loading and leaner state at Schlumberger; lazy loading, image optimisation and smaller bundles on Holland America Line's cruise site at Xpanxion.
+      context: An offers API redesigned on Chase Travel so pages fetch only the data they render, and 40% better LCP on Site Manager's dashboard at JP Morgan Chase; code splitting, lazy loading and leaner state at Schlumberger; lazy loading, image optimisation and smaller bundles on Holland America Line's cruise site at Xpanxion.
       roles: [slb, jpmc]
       projects: [chase-travel-booking, chase-travel-site-manager, holland-america]
     - name: Angular runtime performance
@@ -146,7 +146,8 @@
   skills:
     - name: Node.js & Express
       level: Advanced
-      context: REST services that sit behind the front ends I build, including the API behind Nexpenso, my personal finance tracker.
+      context: An internal API at Schlumberger, and the REST API behind Nexpenso, my personal finance tracker.
+      roles: [slb]
       projects: [nexpenso]
     - name: REST API integration
       level: Expert
@@ -163,7 +164,6 @@
       context: Used at JP Morgan Chase and Xpanxion.
       roles: [jpmc, xpanxion]
     - name: MySQL
-      level: Advanced
       context: Used at JP Morgan Chase and Xpanxion.
       roles: [jpmc, xpanxion]
     - name: GraphQL

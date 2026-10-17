@@ -30,6 +30,7 @@ features:
   - Role-based access control scoped per business unit, with sensitive operations restricted, enforced by the APIs as well as the UI
   - Fine-grained entitlement management
   - A centralised governance model with audit-friendly administration workflows
+  - A registry for Chase Travel's micro-apps, holding each one's bundle address and its configuration for each client
 metrics:
   - label: Settings change cycle
     before: Days
@@ -93,6 +94,7 @@ Site Manager is an Angular administration platform:
 - **Modular features.** Features are designed as modules, which keeps the platform maintainable as it grows.
 - **Access control at both layers.** Role-based access control scopes every user's permissions to their business unit and restricts sensitive operations. The Angular layer shows each role only what it may change, and the APIs enforce the same entitlements.
 - **Live configuration.** A change made through Site Manager takes effect immediately, not through a release.
+- **Micro-app registry.** Chase Travel's micro-apps are registered in Site Manager, with each one's bundle address and its configuration for each client. A dynamic element loader provided by the core team reads the registry and loads each micro-app independently at run time. I worked on the registry feature.
 
 <Draft note="Architecture detail — needed for the interactive diagram, within disclosure limits">
 
@@ -194,7 +196,7 @@ TODO — Effects beyond these: engineering time freed for product work, fewer co
 
 ## Leadership and ownership
 
-I led the development of Site Manager's Angular administration platform and set its architecture: reusable components, configuration-driven UI patterns and modular features. I designed and implemented the role-based access control that governs it, with the same entitlements enforced in the Angular layer and by the APIs. When the dashboard slowed as the platform grew, I drove the performance audit and fixed the bottlenecks.
+I led the development of Site Manager's Angular administration platform and set its architecture: reusable components, configuration-driven UI patterns and modular features. I designed and implemented the role-based access control that governs it, with the same entitlements enforced in the Angular layer and by the APIs. When the dashboard slowed as the platform grew, I drove the performance audit and fixed the bottlenecks. I also worked on its registry feature, where Chase Travel's micro-apps are registered and configured for each client.
 
 <Draft note="Cross-functional work — confirm for Site Manager">
 

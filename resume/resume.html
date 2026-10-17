@@ -1,0 +1,198 @@
+<!doctype html>
+<!--
+  Source of the résumé PDF the site links to (public/assets/documents/Niraj-Chavan.pdf).
+  Edit this file, then run `npm run resume` to print it with headless Chrome.
+
+  Keep it in step with src/content/experience.yaml: where the two disagree, the site's
+  wording is the confirmed one. Every claim here must be one Niraj can explain in an
+  interview. Single column on purpose, so applicant tracking systems read it in order;
+  it should stay at two pages.
+-->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Niraj Chavan's résumé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=block">
+<style>
+  @page { size: Letter; margin: 0.4in 0.5in 0.4in; }
+  :root {
+    --ink: #201e1d;
+    --muted: #605d5d;
+    --faint: #7d7979;
+    --accent: #ae1800;
+    --rule: #b3b0ae;
+    --hairline: #e2e0de;
+    --display: 'Archivo', Arial, sans-serif;
+  }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 9.2pt/1.36 Arial, Helvetica, sans-serif; }
+  a { color: var(--accent); text-decoration: none; }
+  p { margin: 0; }
+
+  h1 { margin: 0; font: 900 25pt/1 var(--display); font-stretch: 125%; letter-spacing: 0.02em; text-transform: uppercase; }
+  .headline { margin-top: 7pt; font: 600 9pt/1.2 var(--display); font-stretch: 112%; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+  .contact { margin-top: 5pt; font-size: 8.6pt; color: var(--muted); }
+
+  section { margin-top: 8pt; padding-top: 5pt; border-top: 1.5pt solid var(--rule); }
+  h2 { margin: 0 0 4pt; font: 700 9pt/1.2 var(--display); letter-spacing: 0.24em; text-transform: uppercase; }
+
+  .role { display: flex; justify-content: space-between; align-items: baseline; gap: 12pt; margin-top: 7pt; padding-bottom: 2.5pt; border-bottom: 0.6pt solid var(--hairline); break-after: avoid; }
+  h2 + .role { margin-top: 0; }
+  h3 { margin: 0; font: 600 10.8pt/1.25 var(--display); }
+  h3 .org { font-weight: 400; color: var(--faint); }
+  .when { flex: none; font: 400 8.4pt/1.2 var(--display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+
+  h4 { margin: 5pt 0 1.5pt; font: 600 9.1pt/1.3 var(--display); break-after: avoid; }
+  h4 .stack { font-weight: 400; color: var(--accent); }
+
+  ul { margin: 0; padding-left: 12pt; }
+  .role + ul { margin-top: 3pt; }
+  li { margin-bottom: 1pt; break-inside: avoid; }
+
+  .rows p { margin-bottom: 2pt; }
+  .rows b { font: 600 9pt var(--display); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Niraj Dilip Chavan</h1>
+  <p class="headline">Senior Software Engineer · Frontend-led full-stack · Fintech &amp; travel platforms</p>
+  <p class="contact">nirajd327@gmail.com · +91 96071 95436 · <a href="https://linkedin.com/in/niraj-chavan-8267bb98">linkedin.com/in/niraj-chavan-8267bb98</a> · <a href="https://devnirajc.github.io/niraj-chavan">devnirajc.github.io/niraj-chavan</a> · Pune, India</p>
+</header>
+
+<section>
+  <h2>Summary</h2>
+  <p>Senior Software Engineer with 12+ years building large-scale frontend systems for fintech, travel and enterprise platforms. Currently a Software Development Engineer III at JP Morgan Chase, leading the front end of the promotions and offers platform on Chase Travel, which serves millions of customers. Strong in Angular, React, TypeScript and Node.js, with a record of technical leadership: mentoring engineers, leading cross-team design reviews, and building reusable component libraries adopted across squads. Expanding backend depth in microservices, cloud deployment and AI-assisted development.</p>
+</section>
+
+<section>
+  <h2>Experience</h2>
+
+  <div class="role">
+    <h3>Software Development Engineer III <span class="org">· JP Morgan Chase &amp; Co.</span></h3>
+    <p class="when">Dec 2021 – Present · Pune</p>
+  </div>
+
+  <h4>Chase Travel — Promotions, Offers &amp; Purchase Flow <span class="stack">| Angular · TypeScript · Micro-frontends</span></h4>
+  <ul>
+    <li>Lead Developer for the promotions and offers platform. Delivered personalised offer rendering across Chase Travel, serving millions of active users; customer bookings rose 20% after launch, measured from Kibana logs.</li>
+    <li>Architected a reusable Angular component library for promotion rendering, adopted by 3 downstream squads, so they render promotions with one shared library instead of building their own.</li>
+    <li>Introduced micro-frontend module boundaries using Webpack Module Federation, enabling independent deployments across 4 squads and removing cross-team release coordination bottlenecks.</li>
+    <li>Collaborated with backend teams on REST API design for the offers service, eliminating over-fetching so pages receive only the offer data they render.</li>
+    <li>Worked on the purchase flow, from trip cart and traveller information through payment and review to booking confirmation.</li>
+    <li>Led the WCAG 2.1 AA accessibility compliance audit and remediation across the Travel platform: keyboard navigation, ARIA landmarks and screen-reader support.</li>
+    <li>Conduct weekly design and code reviews for a team of 6 engineers and lead cross-team design reviews; mentored 2 junior engineers on TypeScript best practices and Angular component architecture.</li>
+  </ul>
+
+  <h4>Site Manager — Travel Settings Customisation <span class="stack">| Angular · RBAC · REST APIs · Dynatrace · Kibana</span></h4>
+  <ul>
+    <li>Led the design and implementation of Site Manager, a self-service settings platform: business teams change travel product settings without engineering involvement, and changes take effect immediately instead of waiting days for a release.</li>
+    <li>Worked on Site Manager's registry feature, where Chase Travel's micro-apps are registered with their bundle addresses and configured per client for the dynamic element loader.</li>
+    <li>Designed and implemented role-based access control scoping configuration permissions per business unit. The Angular layer shows each role only what it may change, and the APIs enforce the same entitlements. Zero privilege-escalation incidents since launch.</li>
+    <li>Drove a performance audit using Dynatrace and Kibana; fixed 3 rendering bottlenecks, improving Largest Contentful Paint (LCP) by 40% on the settings dashboard.</li>
+  </ul>
+
+  <div class="role">
+    <h3>UI Developer <span class="org">· Schlumberger</span></h3>
+    <p class="when">Sep 2019 – Dec 2021 · Pune</p>
+  </div>
+
+  <h4>Field Logistics Module <span class="stack">| Angular · TypeScript · Jasmine/Karma · WebDriver · Kibana</span></h4>
+  <ul>
+    <li>Developed FLM, the application managing global logistics inventory for field operations, used by 500+ engineers across multiple geographies.</li>
+    <li>Built a real-time inventory tracking dashboard with Kibana-integrated data feeds, reducing inventory discrepancies by ~35% within one quarter of go-live.</li>
+    <li>Achieved ~80% unit test coverage (Jasmine/Karma) and a full E2E test suite (WebDriver/Allure), reducing the QA regression cycle from 3 days to under 6 hours.</li>
+    <li>Led the Angular v8 to v11 upgrade: planned the migration, coordinated with QA, and rolled out with zero production downtime.</li>
+  </ul>
+
+  <h4>Internal projects <span class="stack">| React · Node.js · Express</span></h4>
+  <ul>
+    <li>Planned an internal application's migration from Angular to React: set up the React app (build tooling, routing, state), rebuilt its screens, and ran both side by side until the React version went live in production.</li>
+    <li>Built an internal API with Node.js and Express.</li>
+  </ul>
+
+  <div class="role">
+    <h3>Senior UI Engineer <span class="org">· Xpanxion International (UST Global)</span></h3>
+    <p class="when">Jan 2017 – Sep 2019 · Pune</p>
+  </div>
+
+  <h4>Scope Retail — Order Management System <span class="stack">| Angular · Chart.js · REST APIs</span></h4>
+  <ul>
+    <li>Designed and built the full UI for inventory oversight and order management; manual data-entry errors fell by 50% over three months post-launch.</li>
+    <li>Built real-time dashboards for inventory and order monitoring, adopted by the operations team as their primary daily tool, replacing manual spreadsheet tracking.</li>
+    <li>Mentored 2 junior engineers on Angular architecture, component composition and REST API integration patterns.</li>
+  </ul>
+
+  <h4>K7 Computing — Consumer Console &amp; Antivirus Dashboard <span class="stack">| Angular · TypeScript · RxJS</span></h4>
+  <ul>
+    <li>Built the front end of K7's consumer console and antivirus dashboard, used by thousands of home users.</li>
+  </ul>
+
+  <h4>Holland America Line — Cruise Booking Site</h4>
+  <ul>
+    <li>Built cruise search and booking screens and shared components; sped up photo-heavy pages with lazy loading, code splitting, image optimisation and smaller bundles.</li>
+  </ul>
+
+  <div class="role">
+    <h3>Frontend Developer <span class="org">· Connect 91 Web Solutions (Polyscripts Infotech)</span></h3>
+    <p class="when">Dec 2015 – Jan 2017 · Pune</p>
+  </div>
+  <ul>
+    <li>Built an interactive in-video banner system for live product demos on a video SDK, for desktop and mobile playback.</li>
+    <li>Built a Sass architecture with reusable component patterns for large e-commerce front ends, and converted PSD and Sketch designs into semantic, accessible HTML5 and CSS3.</li>
+  </ul>
+
+  <div class="role">
+    <h3>Software Developer <span class="org">· Whitecode IT Solutions Pvt. Ltd.</span></h3>
+    <p class="when">Jul 2014 – Dec 2015 · Pune</p>
+  </div>
+  <ul>
+    <li>Built an end-to-end Plot Booking System that replaced a paper-based reservation process, from requirements to production.</li>
+    <li>Built e-commerce applications on CodeIgniter and Laravel with cart and payment-gateway integration, and custom WordPress themes and plugins.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Projects</h2>
+
+  <h4>Rxbit — Prescription Builder <span class="stack">| React · Vite · IndexedDB (Dexie) · Zod · PWA</span></h4>
+  <ul>
+    <li>Prescription builder for doctors with patient history, allergy flags, a drug library and interaction warnings; local-first, keyboard-navigable (WCAG 2.1), with PDF export. Live: <a href="https://rxbit.vercel.app/">rxbit.vercel.app</a></li>
+  </ul>
+
+  <h4>ShredTrack — Calorie &amp; Macro Tracker <span class="stack">| Next.js · React · IndexedDB (Dexie) · PWA</span></h4>
+  <ul>
+    <li>Tracks daily calories, protein, carbs and fat against personal targets, with a food log by meal, workout logging and an AI meal planner; installable, with on-device storage. Live: <a href="https://shred-track-livid.vercel.app/">shred-track-livid.vercel.app</a></li>
+  </ul>
+
+  <h4>Nexpenso — Personal Finance Tracker <span class="stack">| React · Redux · Vite · Node.js · Express · PostgreSQL · Docker</span></h4>
+  <ul>
+    <li>Imports bank statements as cancellable background jobs, detects duplicate UTR and UPI references and categorises spending with AI-assisted rules; Node.js and Express API on PostgreSQL, deployed via GitHub Actions. Live: <a href="https://nexpenso.netlify.app/">nexpenso.netlify.app</a></li>
+  </ul>
+</section>
+
+<section class="rows">
+  <h2>Skills</h2>
+  <p><b>Frontend:</b> Angular · React · Next.js · TypeScript · JavaScript · RxJS · HTML5 · CSS3/SCSS · Tailwind CSS</p>
+  <p><b>Architecture:</b> Micro-frontends (Webpack Module Federation) · Component libraries · Role-based access control · WCAG accessibility · Performance optimisation (Core Web Vitals)</p>
+  <p><b>State &amp; data:</b> Redux / Redux Toolkit · REST APIs · GraphQL · React Query</p>
+  <p><b>Backend &amp; cloud:</b> Node.js · Express · MongoDB · PostgreSQL · Microservices · Docker · Kubernetes · AWS · Azure</p>
+  <p><b>Testing:</b> Jest · React Testing Library · Jasmine/Karma · WebDriver · Cypress · Playwright · Allure</p>
+  <p><b>Tooling:</b> Webpack · Vite · Git · GitHub Actions (CI/CD) · Dynatrace · Kibana · Grafana · Jira · Figma · LLM Suite · GitHub Copilot</p>
+  <p><b>Practices:</b> Technical leadership · Code review &amp; mentoring · Agile/Scrum · Design patterns · Frontend system design</p>
+  <p><b>Familiar with:</b> MySQL</p>
+</section>
+
+<section class="rows">
+  <h2>Education &amp; certification</h2>
+  <p><b>B.E. Computer Engineering</b> · Dr. D. Y. Patil Institute of Engineering &amp; Technology, Pune University · 2011–2014 · 63.89%</p>
+  <p><b>Diploma in Computer Engineering</b> · Y. B. Patil Polytechnic, MSBTE, Pune · 2008–2011 · 83.03%</p>
+  <p><b>AWS Certified Cloud Practitioner</b> · Amazon Web Services · Issued Dec 2023 · Expires Dec 2026 · <a href="https://credly.com/badges/0643f169-29c6-45d2-ab5f-f1f511549723">Credly badge</a></p>
+  <p><b>Languages:</b> English · Hindi · Marathi</p>
+</section>
+
+</body>
+</html>
