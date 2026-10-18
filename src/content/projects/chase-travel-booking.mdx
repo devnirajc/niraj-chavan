@@ -29,7 +29,6 @@ features:
   - Personalised offer rendering across Chase Travel
   - A reusable Angular component library for promotion rendering, shared by three downstream squads
   - Micro-frontend boundaries with Webpack Module Federation, so four squads deploy independently
-  - An offers-service REST API shaped with the back-end teams to remove over-fetching
   - WCAG 2.1 AA audit and remediation across the platform — keyboard navigation, ARIA landmarks and screen-reader support
 metrics:
   - label: Customer bookings
@@ -38,9 +37,6 @@ metrics:
   - label: Promotion UI
     after: One shared library
     note: Three downstream squads stopped building their own promotion components and render promotions with the shared Angular library instead.
-  - label: Offers API
-    after: No over-fetching
-    note: Redesigned with the back-end teams, so pages receive only the offer data they render.
   - label: Squads deploying independently
     after: "4"
     note: Micro-frontend boundaries with Webpack Module Federation.
@@ -51,7 +47,7 @@ caseStudy: microfrontend-architecture
 
 I worked on two parts of Chase Travel that decide whether a customer books.
 
-- **The promotions and offers platform**, which puts offers in front of customers. I'm its lead developer. I delivered personalised offer rendering across the platform, built the shared component library other squads render promotions with, redrew the boundaries between squads' code so each could deploy on its own, and worked with the back-end teams to make the offers API faster.
+- **The promotions and offers platform**, which puts offers in front of customers. I'm its lead developer. I delivered personalised offer rendering across the platform, built the shared component library other squads render promotions with, and redrew the boundaries between squads' code so each could deploy on its own.
 - **The purchase flow**, the steps where a customer's choices become a booking: trip cart, traveller information, payment and review, and confirmation.
 
 Alongside both, I run design and code reviews for the team.
@@ -60,12 +56,12 @@ Alongside both, I run design and code reviews for the team.
 - **Organisation:** JP Morgan Chase & Co.
 - **Scale:** millions of active users
 - **My role:** lead developer for the promotions and offers platform, where I own the front-end architecture. I also worked on the purchase flow, from trip cart to confirmation. I run weekly design and code reviews for a team of six engineers
-- **Teams involved:** my team, three downstream squads that build on the promotion component library, four squads that deploy through the micro-frontend boundaries, and the back-end teams behind the offers service
-- **When:** at JP Morgan Chase since December 2021
+- **Teams involved:** my team, three downstream squads that build on the promotion component library, and four squads that deploy through the micro-frontend boundaries
+- **When:** on the promotions and purchase flow team since January 2025, at JP Morgan Chase since December 2021
 
 <Draft note="Project scope — fill in what you can say publicly">
 
-TODO — When did the promotions work start, and is it ongoing? Who were your stakeholders: product owners for offers, marketing, the rewards and loyalty teams, design, compliance? What does "personalised" mean in practice: offers chosen by card product, points balance, travel history, location? Only as much as JP Morgan Chase's disclosure policy allows. Patterns and outcomes, not internal names or confidential numbers.
+TODO — Who were your stakeholders: product owners for offers, marketing, the rewards and loyalty teams, design, compliance? What does "personalised" mean in practice: offers chosen by card product, points balance, travel history, location? Only as much as JP Morgan Chase's disclosure policy allows. Patterns and outcomes, not internal names or confidential numbers.
 
 </Draft>
 
@@ -73,11 +69,10 @@ TODO — When did the promotions work start, and is it ongoing? Who were your st
 
 A booking on Chase Travel depends on two things: the offers that draw a customer in, and a purchase flow that turns their choices into a confirmed trip.
 
-Offers are central to Chase Travel: the public site leads with them, and how well they reach a customer affects whether that customer books. The offers work started from five problems:
+Offers are central to Chase Travel: the public site leads with them, and how well they reach a customer affects whether that customer books. The offers work started from four problems:
 
 - **Personalised offers weren't available across the platform.** Customers needed to see the offers relevant to them, wherever they were in Chase Travel.
 - **Promotion UI was duplicated.** Squads rendered promotions in their own ways, so the same work was done several times.
-- **The offers API over-fetched.** Pages downloaded more offer data than they displayed.
 - **Releases needed cross-team coordination.** Squads working in the same front end had to line up their releases, which became a bottleneck.
 - **Accessibility needed an audit.** The platform had to meet WCAG 2.1 AA, which meant finding and fixing the gaps across Chase Travel.
 
@@ -91,7 +86,7 @@ TODO — How did these problems show up for customers: offers that didn't apply 
 
 ## Discovery and requirements
 
-TODO — How did requirements reach you: product owners for offers, marketing campaigns, the rewards team? How did you find the over-fetching: profiling the offers pages, reading payloads, Dynatrace? How did the micro-frontend idea get agreed across four squads: an architecture review, a proof of concept? How did expectations change during delivery, and how did you manage them?
+TODO — How did requirements reach you: product owners for offers, marketing campaigns, the rewards team? How did the micro-frontend idea get agreed across four squads: an architecture review, a proof of concept? How did expectations change during delivery, and how did you manage them?
 
 </Draft>
 
@@ -128,11 +123,10 @@ TODO — Outcomes you can share within JP Morgan Chase's disclosure policy: conv
 
 ## Architecture and design
 
-The promotions work changed Chase Travel's front end in three structural ways:
+The promotions work changed Chase Travel's front end in two structural ways:
 
 - **Micro-frontend boundaries.** I introduced module boundaries using Webpack Module Federation, so each squad's part of the front end builds and deploys independently while customers still get one Chase Travel. Each micro-app is registered in Site Manager's registry, which holds its bundle address and its configuration for each client, and a dynamic element loader provided by the core team reads the registry and loads each micro-app at run time. Angular upgrades are coordinated through the common platform with all the squads, so every micro-app stays on one Angular version.
 - **A shared promotion-rendering library.** I architected a reusable Angular component library that renders promotions. Three downstream squads build on it rather than maintaining their own.
-- **An offers API shaped around the UI.** I worked with the back-end teams on the REST API design of the offers service, so pages receive the data they render and nothing more.
 
 <Draft note="Architecture detail — needed for the interactive diagram, within disclosure limits">
 
@@ -221,31 +215,20 @@ Each decision below compares the approach I chose with the state it replaced.
       ],
       tradeoff: 'A shared library is a product with consumers: changes need versioning and backward compatibility for every squad that depends on it.',
     },
-    {
-      title: 'Where offer data gets trimmed',
-      context: 'The offers service returned more data than pages displayed.',
-      options: [
-        { name: 'Redesign the offers REST API with the back-end teams', chosen: true, reason: 'Pages receive only what they render, which ended the over-fetching.' },
-        { name: 'Keep the existing responses (the existing model)', chosen: false, reason: 'Every offers page kept paying for data it never showed.' },
-      ],
-      tradeoff: 'An API shaped around its UI couples the two more closely, so changing what a page shows can mean changing the API with it.',
-    },
   ]}
 />
 
 <Draft note="Other options you weighed">
 
-TODO — The cards above compare each choice with the state it replaced. If you also evaluated other options, add them: for micro-frontends, single-spa, Nx libraries in a monorepo or iframes; for the API, GraphQL (you have used it at JP Morgan Chase) or a backend-for-frontend; for the library, extending an existing design system.
+TODO — The cards above compare each choice with the state it replaced. If you also evaluated other options, add them: for micro-frontends, single-spa, Nx libraries in a monorepo or iframes; for the library, extending an existing design system.
 
 </Draft>
 
+<Draft note="Performance — whole section is unconfirmed">
+
 ## Performance
 
-I worked with the back-end teams to stop the offers service over-fetching. Pages now download only the offer data they render.
-
-<Draft note="Performance detail">
-
-TODO — The site used to claim about 30% lower average page load time, but nobody could say how it was measured, so it was removed on 2026-10-17. If Dynatrace shows the before and after, note which pages, which metric (LCP, full load) and the dates, and the number can come back. Any other optimisation in the promotions work, such as lazy loading remotes or caching offers?
+TODO — Did you do any front-end performance work on the promotions platform or the purchase flow, such as lazy loading remotes or caching offers? If Dynatrace shows a before and after, note which pages, which metric (LCP, full load) and the dates. The offers service's back-end API was not your work, so don't credit its changes here.
 
 </Draft>
 
@@ -273,13 +256,12 @@ TODO — What enterprise constraints shaped the work: security reviews, change m
 
 - **More bookings:** customer bookings rose 20% after personalised offer rendering went live across Chase Travel.
 - **Less duplicated work:** three downstream squads render promotions with one shared library instead of building their own.
-- **Leaner pages:** pages download only the offer data they render.
 - **Independent teams:** four squads deploy independently, with no cross-team release coordination.
 - **Accessibility:** a WCAG 2.1 AA audit and remediation across the platform.
 
 ## Leadership and collaboration
 
-As lead developer I own the front-end architecture of the promotions and offers platform, and I worked on the purchase flow from trip cart to confirmation. I run weekly design reviews and code reviews for a team of six engineers, lead design reviews across teams, and have mentored two junior engineers on TypeScript best practices and Angular component architecture. The work also crossed team lines: the component library was adopted by three downstream squads, the micro-frontend boundaries span four squads, and the offers API was redesigned with the back-end teams.
+As lead developer I own the front-end architecture of the promotions and offers platform, and I worked on the purchase flow from trip cart to confirmation. I run weekly design reviews and code reviews for a team of six engineers, lead design reviews across teams, and have mentored two junior engineers on TypeScript best practices and Angular component architecture. The work also crossed team lines: the component library was adopted by three downstream squads, and the micro-frontend boundaries span four squads.
 
 <Draft note="Stakeholders and documentation">
 
