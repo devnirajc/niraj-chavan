@@ -22,6 +22,5 @@ stack: [Angular, TypeScript, RxJS, Dynatrace, Kibana]
 results:
   - Three rendering bottlenecks fixed.
   - Largest Contentful Paint on the settings dashboard improved.
-  - TODO — LCP before and after, in seconds.
 lessons:
   - TODO

@@ -145,9 +145,23 @@ TODO — The cards compare each choice with the state it replaced. Did you also 
 
 **Result.** All three rendering bottlenecks were fixed. Largest Contentful Paint on the settings dashboard improved, and the dashboard responds noticeably faster for the business users who configure Chase Travel.
 
-<Draft note="The detail that makes this credible">
+<Draft note="Claude's draft of the three bottlenecks: confirm or correct each before publishing">
 
-TODO — For each of the three bottlenecks: what Dynatrace or Kibana showed, the cause you found (for example, default change detection on a large settings table, duplicate API calls on load, a heavy component rendered off-screen), and the fix (OnPush, trackBy, memoised selectors, request de-duplication, deferred loading). What was LCP before and after, in seconds?
+TODO — Claude drafted these three from the confirmed findings above, not from your records. Check each against the code and tickets from the audit, correct anything that didn't happen, and move the confirmed ones out of this block.
+
+**1. The settings list rebuilt every row.** *Symptom:* the browser profile showed a long scripting task after the settings data arrived, most of it destroying and recreating row DOM. *Cause:* the list's `*ngFor` had no `trackBy`, so every new array from the API, even with unchanged settings, made Angular tear down and rebuild every row. *Fix:* I added `trackBy` on the setting's ID, so Angular reuses existing rows and only touches the ones that changed.
+
+**2. Default change detection across the dashboard.** *Symptom:* the profile showed change detection running over the whole component tree several times during load, once for each HTTP response, timer and event. *Cause:* the dashboard's components used the default change-detection strategy, so every async event checked every component, including the ones whose inputs hadn't changed. *Fix:* I moved the presentational components to `OnPush`, with immutable inputs and the `async` pipe, so a component is checked only when its inputs or its own observables change.
+
+**3. Expensive work in templates.** *Symptom:* the same formatting and filtering functions appeared again and again in the profile's call tree. *Cause:* templates called methods, such as formatting labels and filtering settings by business unit, that ran on every change-detection cycle. *Fix:* I replaced them with pure pipes and view models computed once in RxJS streams, so the work runs only when the data changes.
+
+**How each fix reaches LCP.** The dashboard's largest element can't paint until four things have happened, in order: the JavaScript bundle loads and Angular starts, the dashboard requests its data, the data arrives, and Angular renders it.
+
+- **Lazy loading** shortens the first step: code for screens the dashboard doesn't need is no longer downloaded and parsed before it renders.
+- **Leaner API calls** shorten the middle steps: fewer duplicate calls, and calls that don't depend on each other run in parallel instead of one after another.
+- **The rendering fixes** shorten the last step. On first load, `trackBy` helps only if the list renders more than once before the first paint, and `OnPush` and the template fixes help in proportion to how many change-detection cycles run during load. Their bigger effect is on interactions once the dashboard has loaded.
+
+TODO — [removed]
 
 </Draft>
 
