@@ -121,7 +121,7 @@
   skills:
     - name: Load-time optimisation
       level: Advanced
-      context: 40% better LCP on Site Manager's dashboard at JP Morgan Chase (4.1 s to 2.3 s); code splitting, lazy loading and leaner state at Schlumberger; lazy loading, image optimisation and smaller bundles on Holland America Line's cruise site at Xpanxion.
+      context: 44% better LCP on Site Manager's dashboard at JP Morgan Chase (4.1 s to 2.3 s); code splitting, lazy loading and leaner state at Schlumberger; lazy loading, image optimisation and smaller bundles on Holland America Line's cruise site at Xpanxion.
       roles: [slb, jpmc]
       projects: [chase-travel-site-manager, holland-america]
     - name: Angular runtime performance

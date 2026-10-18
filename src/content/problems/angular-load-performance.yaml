@@ -21,6 +21,6 @@ solution: >-
 stack: [Angular, TypeScript, RxJS, Dynatrace, Kibana]
 results:
   - Three rendering bottlenecks fixed.
-  - Largest Contentful Paint on the settings dashboard improved by 40%, from 4.1 s to 2.3 s.
+  - Largest Contentful Paint on the settings dashboard improved by 44%, from 4.1 s to 2.3 s.
 lessons:
   - TODO

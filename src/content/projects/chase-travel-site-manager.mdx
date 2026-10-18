@@ -1,7 +1,7 @@
 ---
 title: Chase Travel — Site Manager
 tagline: Self-service travel settings for Chase Travel's business teams, with role-based access per business unit
-summary: I led Site Manager, the self-service settings platform behind Chase Travel. Settings changes that took days now apply immediately, my business-unit RBAC has had zero privilege escalations, and dashboard LCP improved 40%.
+summary: I led Site Manager, the self-service settings platform behind Chase Travel. Settings changes that took days now apply immediately, my business-unit RBAC has had zero privilege escalations, and dashboard LCP improved 44%.
 featured: true
 order: 2
 kind: client
@@ -42,7 +42,7 @@ metrics:
   - label: Dashboard LCP
     before: "4.1 s"
     after: "2.3 s"
-    note: Largest Contentful Paint on the settings dashboard, 40% better after a Dynatrace and Kibana audit.
+    note: Largest Contentful Paint on the settings dashboard, 44% better after a Dynatrace and Kibana audit.
   - label: Rendering bottlenecks fixed
     after: "3"
     note: Found through monitoring data and browser profiling.
@@ -50,7 +50,7 @@ metrics:
 
 Site Manager (Travel Settings Customisation) is the centralised configuration platform behind [Chase Travel](https://www.chase.com/travel), JP Morgan Chase's travel-booking platform for Chase cardmembers. Authorised business users manage Chase Travel's travel product settings through it, without engineering intervention.
 
-I led the design and implementation of Site Manager. Business teams now manage travel product configuration themselves, through a secure, role-based administration experience. Configuration changes that used to wait days for an engineer and a release now take effect as soon as they are saved. The platform also brought access governance through role-based access control (RBAC) I designed and implemented, enforced by the APIs as well as the Angular layer, and improved the dashboard's Largest Contentful Paint by 40% after an observability-led optimisation using Dynatrace and Kibana.
+I led the design and implementation of Site Manager. Business teams now manage travel product configuration themselves, through a secure, role-based administration experience. Configuration changes that used to wait days for an engineer and a release now take effect as soon as they are saved. The platform also brought access governance through role-based access control (RBAC) I designed and implemented, enforced by the APIs as well as the Angular layer, and improved the dashboard's Largest Contentful Paint by 44% after an observability-led optimisation using Dynatrace and Kibana.
 
 Site Manager is internal, so there is no public demo; the image above is an illustration, not a screenshot.
 
@@ -150,7 +150,7 @@ TODO — The cards compare each choice with the state it replaced. Did you also 
 
 **Solution.** Rendering and change-detection fixes for the three bottlenecks, plus lazy-loading improvements and leaner API calls.
 
-**Result.** All three rendering bottlenecks were fixed. Largest Contentful Paint on the settings dashboard improved by about 40%, from 4.1 s to 2.3 s, and the dashboard responds noticeably faster for the business users who configure Chase Travel.
+**Result.** All three rendering bottlenecks were fixed. Largest Contentful Paint on the settings dashboard improved by 44%, from 4.1 s to 2.3 s, and the dashboard responds noticeably faster for the business users who configure Chase Travel.
 
 <Draft note="Claude's draft of the three bottlenecks: confirm or correct each before publishing">
 
@@ -201,7 +201,7 @@ TODO — Accessibility: your WCAG 2.1 AA work covered the Travel platform. Did i
 
 - **Operational efficiency:** settings changes that used to take days now take effect immediately, and routine configuration updates no longer need engineering involvement.
 - **Security and governance:** zero privilege-escalation incidents since launch, and configuration ownership controlled per business unit.
-- **Performance:** 40% better Largest Contentful Paint on the settings dashboard (4.1 s to 2.3 s), and faster interactions for the business users who rely on it.
+- **Performance:** 44% better Largest Contentful Paint on the settings dashboard (4.1 s to 2.3 s), and faster interactions for the business users who rely on it.
 
 <Draft note="Wider impact — only claim what you can stand behind">
 

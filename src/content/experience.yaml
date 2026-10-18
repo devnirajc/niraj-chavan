@@ -23,7 +23,7 @@
     - Led the design and implementation of Site Manager, which lets Chase Travel's business teams change travel product settings without engineers. A change takes effect as soon as it is saved, instead of waiting days for an engineer and a release.
     - Worked on Site Manager's registry feature, where Chase Travel's micro-apps are registered with their bundle addresses and configured for each client; the core team's dynamic element loader reads it to load each micro-app independently.
     - Designed and implemented role-based access control for Site Manager, scoping configuration permissions per business unit. The Angular layer shows each role only what it may change, and the APIs enforce the same entitlements. Zero privilege-escalation incidents since launch.
-    - Drove a Dynatrace and Kibana performance audit of Site Manager's dashboard, fixing three rendering bottlenecks and improving LCP by 40%, from 4.1 s to 2.3 s.
+    - Drove a Dynatrace and Kibana performance audit of Site Manager's dashboard, fixing three rendering bottlenecks and improving LCP by 44%, from 4.1 s to 2.3 s.
     - Led the WCAG 2.1 AA accessibility audit and remediation across Chase Travel, covering keyboard navigation, ARIA landmarks and screen-reader support.
     - Run weekly design and code reviews for a team of six engineers, lead design reviews across teams, and mentored two junior engineers on TypeScript and Angular component architecture.
     - Write unit and end-to-end tests for the Chase Travel features I build.
