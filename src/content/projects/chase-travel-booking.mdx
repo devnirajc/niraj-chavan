@@ -65,16 +65,10 @@ A booking on Chase Travel depends on two things: the offers that draw a customer
 
 Offers are central to Chase Travel: the public site leads with them, and how well they reach a customer affects whether that customer books. The offers work started from four problems:
 
-- **Personalised offers weren't available across the platform.** Customers needed to see the offers relevant to them, wherever they were in Chase Travel.
-- **Promotion UI was duplicated.** Squads rendered promotions in their own ways, so the same work was done several times.
-- **Releases needed cross-team coordination.** Squads working in the same front end had to line up their releases, which became a bottleneck.
-- **Accessibility needed an audit.** The platform had to meet WCAG 2.1 AA, which meant finding and fixing the gaps across Chase Travel.
-
-<Draft note="Customer and business context — what you can share">
-
-TODO — How did these problems show up for customers: offers that didn't apply to them, slow offer-heavy pages, inconsistent offer designs? For the business: slower delivery, missed bookings, release-day coordination?
-
-</Draft>
+- **Personalised offers weren't available across the platform.** Customers couldn't see the promotions available to them. They needed to see the offers relevant to them, wherever they were in Chase Travel.
+- **Promotion UI was duplicated.** Squads rendered promotions in their own ways, so the same work was done several times, and there was no dedicated component where a customer could see the list of promotions available to them.
+- **Releases needed cross-team coordination.** Squads working in the same front end had to line up their releases, which became a bottleneck. Releases had to go out in order: when one component depended on another, the component it depended on was released first, and only then could the dependent one go live on the site.
+- **Accessibility needed an audit.** US accessibility law applies to Chase Travel, so the platform had to meet WCAG 2.1 AA, which meant finding and fixing the gaps across Chase Travel.
 
 <Draft note="Discovery and requirements — whole section is unconfirmed">
 
