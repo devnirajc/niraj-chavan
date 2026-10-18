@@ -67,7 +67,7 @@ Offers are central to Chase Travel: the public site leads with them, and how wel
 
 - **Personalised offers weren't available across the platform.** Customers couldn't see the promotions available to them. They needed to see the offers relevant to them, wherever they were in Chase Travel.
 - **Promotion UI was duplicated.** Squads rendered promotions in their own ways, so the same work was done several times, and there was no dedicated component where a customer could see the list of promotions available to them.
-- **Releases needed cross-team coordination.** Squads working in the same front end had to line up their releases, which became a bottleneck. Releases had to go out in order: when one component depended on another, the component it depended on was released first, and only then could the dependent one go live on the site.
+- **Releases needed cross-team coordination.** Squads working in the same front end had to line up their releases, which became a bottleneck.
 - **Accessibility needed an audit.** US accessibility law applies to Chase Travel, so the platform had to meet WCAG 2.1 AA, which meant finding and fixing the gaps across Chase Travel.
 
 <Draft note="Discovery and requirements — whole section is unconfirmed">
@@ -113,7 +113,7 @@ TODO — Outcomes you can share within JP Morgan Chase's disclosure policy: conv
 
 The promotions work changed Chase Travel's front end in two structural ways:
 
-- **Micro-frontend boundaries.** I introduced module boundaries using Webpack Module Federation, so each squad's part of the front end builds and deploys independently while customers still get one Chase Travel. Each micro-app is registered in Site Manager's registry, which holds its bundle address and its configuration for each client, and a dynamic element loader provided by the core team reads the registry and loads each micro-app at run time. Angular upgrades are coordinated through the common platform with all the squads, so every micro-app stays on one Angular version.
+- **Micro-frontend boundaries.** I introduced module boundaries using Webpack Module Federation, so each squad's part of the front end builds and deploys independently while customers still get one Chase Travel. Each micro-app is registered in Site Manager's registry, which holds its bundle address and its configuration for each client, and a dynamic element loader provided by the core team reads the registry and loads each micro-app at run time. Release order still matters when one component depends on another: the one it depends on is released first, and the dependent one goes live after it. Angular upgrades are coordinated through the common platform with all the squads, so every micro-app stays on one Angular version.
 - **A shared promotion-rendering library.** I architected a reusable Angular component library that renders promotions. Three downstream squads build on it rather than maintaining their own.
 
 <Draft note="Architecture detail — needed for the interactive diagram, within disclosure limits">
@@ -159,7 +159,7 @@ TODO — Analysis: what made it hard: many offer types, eligibility rules, cachi
 
 **Solution.** Two changes, one per problem: Module Federation boundaries so squads deploy independently, and a shared promotion-rendering library so they stop rebuilding the same components.
 
-**Outcome.** Four squads deploy independently without cross-team release coordination. Three downstream squads render promotions with the shared library instead of building their own.
+**Outcome.** Four squads deploy independently instead of lining up every release across teams. When one component depends on another, the one it depends on still goes out first. Three downstream squads render promotions with the shared library instead of building their own.
 
 <Draft note="How you got four squads to agree">
 
@@ -189,7 +189,7 @@ Each decision below compares the approach I chose with the state it replaced.
       title: 'How squads ship into one front end',
       context: 'Several squads work in Chase Travel\'s front end. Releasing together meant coordinating across teams, and that coordination became a bottleneck.',
       options: [
-        { name: 'Micro-frontend boundaries with Webpack Module Federation', chosen: true, reason: 'Each squad builds and deploys its part independently, while customers still get one Chase Travel. Four squads now deploy on their own schedule.' },
+        { name: 'Micro-frontend boundaries with Webpack Module Federation', chosen: true, reason: 'Each squad builds and deploys its part independently, while customers still get one Chase Travel. Four squads now deploy independently; when one component depends on another, the one it depends on is released first.' },
         { name: 'One front end, released together (the existing model)', chosen: false, reason: 'Every release needed cross-team coordination, so one squad\'s timing held up the others.' },
       ],
       tradeoff: 'Independent deployment moves integration from build time to run time: shared dependencies such as Angular and the component library have to be versioned and shared deliberately across remotes.',
@@ -244,7 +244,7 @@ TODO — What enterprise constraints shaped the work: security reviews, change m
 
 - **More bookings:** customer bookings rose 20% after personalised offer rendering went live across Chase Travel.
 - **Less duplicated work:** three downstream squads render promotions with one shared library instead of building their own.
-- **Independent teams:** four squads deploy independently, with no cross-team release coordination.
+- **Independent teams:** four squads deploy independently instead of lining up every release across teams.
 - **Accessibility:** a WCAG 2.1 AA audit and remediation across the platform.
 
 ## Leadership and collaboration
