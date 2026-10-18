@@ -40,8 +40,9 @@ metrics:
     after: Zero
     note: Since launch, with access scoped per business unit.
   - label: Dashboard LCP
-    after: "40% better"
-    note: Largest Contentful Paint on the settings dashboard, after a Dynatrace and Kibana audit.
+    before: "4.1 s"
+    after: "2.3 s"
+    note: Largest Contentful Paint on the settings dashboard, 40% better after a Dynatrace and Kibana audit.
   - label: Rendering bottlenecks fixed
     after: "3"
     note: Found through monitoring data and browser profiling.
@@ -149,11 +150,25 @@ TODO — The cards compare each choice with the state it replaced. Did you also 
 
 **Solution.** Rendering and change-detection fixes for the three bottlenecks, plus lazy-loading improvements and leaner API calls.
 
-**Result.** All three rendering bottlenecks were fixed. Largest Contentful Paint on the settings dashboard improved by about 40%, and the dashboard responds noticeably faster for the business users who configure Chase Travel.
+**Result.** All three rendering bottlenecks were fixed. Largest Contentful Paint on the settings dashboard improved by about 40%, from 4.1 s to 2.3 s, and the dashboard responds noticeably faster for the business users who configure Chase Travel.
 
-<Draft note="The detail that makes this credible">
+<Draft note="Claude's draft of the three bottlenecks: confirm or correct each before publishing">
 
-TODO — For each of the three bottlenecks: what Dynatrace or Kibana showed, the cause you found (for example, default change detection on a large settings table, duplicate API calls on load, a heavy component rendered off-screen), and the fix (OnPush, trackBy, memoised selectors, request de-duplication, deferred loading). What was LCP before and after, in seconds?
+TODO — Claude drafted these three from the confirmed findings above, not from your records. Check each against the code and tickets from the audit, correct anything that didn't happen, and move the confirmed ones out of this block.
+
+**1. The settings list rebuilt every row.** *Symptom:* the browser profile showed a long scripting task after the settings data arrived, most of it destroying and recreating row DOM. *Cause:* the list's `*ngFor` had no `trackBy`, so every new array from the API, even with unchanged settings, made Angular tear down and rebuild every row. *Fix:* I added `trackBy` on the setting's ID, so Angular reuses existing rows and only touches the ones that changed.
+
+**2. Default change detection across the dashboard.** *Symptom:* the profile showed change detection running over the whole component tree several times during load, once for each HTTP response, timer and event. *Cause:* the dashboard's components used the default change-detection strategy, so every async event checked every component, including the ones whose inputs hadn't changed. *Fix:* I moved the presentational components to `OnPush`, with immutable inputs and the `async` pipe, so a component is checked only when its inputs or its own observables change.
+
+**3. Expensive work in templates.** *Symptom:* the same formatting and filtering functions appeared again and again in the profile's call tree. *Cause:* templates called methods, such as formatting labels and filtering settings by business unit, that ran on every change-detection cycle. *Fix:* I replaced them with pure pipes and view models computed once in RxJS streams, so the work runs only when the data changes.
+
+**How each fix reaches LCP.** The dashboard's largest element can't paint until four things have happened, in order: the JavaScript bundle loads and Angular starts, the dashboard requests its data, the data arrives, and Angular renders it.
+
+- **Lazy loading** shortens the first step: code for screens the dashboard doesn't need is no longer downloaded and parsed before it renders.
+- **Leaner API calls** shorten the middle steps: fewer duplicate calls, and calls that don't depend on each other run in parallel instead of one after another.
+- **The rendering fixes** shorten the last step. On first load, `trackBy` helps only if the list renders more than once before the first paint, and `OnPush` and the template fixes help in proportion to how many change-detection cycles run during load. Their bigger effect is on interactions once the dashboard has loaded.
+
+TODO — Which of these cut the most from the 4.1 s? Claude's expectation, not a fact: lazy loading and the API changes did most of it, and the rendering fixes contributed less to LCP and more to how fast the dashboard feels in use. Confirm in Dynatrace: if the fixes shipped in separate releases, the LCP trend should step down at each one; if not, compare the before and after waterfalls to see whether the time saved was in loading code, waiting for data or rendering. Also: what was the LCP element (the settings table, a summary card, a heading), and is the dashboard client-rendered (no Angular SSR)?
 
 </Draft>
 
@@ -186,7 +201,7 @@ TODO — Accessibility: your WCAG 2.1 AA work covered the Travel platform. Did i
 
 - **Operational efficiency:** settings changes that used to take days now take effect immediately, and routine configuration updates no longer need engineering involvement.
 - **Security and governance:** zero privilege-escalation incidents since launch, and configuration ownership controlled per business unit.
-- **Performance:** 40% better Largest Contentful Paint on the settings dashboard, and faster interactions for the business users who rely on it.
+- **Performance:** 40% better Largest Contentful Paint on the settings dashboard (4.1 s to 2.3 s), and faster interactions for the business users who rely on it.
 
 <Draft note="Wider impact — only claim what you can stand behind">
 
