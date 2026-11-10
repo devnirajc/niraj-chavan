@@ -88,6 +88,30 @@
   quadrant: techniques
   note: Cross-document page transitions on this site, with no client router.
 
+- id: copilot
+  name: GitHub Copilot
+  ring: adopt
+  quadrant: tools
+  note: My assistant in VS Code, with Claude Opus and GPT models.
+
+- id: claude-code
+  name: Claude Code
+  ring: adopt
+  quadrant: tools
+  note: Builds and maintains this site, guided by two project skills.
+
+- id: agent-skills
+  name: Agent Skills
+  ring: trial
+  quadrant: techniques
+  note: This site's conventions and my document archive's filing rules, written down for agents.
+
+- id: scheduled-agents
+  name: Scheduled agents
+  ring: trial
+  quadrant: platforms
+  note: A Claude Cowork task files new documents into my archive and refreshes its search.
+
 - id: assess-1
   name: TODO
   ring: assess

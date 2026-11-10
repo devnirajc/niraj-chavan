@@ -19,7 +19,7 @@ import { defineCollection, reference } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { mediumLoader } from './lib/medium-loader';
-import { PROBLEM_DOMAINS, WRITING_CATEGORIES } from './data/taxonomy';
+import { AI_KINDS, PROBLEM_DOMAINS, WRITING_CATEGORIES } from './data/taxonomy';
 
 const draft = z.boolean().default(false);
 
@@ -179,6 +179,22 @@ const playbooks = defineCollection({
   }),
 });
 
+/** How I build with AI — workflows, skills, agents, MCP servers: /ai/ */
+const aiUseCases = defineCollection({
+  loader: glob({ base: './src/content/ai', pattern: '*.mdx' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string().max(240),
+    draft,
+    order: z.number(),
+    kind: z.enum(AI_KINDS),
+    context: z.string(),
+    tools: z.array(z.string()).default([]),
+    steps: z.array(z.object({ title: z.string(), detail: z.string() })).default([]),
+    links: z.object({ repo: z.url().optional(), live: z.url().optional() }).default({}),
+  }),
+});
+
 /** Career history: /experience/ */
 const experience = defineCollection({
   loader: file('src/content/experience.yaml'),
@@ -302,6 +318,7 @@ export const collections = {
   projects,
   problems,
   playbooks,
+  aiUseCases,
   experience,
   education,
   skills,

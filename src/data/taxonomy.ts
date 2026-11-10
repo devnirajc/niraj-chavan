@@ -31,6 +31,17 @@ export const DOMAIN_LABELS: Record<ProblemDomain, string> = {
   'data-reporting': 'Data & reporting',
 };
 
+export const AI_KINDS = ['workflow', 'skill', 'agent', 'mcp-server'] as const;
+
+export type AiKind = (typeof AI_KINDS)[number];
+
+export const AI_KIND_LABELS: Record<AiKind, string> = {
+  workflow: 'Workflow',
+  skill: 'Skill',
+  agent: 'Agent',
+  'mcp-server': 'MCP server',
+};
+
 export const WRITING_CATEGORIES = [
   'Angular',
   'JavaScript',

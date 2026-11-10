@@ -7,7 +7,7 @@ import type { APIRoute } from 'astro';
 import { published } from '@/lib/drafts';
 import { href } from '@/lib/url';
 import { hasVisible } from '@/lib/nav';
-import { DOMAIN_LABELS } from '@/data/taxonomy';
+import { AI_KIND_LABELS, DOMAIN_LABELS } from '@/data/taxonomy';
 
 interface Entry {
   title: string;
@@ -28,6 +28,7 @@ export const GET: APIRoute = async () => {
     ['Now', '/now/', "Changelog and tech radar — what I'm building now"],
     ['Contact', '/contact/', 'Email, availability and profiles'],
   ];
+  if (await hasVisible('aiUseCases')) pages.splice(4, 0, ['AI', '/ai/', 'How I build with AI: Copilot, Claude, skills and agents']);
   if (await hasVisible('playbooks')) pages.splice(4, 0, ['Approach', '/approach/', 'How I solve problems, debug and review code']);
   if (await hasVisible('problems')) pages.splice(4, 0, ['Problems solved', '/problems/', 'Enterprise problems and how I solved them']);
   if (await hasVisible('caseStudies')) pages.splice(4, 0, ['Case studies', '/case-study/', 'In-depth engineering case studies']);
@@ -66,6 +67,16 @@ export const GET: APIRoute = async () => {
 
   for (const p of await published('playbooks')) {
     entries.push({ title: p.data.title, url: href(`/approach/#${p.id}`), type: 'Playbook', summary: p.data.summary, keywords: '' });
+  }
+
+  for (const u of await published('aiUseCases')) {
+    entries.push({
+      title: u.data.title,
+      url: href(`/ai/#${u.id}`),
+      type: AI_KIND_LABELS[u.data.kind],
+      summary: u.data.summary,
+      keywords: ['AI', u.data.context, ...u.data.tools].join(' '),
+    });
   }
 
   for (const a of await published('articles')) {

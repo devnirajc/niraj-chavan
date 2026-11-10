@@ -1,0 +1,44 @@
+---
+title: A filing agent that asks before it guesses
+summary: A skill and a scheduled Claude Cowork task that file new documents into my personal archive of about 1,800 files and refresh its offline search. When it can't tell whose a document is, it asks or leaves a note.
+order: 3
+kind: agent
+context: Personal · document archive
+tools:
+  - Claude Cowork
+  - Claude Sonnet
+  - Agent Skills
+  - Scheduled tasks
+  - Python
+  - OCR
+steps:
+  - title: Find what's new
+    detail: >-
+      New documents land at the archive's root. The agent lists them, then
+      sweeps the rest of the tree for recent arrivals.
+  - title: Identify before moving
+    detail: >-
+      It opens each file and reads the holder's name, the issuer, the account
+      or policy number and the document date. It also checks the real file
+      type, because some extensions lie.
+  - title: Ask, or leave it and report
+    detail: >-
+      It never guesses who a document belongs to. On a scheduled run, with
+      nobody there to answer, an unlabelled file stays where it is with a note.
+      An unfiled document is inconvenient; a misfiled one is lost.
+  - title: File by the archive's conventions
+    detail: >-
+      A fixed folder taxonomy and naming convention, year folders for recurring
+      paperwork, moves that never overwrite, and timestamps left alone, because
+      the indexer relies on them.
+  - title: Refresh the search index
+    detail: >-
+      A Python indexer, incremental and resumable, regenerates the data behind
+      an offline search page. A scheduled task runs it monthly.
+---
+
+The archive holds about 1,800 documents, mostly PDFs, synced through Google Drive. The skill holds the filing rules, but a `CLAUDE.md` file at the archive's root is the authority and wins wherever the two disagree. I update that file as the archive changes, and the agent follows it.
+
+<Callout kind="note" title="Limits measured, not guessed">
+Each tool call in the sandbox is capped at 45 seconds. Walking the archive takes about 20 of them, and OCR overruns its time budget by 11 to 14 seconds, so passes given a bigger budget were killed silently, with no output at all. Each pass now gets 20 seconds of extraction, reuses the file listing while work is pending, and repeats until the indexer reports it is done. State is written atomically, so a killed pass loses only its own work.
+</Callout>

@@ -1,0 +1,46 @@
+---
+title: Two Claude Code skills that keep this site honest
+summary: This site is built with Claude Code. Two project skills give every session its conventions and its one hard rule, never publish a fact I haven't confirmed. The build checks what a skill can't enforce.
+order: 2
+kind: skill
+context: Personal · this portfolio
+tools:
+  - Claude Code
+  - Agent Skills
+  - Astro
+  - Playwright
+  - axe-core
+  - Lighthouse
+links:
+  repo: https://github.com/devnirajc/niraj-chavan/tree/master/.claude/skills
+steps:
+  - title: Write the conventions down once
+    detail: >-
+      portfolio-dev holds the rules a quick edit could silently break: links go
+      through href(), content goes through published(), colour comes only from
+      semantic tokens, and the Astro 7 quirks are documented.
+  - title: Interview, don't invent
+    detail: >-
+      portfolio-content drafts a case study by asking me a few questions at a
+      time. Anything I haven't confirmed goes into a Draft block as an open
+      question. Drafts show in development and are left out of production.
+  - title: Let the build enforce it
+    detail: >-
+      A published entry that still holds an open question fails the build, and so
+      does any colour pair that drops below its WCAG contrast threshold.
+  - title: Verify before calling it done
+    detail: >-
+      Type and build checks must pass. The changed pages are screenshotted in
+      both themes at desktop and phone widths, audited with axe for zero
+      violations, and Lighthouse mobile performance stays at 95 or above.
+  - title: Keep the record current
+    detail: >-
+      Every content change also adds a dated entry to the Now page, so its
+      "Last updated" date is always true.
+---
+
+Both skills are committed to the repository, so every Claude Code session on this site starts from the same rules.
+
+<Callout kind="note" title="An instruction, then a check">
+The rule that matters most is also enforced in code. A skill tells the agent never to publish an unconfirmed claim, and the build fails if a published page still holds an open question.
+</Callout>

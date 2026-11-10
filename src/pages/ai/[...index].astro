@@ -1,0 +1,90 @@
+---
+/**
+ * How I build with AI — the development workflow, and the skills, agents and
+ * MCP servers I've built, each with how it works and the tools behind it.
+ */
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import Toc from '@/components/ui/Toc.astro';
+import Steps from '@/components/ui/Steps.astro';
+import TechList from '@/components/ui/TechList.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { mdxComponents } from '@/components/mdx';
+import { AI_KIND_LABELS } from '@/data/taxonomy';
+import { published, pathsWhenVisible } from '@/lib/drafts';
+
+export const getStaticPaths = () => pathsWhenVisible('aiUseCases');
+
+const useCases = (await published('aiUseCases')).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(useCases.map(async (u) => ({ u, ...(await render(u)) })));
+---
+
+<BaseLayout
+  title="AI"
+  description="How I develop with GitHub Copilot, Claude Opus and Claude Code, and the skills and agents I've built: what each one does, how it works and the tools behind it."
+>
+  <PageHeader
+    eyebrow="AI"
+    title="How I build with AI"
+    lede="I write code in VS Code with GitHub Copilot, using Claude Opus and GPT models, and I build and maintain this site with Claude Code. I also build what agents run on: skills that carry a project's rules, and scheduled agents that do recurring work unattended. They share one rule: when they don't know, they ask or leave a note instead of guessing."
+  />
+
+  <div class="container-page grid gap-12 pt-14 lg:grid-cols-[13rem_1fr]">
+    <div class="hidden lg:block">
+      <div class="sticky top-24">
+        <Toc items={useCases.map((u) => ({ id: u.id, label: u.data.title }))} label="Use cases" />
+      </div>
+    </div>
+
+    <div class="grid min-w-0 gap-20">
+      {
+        rendered.map(({ u, Content }, i) => (
+          <section
+            aria-labelledby={u.id}
+            class:list={['grid gap-8', u.data.steps.length > 0 && 'md:grid-cols-[1fr_1.2fr] md:gap-12']}
+          >
+            <div class="min-w-0">
+              <p class="flex items-center gap-2 font-mono text-xs text-fg-subtle">
+                <span class="text-accent-fg">{String(i + 1).padStart(2, '0')}</span> {AI_KIND_LABELS[u.data.kind]}
+                <DraftBadge draft={u.data.draft} />
+              </p>
+              <h2 id={u.id} class="mt-3 text-heading font-semibold">
+                {u.data.title}
+              </h2>
+              <p class="mt-2 font-mono text-xs text-fg-subtle">{u.data.context}</p>
+              <p class="mt-4 text-lg leading-relaxed text-fg-muted">{u.data.summary}</p>
+              <div class="mt-5">
+                <TechList items={u.data.tools} label={`${u.data.title}: tools`} size="sm" />
+              </div>
+              <div class="prose mt-6 text-base">
+                <Content components={mdxComponents} />
+              </div>
+              {
+                u.data.links.repo && (
+                  <ExternalLink
+                    href={u.data.links.repo}
+                    class="group mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-fg hover:text-accent-hover"
+                  >
+                    <Icon name="github" size={16} />
+                    View the source on GitHub
+                  </ExternalLink>
+                )
+              }
+            </div>
+            {
+              u.data.steps.length > 0 && (
+                <div>
+                  <p class="eyebrow mb-6">How it works</p>
+                  <Steps steps={u.data.steps} label={`${u.data.title}: how it works`} />
+                </div>
+              )
+            }
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>

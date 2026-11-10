@@ -19,6 +19,7 @@ export const PRIMARY_NAV: NavItem[] = [
   { label: 'Problems', href: '/problems/', requires: 'problems' },
   { label: 'Case studies', href: '/case-study/', requires: 'caseStudies' },
   { label: 'Projects', href: '/projects/', requires: 'projects' },
+  { label: 'AI', href: '/ai/', requires: 'aiUseCases' },
   { label: 'Writing', href: '/writing/', requires: 'articles' },
   { label: 'Now', href: '/now/' },
 ];
@@ -38,6 +39,7 @@ export const FOOTER_NAV: { heading: string; items: NavItem[] }[] = [
       { label: 'Case studies', href: '/case-study/', requires: 'caseStudies' },
       { label: 'Problems solved', href: '/problems/', requires: 'problems' },
       { label: 'Projects', href: '/projects/', requires: 'projects' },
+      { label: 'Building with AI', href: '/ai/', requires: 'aiUseCases' },
     ],
   },
   {

@@ -10,6 +10,7 @@ Every collection accepts `draft: true` unless noted. Entry ids come from file na
 - [projects](#projects) — `src/content/projects/*.mdx` → `/projects/<id>/`
 - [problems](#problems) — `src/content/problems/*.yaml` → `/problems/#<id>`
 - [playbooks](#playbooks) — `src/content/playbooks/*.mdx` → `/approach/#<id>`
+- [aiUseCases](#aiusecases) — `src/content/ai/*.mdx` → `/ai/#<id>`
 - [experience, education](#experience) — single YAML files → `/experience/`
 - [skills](#skills) — `src/content/skills.yaml` → `/skills/`
 - [now, radar](#now-and-radar) — `/now/`
@@ -100,6 +101,24 @@ steps: [{ title, detail }]
 ```
 
 Body: a short intro paragraph.
+
+## aiUseCases
+
+How Niraj builds with AI: his development workflow, and the skills, agents and MCP servers he has built. The `/ai/` page, its nav item and its home chapter appear once one entry is published.
+
+```yaml
+title: string
+summary: string               # ≤ 240 chars; home chapter card, search
+draft
+order: number                 # lower first
+kind: workflow | skill | agent | mcp-server
+context: string               # "Personal · this portfolio"; employer work names the pattern, not internal systems
+tools: [string]               # chips: Claude Code, GitHub Copilot, Claude Opus…
+steps: [{ title, detail }]    # "How it works", beside the body; omit until confirmed
+links: { repo?: url, live?: url }
+```
+
+Body: one or two short paragraphs, plus a `<Callout>` for the guardrail or lesson that makes it interesting. Verify against the actual skill, task or repository before publishing. Keep personal data (paths, account numbers, family names) and employer internals off the page.
 
 ## experience
 
