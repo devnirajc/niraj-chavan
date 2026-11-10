@@ -1,7 +1,7 @@
 ---
 title: Chase Travel — Offers & Purchase Flow
 tagline: Personalised offers and the purchase flow, from trip cart to confirmation, on JP Morgan Chase's travel platform
-summary: On Chase Travel I lead the promotions and offers platform and worked on the purchase flow, from trip cart to confirmation. Micro-frontends let four squads deploy independently.
+summary: On Chase Travel I lead the promotions and offers platform and worked on the purchase flow, from trip cart to confirmation. I delivered personalised offers platform-wide, and micro-frontends let four squads deploy independently.
 featured: true
 order: 1
 kind: client
@@ -40,7 +40,7 @@ metrics:
 caseStudy: microfrontend-architecture
 ---
 
-[Chase Travel](https://www.chase.com/travel) is JP Morgan Chase's travel platform. Chase cardmembers use it to book flights, hotels, car rentals, cruises and activities, earning and redeeming Ultimate Rewards points. Offers are central to the product: Points Boost, for example, makes points worth more when they are spent through Chase Travel. 
+[Chase Travel](https://www.chase.com/travel) is JP Morgan Chase's travel platform. Chase cardmembers use it to book flights, hotels, car rentals, cruises and activities, earning and redeeming Ultimate Rewards points. Offers are central to the product: Points Boost, for example, makes points worth more when they are spent through Chase Travel.
 
 I worked on two parts of Chase Travel that decide whether a customer books.
 
@@ -59,20 +59,12 @@ Alongside both, I run design and code reviews for the team.
 
 A booking on Chase Travel depends on two things: the offers that draw a customer in, and a purchase flow that turns their choices into a confirmed trip.
 
-Offers are central to Chase Travel: the public site leads with them, and how well they reach a customer affects whether that customer books. The offers work started from four problems:
+Offers are central to Chase Travel: the public site leads with them, and how well they reach a customer affects whether that customer books. The offers work had four goals:
 
-- **Personalised offers weren't available across the platform.** They needed to see the offers relevant to them, wherever they were in Chase Travel.
-- **Promotion UI was duplicated.** Squads rendered promotions in their own ways, so the same work was done several times.
-- **Releases needed cross-team coordination.** Squads working in the same front end had to line up their releases, which became a bottleneck.
-- **Accessibility needed an audit.** The platform had to meet accessibility standards (WCAG 2.1 AA) across Chase Travel.
-
-<Draft note="Discovery and requirements — whole section is unconfirmed">
-
-## Discovery and requirements
-
-TODO — [removed]
-
-</Draft>
+- **Personalised offers across the platform.** Show each customer the offers relevant to them, wherever they are in Chase Travel.
+- **One way to render promotions.** Squads rendered promotions in their own ways, so the same work was done several times.
+- **Independent releases.** Squads working in the same front end had to line up their releases, which became a bottleneck.
+- **Accessibility.** Meet accessibility standards (WCAG 2.1 AA) across Chase Travel.
 
 ## The purchase flow
 
@@ -88,58 +80,22 @@ The purchase flow is the path a customer takes from a chosen trip to a confirmed
   ]}
 />
 
-<Draft note="The purchase flow in detail — this is where the case study can go deepest">
-
-TODO — Which steps did you own end to end, and which did you contribute to? What did you build in each?
-
-- **Trip cart:** one product per booking, or several (flight plus hotel)? How are prices held or refreshed if they change before payment?
-- **Traveller information:** validation (names matching ID documents, dates of birth, contact details), saved travellers, loyalty numbers?
-TODO — [removed]
-- **Confirmation:** what the customer sees, and what happens if a supplier booking fails after payment?
-
-TODO — The hardest problems: keeping state across steps and browser refreshes, preventing double submission, recovering from errors without losing what the customer typed, accessible forms and error messages?
-
-TODO — Decisions you made: how state moves through the flow (a store, route resolvers, a server-side cart), form architecture (reactive forms, shared validators), how the flow is split between squads or micro-frontends. Each can become a decision card.
-
-TODO — Outcomes you can share within JP Morgan Chase's disclosure policy: conversion or drop-off by step, fewer payment errors, faster checkout, accessibility fixes on the forms, end-to-end test coverage of the flow.
-
-</Draft>
-
 ## Architecture and design
 
 The promotions work changed Chase Travel's front end in two structural ways:
 
-- **Micro-frontend boundaries.** I introduced module boundaries using Webpack Module Federation, so each squad's part of the front end builds and deploys independently while customers still get one Chase Travel. Each squad's micro-app is loaded at run time. Release order still matters when one component depends on another: the one it depends on is released first, and the dependent one goes live after it. Angular upgrades are coordinated through the common platform with all the squads, so every micro-app stays on one Angular version.
+- **Micro-frontend boundaries.** I introduced module boundaries using Webpack Module Federation, so each squad's part of the front end builds and deploys independently while customers still get one Chase Travel. Each squad's micro-app is loaded at run time. Release order still matters when one component depends on another: the one it depends on is released first, and the dependent one goes live after it. Angular upgrades are coordinated across the squads, so every micro-app stays on one Angular version.
 - **A shared promotion-rendering library.** I architected a reusable Angular component library that renders promotions. Three downstream squads build on it rather than maintaining their own.
-
-<Draft note="Architecture detail — needed for the interactive diagram, within disclosure limits">
-
-TODO — Describe the moving parts at the level JP Morgan Chase allows, so they can become an interactive diagram (the `architecture:` block in the frontmatter):
-
-- **Host and remotes:** is there a shell application that loads each squad's remote? How are shared dependencies (Angular, the component library) versioned and shared?
-TODO — [removed]
-- **Purchase flow:** how the booking's state moves from trip cart to confirmation, and which services each step calls (cart, pricing, payment, booking).
-- **Security and authentication:** how Chase sign-in carries through to the travel front end and its APIs (described as a pattern, not internals).
-- **CI/CD and environments:** how a squad's remote is built, tested and promoted through environments to production, and how you roll back.
-- **Scalability:** how the front end copes with peak travel-booking traffic: CDN, caching, lazy loading.
-
-</Draft>
 
 ## Key technical challenges
 
-### Personalised offers at Chase Travel's scale
+### Personalised offers across the platform
 
-**Challenge.** Render offers personalised to each cardmember, across the platform.
+**Challenge.** Render offers personalised to each cardmember, wherever they are in Chase Travel.
 
 **Solution.** I delivered personalised offer rendering across Chase Travel.
 
 **Outcome.** Personalised offers now render across the platform.
-
-<Draft note="Analysis and implementation">
-
-TODO — Analysis: what made it hard: many offer types, eligibility rules, caching personalised content, performance on offer-heavy pages? How did you keep offers consistent across squads' pages?
-
-</Draft>
 
 ### Many squads, one product
 
@@ -149,23 +105,11 @@ TODO — Analysis: what made it hard: many offer types, eligibility rules, cachi
 
 **Outcome.** Four squads deploy independently instead of lining up every release across teams. When one component depends on another, the one it depends on still goes out first. Three downstream squads render promotions with the shared library instead of building their own.
 
-<Draft note="How you got four squads to agree">
-
-TODO — Large-scale and cross-team complexity is the senior part of this story. How did you get the squads to adopt the boundaries and the library: a proposal, an architecture review, pairing, migration guides? What resistance did you meet? How did you migrate existing pages without a freeze?
-
-</Draft>
-
 ### Accessibility across the platform
 
-**Challenge.** Chase Travel needed to meet WCAG 2.1 AA.
+**Challenge.** Chase Travel had to meet WCAG 2.1 AA.
 
 **Solution.** I led the accessibility compliance audit and remediation across the platform, implementing keyboard navigation, ARIA landmarks and screen-reader support.
-
-<Draft note="How compliance was validated">
-
-TODO — How was the audit run: automated (axe), manual keyboard and screen-reader passes (NVDA, JAWS, VoiceOver), a third-party audit, an internal accessibility team? What were the worst findings? How do you stop regressions: accessibility checks in CI, the component library, review checklists?
-
-</Draft>
 
 ## Engineering decisions
 
@@ -194,42 +138,13 @@ Each decision below compares the approach I chose with the state it replaced.
   ]}
 />
 
-<Draft note="Other options you weighed">
-
-TODO — The cards above compare each choice with the state it replaced. If you also evaluated other options, add them: for micro-frontends, single-spa, Nx libraries in a monorepo or iframes; for the library, extending an existing design system.
-
-</Draft>
-
-<Draft note="Performance — whole section is unconfirmed">
-
-## Performance
-
-TODO — Did you do any front-end performance work on the promotions platform or the purchase flow, such as lazy loading remotes or caching offers? If Dynatrace shows a before and after, note which pages, which metric (LCP, full load) and the dates. The offers service's back-end API was not your work, so don't credit its changes here.
-
-</Draft>
-
 ## Accessibility
 
 I led the WCAG 2.1 AA compliance audit and remediation across Chase Travel, implementing keyboard navigation, ARIA landmarks and screen-reader support.
 
-<Draft note="Suggested by Claude — confirm before publishing">
-
-Building accessibility into the shared promotion components means every squad that renders promotions through the library inherits it.
-
-TODO — Is that true: does the library carry the accessibility work (focus handling, labels, semantics), so squads get it for free? If not, delete the sentence above.
-
-</Draft>
-
-<Draft note="Security, governance and delivery — describe patterns, not internals">
-
-## Security, governance and delivery
-
-TODO — What enterprise constraints shaped the work: security reviews, change management, approvals for production releases, accessibility sign-off? How do the micro-frontends handle authentication and content security? What does a squad's pipeline look like from merge to production, and across how many environments?
-
-</Draft>
-
 ## Business impact
 
+- **Personalised offers:** personalised offer rendering live across Chase Travel.
 - **Less duplicated work:** three downstream squads render promotions with one shared library instead of building their own.
 - **Independent teams:** four squads deploy independently instead of lining up every release across teams.
 - **Accessibility:** a WCAG 2.1 AA audit and remediation across the platform.
@@ -238,20 +153,8 @@ TODO — What enterprise constraints shaped the work: security reviews, change m
 
 As lead developer I own the front-end architecture of the promotions and offers platform, and I worked on the purchase flow from trip cart to confirmation. I run weekly design reviews and code reviews for my team, lead design reviews across teams, and have mentored two junior engineers on TypeScript best practices and Angular component architecture. The work also crossed team lines: the component library was adopted by three downstream squads, and the micro-frontend boundaries span four squads.
 
-<Draft note="Design reviews and documentation">
-
-TODO — What do your design reviews look like? Did you write architecture decision records, library documentation or migration guides?
-
-</Draft>
-
-<Draft note="Lessons — only you can write these">
-
-## Lessons learned
-
-TODO — What would you do differently? What did micro-frontends cost that you didn't expect? What technical debt remains, and what's next for the promotions platform?
-
-</Draft>
-
 ## Outcome summary
 
-My work on Chase Travel sits on the two paths that decide whether a customer books: the offers that bring them in, and the purchase flow that turns their choices into a booking. On the offers side, most of what I did was structural, giving several squads one way to render promotions and their own release schedules. The numbers are under *Business impact* above.
+My work on Chase Travel sits on the two paths that decide whether a customer books: the offers that bring them in, and the purchase flow that turns their choices into a booking. On the offers side, most of what I did was structural, giving several squads one way to render promotions and the ability to deploy independently. The results are under *Business impact* above.
+
+*This page describes my own work in general terms. The views are my own and are not endorsed by JP Morgan Chase & Co.*
