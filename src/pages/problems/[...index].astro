@@ -8,6 +8,7 @@ import PageHeader from '@/components/ui/PageHeader.astro';
 import FilterBar from '@/components/ui/FilterBar.astro';
 import ProblemCard from '@/components/cards/ProblemCard.astro';
 import { DOMAIN_LABELS, PROBLEM_DOMAINS } from '@/data/taxonomy';
+import { profile } from '@/data/profile';
 import { published, pathsWhenVisible } from '@/lib/drafts';
 
 export const getStaticPaths = () => pathsWhenVisible('problems');
@@ -29,7 +30,7 @@ const beats = ['Problem', 'Challenge', 'Analysis', 'Solution', 'Stack', 'Results
   <PageHeader
     eyebrow="Problems solved"
     title="Enterprise problems, and how I solved them"
-    lede="The kind of problems that show up in large organisations: shared sign-in, slow apps, accessibility debt, teams duplicating each other's work. Each is told the same way, so you can compare how I think across very different situations."
+    lede={`After ${profile.years} years, the problems worth writing up are rarely about one screen. They cut across teams and systems: sign-in every app has to share, dashboards that slow down as they grow, accessibility debt in products that can't stop shipping, squads rebuilding each other's components. Each follows the same seven beats, so you can judge how I reason, not just what I built.`}
   >
     <ol class="mt-8 flex flex-wrap items-center gap-x-2 gap-y-2 font-mono text-xs text-fg-subtle" aria-label="How each problem is told">
       {
