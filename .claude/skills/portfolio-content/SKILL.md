@@ -18,9 +18,40 @@ This is a professional portfolio read by recruiters and hiring managers. A made-
 - **Never replace a `TODO` with a plausible guess.** Ask, or leave it.
 - Metrics need a source in Niraj's own words ("roughly 40% faster" is fine if he said it). Don't round, extrapolate or "improve" numbers.
 - Testimonials must be real quotes with permission. Never write one.
-- Client and employer work (JP Morgan Chase, Schlumberger…): describe patterns and outcomes, not internal system names, hosts or confidential numbers. Flag anything that might breach an employer's disclosure policy and ask.
+- Client and employer work (JP Morgan Chase, Schlumberger…): describe patterns and outcomes, not internal system names, hosts or confidential numbers. Flag anything that might breach an employer's disclosure policy and ask. JP Morgan Chase has stricter rules of its own; see the next section.
 
 The build enforces part of this: `npm run check:content` fails if a **published** entry contains `TODO` (text inside `<Draft>` blocks is exempt). Don't work around it — finish the content or keep it a draft.
+
+## JP Morgan Chase: publish only what needs no approval
+
+Niraj still works at JP Morgan Chase (JPMC) and has **not** asked for or received the firm's approval for anything in this portfolio. So everything about JPMC must be something an employee could publish without approval. The firm's Code of Conduct asks employees to protect confidential information and to use good judgment online (section 3.5.1). It also says not to speak for the firm without authorisation (section 3.5.2). Its internal social media policy isn't public. Where a rule below is unclear, take the cautious reading and ask Niraj. This is a cautious reading, not legal advice, and the final call is his.
+
+**It applies everywhere, not only to live pages.** The repository is public on GitHub, so it covers published pages, `<Draft>` blocks, TODO questions, frontmatter, Now entries, the AI page, the résumé (`resume/resume.html` and its PDF) and commit messages. Never park a confidential detail in a draft "for later".
+
+**Fine to publish:**
+
+- His title, dates, the teams he was on and when, and the public product. Frame his JPMC work around Chase Travel.
+- His own role and responsibilities in general terms: what he led, designed or built.
+- Technologies and engineering patterns he used, described generically (Angular, micro-frontends, role-based access, WCAG 2.1 AA). Listing a commercial tool as one of his skills is fine (Dynatrace, Kibana).
+- Qualitative outcomes ("settings changes take effect immediately", "three squads render promotions with one shared library").
+- Anything JPMC has itself announced publicly. Note the public source.
+
+**Never publish, not even in a draft:**
+
+- Business figures: bookings, revenue, conversion or uplift, customer, user or traffic numbers, incident counts.
+- Where a figure came from inside the firm, such as an internal dashboard, log query or ticket.
+- Team headcount, org structure, and the names of colleagues or internal teams beyond the product.
+- Internal system, service, repository, host or tool names. Internal architecture detail, such as registries, loaders or configuration. Security controls in detail. Screenshots of internal tools or code.
+- Which vendors, AI tools or models the firm uses, how they are set up there, or what they're used for. Niraj's own AI tool use is written employer-neutral ("GitHub Copilot with Claude Opus and GPT"), never "at JP Morgan Chase" or "at work".
+- Anything that reads as the firm's view, an endorsement, or a statement made for the firm. Unreleased products, roadmaps, customers and partners.
+
+**Engineering figures from his JPMC work** (load times, before-and-after timings, error rates) are kept off too. Describe the improvement in words, such as "the dashboard loads and responds noticeably faster". Niraj removed the Site Manager load-time figures and the access-control incident claim everywhere on 2026-11-11. Don't re-add them. Counting his own engineering work ("fixed three rendering bottlenecks") is fine.
+
+**How to apply:**
+
+- Check content against these lists before writing or publishing anything that mentions JPMC, Chase, Chase Travel, Site Manager or his work there. When unsure, leave it out and ask.
+- Every JPMC project page ends with the own-views note: *This page describes my own work in general terms. The views are my own and are not endorsed by JP Morgan Chase & Co.*
+- If Niraj offers a detail from the "never" list, say why it's risky and offer a general version instead of publishing it.
 
 ## Every content update also updates the Now page
 
