@@ -1,6 +1,6 @@
 # DRAFT — solution and results restate my résumé (Chase Travel Site Manager
-# at JP Morgan Chase). Check what the firm lets you publish, and fill in the
-# problem, challenge and analysis with what actually happened.
+# at JP Morgan Chase). Keep it to general terms: no internal figures or system
+# detail (see the portfolio-content skill's JP Morgan Chase section).
 title: An Angular admin dashboard that slowed down as it grew
 draft: true
 order: 2
@@ -21,6 +21,6 @@ solution: >-
 stack: [Angular, TypeScript, RxJS, Dynatrace, Kibana]
 results:
   - Three rendering bottlenecks fixed.
-  - Largest Contentful Paint on the settings dashboard improved.
+  - The settings dashboard loads and responds noticeably faster.
 lessons:
   - TODO

@@ -1,7 +1,7 @@
 ---
 title: Chase Travel — Site Manager
 tagline: Self-service travel settings for Chase Travel's business teams, with role-based access per business unit
-summary: I led Site Manager, the self-service settings platform behind Chase Travel. Settings changes that took days now apply immediately, and dashboard LCP improved.
+summary: I led Site Manager, the self-service settings platform behind Chase Travel. Settings changes that took days now apply immediately, access is scoped per business unit, and a performance audit I drove made the dashboard faster.
 featured: true
 order: 2
 kind: client
@@ -43,7 +43,7 @@ metrics:
 
 Site Manager (Travel Settings Customisation) is the centralised configuration platform behind [Chase Travel](https://www.chase.com/travel), JP Morgan Chase's travel-booking platform for Chase cardmembers. Authorised business users manage Chase Travel's travel product settings through it, without engineering intervention.
 
-I led the design and implementation of Site Manager. Business teams now manage travel product configuration themselves, through a secure, role-based administration experience. Configuration changes that used to wait days for an engineer and a release now take effect as soon as they are saved. The platform also brought access governance through role-based access control (RBAC) I designed and implemented, enforced by the APIs as well as the Angular layer, and improved the dashboard's Largest Contentful Paint after an observability-led optimisation using Dynatrace and Kibana.
+I led the design and implementation of Site Manager. Business teams now manage travel product configuration themselves, through a secure, role-based administration experience. Configuration changes that used to wait days for an engineer and a release now take effect as soon as they are saved. The platform also brought access governance through role-based access control (RBAC) I designed and implemented, enforced by the APIs as well as the Angular layer, and made the dashboard load and respond faster after an observability-led optimisation using Dynatrace and Kibana.
 
 Site Manager is internal, so there is no public demo; the image above is an illustration, not a screenshot.
 
@@ -143,7 +143,7 @@ TODO — The cards compare each choice with the state it replaced. Did you also 
 
 **Solution.** Rendering and change-detection fixes for the three bottlenecks, plus lazy-loading improvements and leaner API calls.
 
-**Result.** All three rendering bottlenecks were fixed. Largest Contentful Paint on the settings dashboard improved, and the dashboard responds noticeably faster for the business users who configure Chase Travel.
+**Result.** All three rendering bottlenecks were fixed, and the settings dashboard loads and responds noticeably faster for the business users who configure Chase Travel.
 
 <Draft note="Claude's draft of the three bottlenecks: confirm or correct each before publishing">
 
@@ -161,7 +161,7 @@ TODO — Claude drafted these three from the confirmed findings above, not from 
 - **Leaner API calls** shorten the middle steps: fewer duplicate calls, and calls that don't depend on each other run in parallel instead of one after another.
 - **The rendering fixes** shorten the last step. On first load, `trackBy` helps only if the list renders more than once before the first paint, and `OnPush` and the template fixes help in proportion to how many change-detection cycles run during load. Their bigger effect is on interactions once the dashboard has loaded.
 
-TODO — [removed]
+TODO — Which of these fixes made the biggest difference? Answer in general terms only. Don't add timings, monitoring data or screenshots: the page no longer publishes internal figures. Also: what was the largest element on the dashboard (the settings table, a summary card, a heading), and is it client-rendered (no Angular SSR)?
 
 </Draft>
 
@@ -172,11 +172,10 @@ TODO — [removed]
 - **Fine-grained entitlements.** Access is managed per role and per business unit, not all-or-nothing.
 - **Enforced on the server.** The APIs enforce the same entitlements the Angular layer shows, so a request sent directly to an API by a user without the right entitlement is still refused.
 - **Centralised governance.** One platform and one access model for configuration, with audit-friendly administration workflows.
-- **Outcome.**
 
 <Draft note="Fill in — enterprise readers will look for these">
 
-TODO — How do users sign in (firm single sign-on)? Where are entitlements managed: in Site Manager or in a central entitlement system? What does an audit record contain (who, what, before and after, when), and who reviews it? How are inputs validated before a setting goes live?
+TODO — Anything else about security you can describe in general terms? Don't name internal systems or detail how controls work (sign-in, entitlement systems, audit records), because that needs the firm's approval. Otherwise delete this block.
 
 </Draft>
 
@@ -184,7 +183,7 @@ TODO — How do users sign in (firm single sign-on)? Where are entitlements mana
 
 ## Reliability and accessibility
 
-TODO — Reliability: how does Site Manager stop a bad setting reaching customers (validation rules, previews, approvals, rollback)? What does monitoring cover beyond the performance audit: alerts, error tracking, dashboards in Kibana or Dynatrace?
+TODO — Reliability: how does Site Manager stop a bad setting reaching customers (validation rules, previews, approvals, rollback)? Describe it in general terms only, with no internal tools, dashboards or figures.
 
 TODO — Accessibility: your WCAG 2.1 AA work covered the Travel platform. Did it include Site Manager? If so, describe keyboard navigation, focus management and accessible form interactions in the admin screens.
 
@@ -193,12 +192,12 @@ TODO — Accessibility: your WCAG 2.1 AA work covered the Travel platform. Did i
 ## Business impact
 
 - **Operational efficiency:** settings changes that used to take days now take effect immediately, and routine configuration updates no longer need engineering involvement.
-- **Security and governance:** configuration ownership controlled per business unit.
-- **Performance:** better Largest Contentful Paint on the settings dashboard, and faster interactions for the business users who rely on it.
+- **Security and governance:** configuration ownership controlled per business unit, with access enforced by the APIs as well as the screens.
+- **Performance:** a faster settings dashboard, in loading and in use, for the business users who rely on it.
 
 <Draft note="Wider impact — only claim what you can stand behind">
 
-TODO — Effects beyond these: engineering time freed for product work, fewer configuration tickets, faster onboarding of new business units or product teams onto the platform, reuse of the architecture elsewhere? Approximate figures are fine if they are yours and you are allowed to share them.
+TODO — Effects beyond these: engineering time freed for product work, fewer configuration tickets, faster onboarding of new business units or product teams onto the platform, reuse of the architecture elsewhere? Describe them in words: internal figures need the firm's approval, which you haven't sought.
 
 </Draft>
 
