@@ -46,7 +46,7 @@ const beats = ['Problem', 'Challenge', 'Analysis', 'Solution', 'Stack', 'Results
 
   <div class="container-page pt-12" data-filter-root>
     <FilterBar label="Filter problems by domain" options={options} noun={['problem', 'problems']} param="domain" />
-    <div class="mt-8 grid gap-5 lg:grid-cols-2 lg:items-start">
+    <div class="mt-8 grid gap-5 lg:grid-cols-2">
       {problems.map((problem) => <ProblemCard problem={problem} headingLevel="h2" />)}
     </div>
   </div>

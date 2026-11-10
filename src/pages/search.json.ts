@@ -48,7 +48,7 @@ export const GET: APIRoute = async () => {
   for (const p of await published('problems')) {
     entries.push({
       title: p.data.title,
-      url: href(`/problems/#${p.id}`),
+      url: href(`/problems/${p.id}/`),
       type: 'Problem',
       summary: p.data.problem,
       keywords: [DOMAIN_LABELS[p.data.domain], p.data.context, ...p.data.stack].join(' '),

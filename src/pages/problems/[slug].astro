@@ -1,0 +1,195 @@
+---
+/**
+ * One enterprise problem, told in full: the problem as the lede, then
+ * Challenge → Analysis → Solution as a numbered timeline, the results, and
+ * the lessons. Context and stack sit in the sidebar. Drafts get no page in
+ * production because the paths come from published().
+ */
+import type { CollectionEntry } from 'astro:content';
+import { getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/ui/Breadcrumbs.astro';
+import Icon from '@/components/ui/Icon.astro';
+import TechList from '@/components/ui/TechList.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import { DOMAIN_LABELS } from '@/data/taxonomy';
+import { published, isVisible } from '@/lib/drafts';
+import { href } from '@/lib/url';
+
+export async function getStaticPaths() {
+  const problems = (await published('problems')).sort((a, b) => a.data.order - b.data.order);
+  return problems.map((problem, i) => ({
+    params: { slug: problem.id },
+    props: { problem, prev: problems[i - 1], next: problems[i + 1] },
+  }));
+}
+
+interface Props {
+  problem: CollectionEntry<'problems'>;
+  prev?: CollectionEntry<'problems'>;
+  next?: CollectionEntry<'problems'>;
+}
+
+const { problem, prev, next } = Astro.props;
+const { data } = problem;
+const study = data.caseStudy ? await getEntry(data.caseStudy) : undefined;
+const showStudy = study && isVisible(study);
+
+const steps = [
+  { id: 'challenge', label: 'Challenge', text: data.challenge },
+  { id: 'analysis', label: 'Analysis', text: data.analysis },
+  { id: 'solution', label: 'Solution', text: data.solution },
+];
+---
+
+<BaseLayout title={data.title} description={data.problem} type="article">
+  <div class="relative overflow-hidden border-b border-line-subtle">
+    <div aria-hidden="true" class="bg-grid pointer-events-none absolute inset-0"></div>
+    <div class="container-page relative pt-10 pb-12">
+      <Breadcrumbs items={[{ label: 'Problems solved', href: '/problems/' }, { label: data.title }]} />
+      <p class="eyebrow mt-8 flex flex-wrap items-center gap-2">
+        {DOMAIN_LABELS[data.domain]}
+        <DraftBadge draft={data.draft} />
+      </p>
+      <h1 class="mt-3 max-w-3xl text-title font-semibold">{data.title}</h1>
+      <p class="mt-4 max-w-3xl text-xl leading-relaxed text-fg-muted">{data.problem}</p>
+      <p class="mt-6 flex max-w-3xl gap-2 text-fg">
+        <Icon name="check" size={18} class="mt-1 text-success-fg" />
+        <span><span class="sr-only">Headline result: </span>{data.results[0]}</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="container-page grid gap-12 pt-12 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+    <article class="max-w-3xl">
+      <ol class="grid">
+        {
+          steps.map((step, i) => {
+            const last = i === steps.length - 1;
+            return (
+              <li class:list={['relative grid grid-cols-[2rem_1fr] gap-x-5', !last && 'pb-10']}>
+                {!last && <span class="absolute top-10 bottom-2 left-[calc(1rem-0.5px)] w-px bg-line" aria-hidden="true" />}
+                <span
+                  class:list={[
+                    'grid size-8 place-items-center rounded-full font-mono text-sm font-medium',
+                    last ? 'bg-accent-solid text-fg-on-accent' : 'border border-line-strong bg-surface text-fg-subtle',
+                  ]}
+                  aria-hidden="true"
+                >
+                  {i + 1}
+                </span>
+                <div class="min-w-0">
+                  <h2 id={step.id} class:list={['text-heading leading-8 font-semibold', last && 'text-accent-fg']}>
+                    {step.label}
+                  </h2>
+                  <p class:list={['mt-2 text-lg leading-relaxed', last ? 'text-fg' : 'text-fg-muted']}>{step.text}</p>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ol>
+
+      <section aria-labelledby="results" class="mt-12 rounded-2xl border border-accent-line bg-accent-quiet p-6">
+        <h2 id="results" class="flex items-center gap-2 text-heading font-semibold text-accent-fg">
+          <Icon name="check" size={20} />
+          Results
+        </h2>
+        <ul class="mt-4 grid gap-3">
+          {
+            data.results.map((r) => (
+              <li class="flex gap-3 leading-relaxed text-fg">
+                <span class="mt-[0.6875rem] size-1.5 shrink-0 rounded-full bg-accent-solid" aria-hidden="true" />
+                {r}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      {
+        data.lessons.length > 0 && (
+          <section aria-labelledby="lessons" class="mt-12">
+            <h2 id="lessons" class="flex items-center gap-2 text-heading font-semibold">
+              <Icon name="lightbulb" size={20} class="text-fg-subtle" />
+              Lessons
+            </h2>
+            <ul class="mt-4 grid gap-3 border-l border-line pl-5">
+              {data.lessons.map((l) => (
+                <li class="leading-relaxed text-fg-muted">{l}</li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        showStudy && (
+          <a href={href(`/case-study/${study!.id}/`)} class="card card-interactive group mt-12 flex items-center gap-4 p-5">
+            <Icon name="book-open" size={22} class="text-accent-fg" />
+            <span>
+              <span class="eyebrow block">Full case study</span>
+              <span class="mt-1 block font-semibold">{study!.data.title}</span>
+            </span>
+            <Icon name="arrow-right" size={18} class="ml-auto text-fg-subtle transition-transform group-hover:translate-x-1" />
+          </a>
+        )
+      }
+    </article>
+
+    <aside class="lg:pt-1">
+      <div class="card p-5 lg:sticky lg:top-24">
+        <dl class="grid gap-4 text-sm">
+          <div>
+            <dt class="text-fg-subtle">Domain</dt>
+            <dd class="mt-0.5 font-medium text-fg">{DOMAIN_LABELS[data.domain]}</dd>
+          </div>
+          <div>
+            <dt class="text-fg-subtle">Context</dt>
+            <dd class="mt-0.5 font-medium text-fg">{data.context}</dd>
+          </div>
+          {
+            data.stack.length > 0 && (
+              <div>
+                <dt class="text-fg-subtle">Stack</dt>
+                <dd class="mt-2">
+                  <TechList items={data.stack} size="sm" />
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+      </div>
+    </aside>
+  </div>
+
+  <nav aria-label="More problems" class="container-page mt-20 grid gap-4 border-t border-line pt-8 sm:grid-cols-2">
+    {
+      prev ? (
+        <a href={href(`/problems/${prev.id}/`)} class="group rounded-xl p-2">
+          <span class="eyebrow flex items-center gap-1">
+            <Icon name="arrow-left" size={12} /> Previous
+          </span>
+          <span class="mt-1 block font-semibold group-hover:text-accent-fg">{prev.data.title}</span>
+        </a>
+      ) : (
+        <a href={href('/problems/')} class="group rounded-xl p-2">
+          <span class="eyebrow flex items-center gap-1">
+            <Icon name="arrow-left" size={12} /> Back
+          </span>
+          <span class="mt-1 block font-semibold group-hover:text-accent-fg">All problems</span>
+        </a>
+      )
+    }
+    {
+      next && (
+        <a href={href(`/problems/${next.id}/`)} class="group rounded-xl p-2 sm:text-right">
+          <span class="eyebrow flex items-center gap-1 sm:justify-end">
+            Next <Icon name="arrow-right" size={12} />
+          </span>
+          <span class="mt-1 block font-semibold group-hover:text-accent-fg">{next.data.title}</span>
+        </a>
+      )
+    }
+  </nav>
+</BaseLayout>
