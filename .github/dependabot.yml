@@ -1,0 +1,36 @@
+# Version updates. Security updates are switched on separately in the repo
+# settings and arrive as their own PRs whatever this file says.
+version: 2
+
+updates:
+  # GitHub Actions used in .github/workflows — a PR when an action has a new
+  # release, instead of a deprecation warning in the deploy log.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: ci
+
+  # npm packages. Minor and patch releases come as one grouped PR a week;
+  # major releases get a PR each, since they can need code changes.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # TypeScript 7 is a major rewrite; upgrade it deliberately, not via a bot PR.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: chore
+      include: scope
+    open-pull-requests-limit: 5
