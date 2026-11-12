@@ -59,6 +59,7 @@ public/sw.js            retires the old site's service worker — keep until ear
 - `getStaticPaths` runs in its own scope: it can use imports, not variables from the page script.
 - Only one `astro preview` per project. To serve a second build (e.g. `dist-drafts`), use the static server in `scripts/serve-static.mjs` of this skill. In Git Bash, prefix with `MSYS_NO_PATHCONV=1` or `/niraj-chavan/` arguments get rewritten into Windows paths.
 - YAML: commas inside one-line `{ … }` mappings silently cut values short; use block style.
+- "Cannot find native binding" / "An Application Control policy has blocked this file" on Windows: Smart App Control is blocking a newly released unsigned `.node` binary. For `satteri` (Astro's Markdown parser) the `postinstall` script `scripts/wasi-fallback.mjs` handles it by installing the WebAssembly build (`--no-save`), so rerun `npm install`. If a different package is blocked, find it by `require()`-ing each `node_modules/**/*win32-x64*.node`, then extend that script or pin the package to a version whose binary loads.
 
 ## Commands
 

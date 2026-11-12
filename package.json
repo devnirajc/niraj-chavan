@@ -20,15 +20,16 @@
     "sync:medium": "node scripts/sync-medium.mjs",
     "icons": "node scripts/generate-icons.js",
     "og": "node scripts/generate-og.js",
-    "resume": "node scripts/build-resume.mjs"
+    "resume": "node scripts/build-resume.mjs",
+    "postinstall": "node scripts/wasi-fallback.mjs"
   },
   "author": "Niraj Chavan",
   "license": "MIT",
   "dependencies": {
-    "@astrojs/mdx": "^8.1.2",
+    "@astrojs/mdx": "^8.1.5",
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.5",
-    "astro": "^7.4.6",
+    "astro": "^7.4.11",
     "fast-xml-parser": "^5.11.2",
     "tailwindcss": "^4.3.5"
   },
