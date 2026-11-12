@@ -34,6 +34,9 @@ const { problem, prev, next } = Astro.props;
 const { data } = problem;
 const study = data.caseStudy ? await getEntry(data.caseStudy) : undefined;
 const showStudy = study && isVisible(study);
+// Pages about work at JP Morgan Chase end with the own-views note the firm's
+// disclosure rules call for (see the portfolio-content skill).
+const ownViewsEmployer = /JP Morgan Chase/i.test(data.context) ? 'JP Morgan Chase & Co.' : undefined;
 
 const steps = [
   { id: 'challenge', label: 'Challenge', text: data.challenge },
@@ -133,6 +136,15 @@ const steps = [
             </span>
             <Icon name="arrow-right" size={18} class="ml-auto text-fg-subtle transition-transform group-hover:translate-x-1" />
           </a>
+        )
+      }
+
+      {
+        ownViewsEmployer && (
+          <p class="mt-12 text-sm text-fg-subtle italic">
+            This page describes my own work in general terms. The views are my own and are not endorsed by{' '}
+            {ownViewsEmployer}
+          </p>
         )
       }
     </article>

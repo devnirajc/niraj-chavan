@@ -20,8 +20,8 @@ stack:
   - TypeScript
   - RBAC
   - REST APIs
-  - Dynatrace
-  - Kibana
+  - Chrome DevTools
+  - Angular DevTools
 features:
   - Dynamic management of Chase Travel's travel product settings
   - Business-unit-specific configuration controls
@@ -43,7 +43,7 @@ metrics:
 
 Site Manager (Travel Settings Customisation) is the centralised configuration platform behind [Chase Travel](https://www.chase.com/travel), JP Morgan Chase's travel-booking platform for Chase cardmembers. Authorised business users manage Chase Travel's travel product settings through it, without engineering intervention.
 
-I led the design and implementation of Site Manager. Business teams now manage travel product configuration themselves, through a secure, role-based administration experience. Configuration changes that used to wait days for an engineer and a release now take effect as soon as they are saved. The platform also brought access governance through role-based access control (RBAC) I designed and implemented, enforced by the APIs as well as the Angular layer, and made the dashboard load and respond faster after an observability-led optimisation using Dynatrace and Kibana.
+I led the design and implementation of Site Manager. Business teams now manage travel product configuration themselves, through a secure, role-based administration experience. Configuration changes that used to wait days for an engineer and a release now take effect as soon as they are saved. The platform also brought access governance through role-based access control (RBAC) I designed and implemented, enforced by the APIs as well as the Angular layer, and made the dashboard load and respond faster after an observability-led optimisation.
 
 Site Manager is internal, so there is no public demo; the image above is an illustration, not a screenshot.
 
@@ -52,12 +52,6 @@ Site Manager is internal, so there is no public demo; the image above is an illu
 - **Users:** authorised business users across Chase Travel's business units, including product, operations and support teams
 - **My role:** I led the development of the Angular administration platform, designed and implemented its role-based access control, and drove its performance audit
 - **When:** on the Site Manager team from December 2021 to December 2024; since January 2025 I've been on Chase Travel's promotions and purchase flow team
-
-<Draft note="Scope and team — fill in what you can say publicly">
-
-TODO — When did Site Manager first go live, and how long did the build take? How big was the team (front end, back end, QA, design), and who owned the back-end APIs? Roughly how many business units and business users use it, and how many kinds of setting does it manage, within what you are allowed to disclose?
-
-</Draft>
 
 ## The business problem
 
@@ -71,14 +65,6 @@ Before Site Manager, changing the configuration of Chase Travel's travel product
 
 That made it a scaling problem, not just an inconvenience. As Chase Travel's products grew more complex, so did their configuration, and every change still had to go through engineering and a release. The demand on engineers grew with the product, whether or not the work needed an engineer.
 
-<Draft note="Discovery and requirements — whole section is unconfirmed">
-
-## Discovery and requirements
-
-TODO — How did you learn what business teams needed: workshops with product and operations, a backlog of configuration tickets, support-team pain points? Which settings came first? How did you decide what business users could change themselves and what stayed with engineering? How did requirements change during delivery, and how did you manage expectations?
-
-</Draft>
-
 ## Architecture and design
 
 Site Manager is an Angular administration platform:
@@ -89,16 +75,6 @@ Site Manager is an Angular administration platform:
 - **Access control at both layers.** Role-based access control scopes every user's permissions to their business unit and restricts sensitive operations. The Angular layer shows each role only what it may change, and the APIs enforce the same entitlements.
 - **Live configuration.** A change made through Site Manager takes effect immediately, not through a release.
 - **Micro-app registry.** Chase Travel's micro-apps are registered in Site Manager, so each one can be loaded independently at run time. I worked on the registry feature.
-
-<Draft note="Architecture detail — needed for the interactive diagram, within disclosure limits">
-
-TODO — What does "configuration-driven" mean here: forms rendered from a settings schema, a registry of setting types, metadata from the API? Give one example of adding a new setting before and after Site Manager.
-
-TODO — Describe the moving parts as patterns, not internal names: the Angular app, the REST APIs it calls and who owns them, where settings are stored, how a change reaches Chase Travel immediately (a push, cache invalidation, polling), and where audit records live. I'll turn it into the interactive diagram.
-
-TODO — CI/CD and environments: how Site Manager is built, tested and promoted to production, and how a settings change is tested before it affects customers (preview, staging, approval)?
-
-</Draft>
 
 ## Engineering decisions
 
@@ -127,17 +103,11 @@ Each decision below compares the approach I chose with the state it replaced.
   ]}
 />
 
-<Draft note="Other options you weighed">
-
-TODO — The cards compare each choice with the state it replaced. Did you also evaluate other options: feature-specific settings pages instead of one centralised platform, static configuration files edited by business users, a third-party feature-flag or configuration service? If so, add them, and say why the centralised platform won.
-
-</Draft>
-
 ## Performance optimisation
 
 **Problem.** As the settings platform grew, some dashboard pages rendered slowly and responded sluggishly to users.
 
-**Investigation.** I drove a performance audit using Dynatrace, Kibana, browser performance profiling and application monitoring metrics.
+**Investigation.** I drove a performance audit using application monitoring, log analysis and browser performance profiling.
 
 **Findings.** The audit found three rendering bottlenecks on the dashboard. All three came from rendering work the screens didn't need: components re-rendering when nothing they displayed had changed, and more rendering cycles than the UI required. Separately, the audit showed inefficient patterns in how API calls were made, which added load on top.
 
@@ -145,25 +115,25 @@ TODO — The cards compare each choice with the state it replaced. Did you also 
 
 **Result.** All three rendering bottlenecks were fixed, and the settings dashboard loads and responds noticeably faster for the business users who configure Chase Travel.
 
-<Draft note="Claude's draft of the three bottlenecks: confirm or correct each before publishing">
+### The three bottlenecks
 
-TODO — Claude drafted these three from the confirmed findings above, not from your records. Check each against the code and tickets from the audit, correct anything that didn't happen, and move the confirmed ones out of this block.
+I found them with Chrome DevTools performance profiles and the Angular DevTools profiler.
 
-**1. The settings list rebuilt every row.** *Symptom:* the browser profile showed a long scripting task after the settings data arrived, most of it destroying and recreating row DOM. *Cause:* the list's `*ngFor` had no `trackBy`, so every new array from the API, even with unchanged settings, made Angular tear down and rebuild every row. *Fix:* I added `trackBy` on the setting's ID, so Angular reuses existing rows and only touches the ones that changed.
+**1. The settings list rebuilt every row.** *Cause:* the list's `*ngFor` had no `trackBy`. So whenever a new array arrived from the API, even with unchanged settings, Angular tore down and rebuilt every row. *Fix:* I added `trackBy` on the setting's ID, so Angular reuses the rows it already has and only updates the ones that changed.
 
-**2. Default change detection across the dashboard.** *Symptom:* the profile showed change detection running over the whole component tree several times during load, once for each HTTP response, timer and event. *Cause:* the dashboard's components used the default change-detection strategy, so every async event checked every component, including the ones whose inputs hadn't changed. *Fix:* I moved the presentational components to `OnPush`, with immutable inputs and the `async` pipe, so a component is checked only when its inputs or its own observables change.
+**2. Default change detection across the dashboard.** *Cause:* the dashboard's components used the default change-detection strategy. So every async event checked every component, including the ones whose inputs hadn't changed. *Fix:* I moved the presentational components to `OnPush`, with immutable inputs and the `async` pipe, so a component is checked only when its inputs or its own observables change.
 
-**3. Expensive work in templates.** *Symptom:* the same formatting and filtering functions appeared again and again in the profile's call tree. *Cause:* templates called methods, such as formatting labels and filtering settings by business unit, that ran on every change-detection cycle. *Fix:* I replaced them with pure pipes and view models computed once in RxJS streams, so the work runs only when the data changes.
+**3. Expensive work in templates.** *Cause:* templates called formatting and filtering methods that re-ran on every change-detection cycle. *Fix:* I replaced them with pure pipes and with view models computed once in RxJS streams, so that work runs only when the data changes.
 
-**How each fix reaches LCP.** The dashboard's largest element can't paint until four things have happened, in order: the JavaScript bundle loads and Angular starts, the dashboard requests its data, the data arrives, and Angular renders it.
+### Why the fixes make the dashboard faster
 
-- **Lazy loading** shortens the first step: code for screens the dashboard doesn't need is no longer downloaded and parsed before it renders.
-- **Leaner API calls** shorten the middle steps: fewer duplicate calls, and calls that don't depend on each other run in parallel instead of one after another.
-- **The rendering fixes** shorten the last step. On first load, `trackBy` helps only if the list renders more than once before the first paint, and `OnPush` and the template fixes help in proportion to how many change-detection cycles run during load. Their bigger effect is on interactions once the dashboard has loaded.
+Before the dashboard can show anything, its code has to load and Angular has to start, its data has to arrive from the APIs, and Angular has to render that data. Each fix targets one of those stages:
 
-TODO — Which of these fixes made the biggest difference? Answer in general terms only. Don't add timings, monitoring data or screenshots: the page no longer publishes internal figures. Also: what was the largest element on the dashboard (the settings table, a summary card, a heading), and is it client-rendered (no Angular SSR)?
+- **Lazy loading** means less code has to load before the dashboard can start.
+- **Leaner API calls** shorten the wait for the data the dashboard needs.
+- **The rendering fixes** cut the work Angular does each time it renders. They help a little on first load, but most of all on every interaction after it: filtering, editing and saving settings.
 
-</Draft>
+Of the three, lazy loading made the biggest difference.
 
 ## Security and governance
 
@@ -173,52 +143,24 @@ TODO — Which of these fixes made the biggest difference? Answer in general ter
 - **Enforced on the server.** The APIs enforce the same entitlements the Angular layer shows, so a request sent directly to an API by a user without the right entitlement is still refused.
 - **Centralised governance.** One platform and one access model for configuration, with audit-friendly administration workflows.
 
-<Draft note="Fill in — enterprise readers will look for these">
-
-TODO — Anything else about security you can describe in general terms? Don't name internal systems or detail how controls work (sign-in, entitlement systems, audit records), because that needs the firm's approval. Otherwise delete this block.
-
-</Draft>
-
-<Draft note="Reliability and accessibility — fill in or delete">
-
-## Reliability and accessibility
-
-TODO — Reliability: how does Site Manager stop a bad setting reaching customers (validation rules, previews, approvals, rollback)? Describe it in general terms only, with no internal tools, dashboards or figures.
-
-TODO — Accessibility: your WCAG 2.1 AA work covered the Travel platform. Did it include Site Manager? If so, describe keyboard navigation, focus management and accessible form interactions in the admin screens.
-
-</Draft>
-
 ## Business impact
 
 - **Operational efficiency:** settings changes that used to take days now take effect immediately, and routine configuration updates no longer need engineering involvement.
 - **Security and governance:** configuration ownership controlled per business unit, with access enforced by the APIs as well as the screens.
 - **Performance:** a faster settings dashboard, in loading and in use, for the business users who rely on it.
 
-<Draft note="Wider impact — only claim what you can stand behind">
-
-TODO — Effects beyond these: engineering time freed for product work, fewer configuration tickets, faster onboarding of new business units or product teams onto the platform, reuse of the architecture elsewhere? Describe them in words: internal figures need the firm's approval, which you haven't sought.
-
-</Draft>
-
 ## Leadership and ownership
 
 I led the development of Site Manager's Angular administration platform and set its architecture: reusable components, configuration-driven UI patterns and modular features. I designed and implemented the role-based access control that governs it, with the same entitlements enforced in the Angular layer and by the APIs. When the dashboard slowed as the platform grew, I drove the performance audit and fixed the bottlenecks. I also worked on its micro-app registry, so each of Chase Travel's micro-apps can be loaded independently.
 
-<Draft note="Cross-functional work — confirm for Site Manager">
-
-TODO — Your brief mentions collaboration with product, operations, security and platform teams, architecture reviews, technical design discussions, mentoring and code review. Which of these happened on Site Manager, and how? For example, a security review of the RBAC design, design sessions with operations on which settings to expose, or mentoring engineers who later built on the platform.
-
-</Draft>
-
-<Draft note="Lessons — only you can write these">
-
 ## Lessons learned
 
-TODO — What would you do differently? What surprised you once business users had control of configuration? What technical debt remains? What's next on the roadmap: approval workflows, configuration versioning and rollback, support for new business units?
-
-</Draft>
+- **Plan lazy loading from the first screen.** Lazy loading made the biggest difference to how fast the dashboard loads. It's easiest to get right when the feature modules are split up at the start, not added once the platform has grown.
+- **Make the fast patterns the default.** `OnPush`, `trackBy` and no method calls in templates, enforced through code review or lint rules, so a slowdown can't build up quietly as settings are added. Performance budgets in CI stop it creeping back.
+- **Design access control alongside the first screens.** Once business users change settings themselves, role-based access is the main safeguard. I'd define roles and business-unit scopes as early as the screens, and test them as thoroughly as any feature.
 
 ## Outcome summary
 
 Site Manager moved routine configuration of Chase Travel's travel products from engineers to the business teams that own it. Because that took changes out of the release process, access control and audit-friendly workflows became the platform's main safeguards, in place of code review and release approval.
+
+*This page describes my own work in general terms. The views are my own and are not endorsed by JP Morgan Chase & Co.*

@@ -130,7 +130,7 @@
       roles: [jpmc, xpanxion]
       projects: [chase-travel-site-manager]
     - name: Performance monitoring
-      context: Dynatrace, Kibana and browser profiling to find rendering bottlenecks in Chase Travel's Site Manager.
+      context: Application monitoring, log analysis and browser profiling with Chrome DevTools and Angular DevTools to find rendering bottlenecks in Chase Travel's Site Manager.
       roles: [jpmc]
       projects: [chase-travel-site-manager]
     - name: Build tooling

@@ -88,7 +88,7 @@ TODO — How was the app structured: one lazy-loaded feature module per area? A 
 
 TODO — How was client-side state handled: RxJS services, component state? How were dashboards kept "real time": polling, WebSockets?
 
-TODO — Did it use the JWT authentication and session management you designed at Xpanxion (the authentication-platform case study)? Were permissions enforced on the server as well as in the UI?
+Confirmed 2026-11-12, ready to publish alongside the problem write-up: sign-in used the JWT authentication and session management Niraj designed and built (the authentication-platform case study). Every API checked the token and the user's role on each request, as well as the UI's role-based route guards.
 
 Answer these and I'll turn them into the interactive diagram (the `architecture:` block in the frontmatter).
 
@@ -140,7 +140,9 @@ Access to the system is controlled through user accounts with roles and permissi
 
 <Draft note="How permissions worked">
 
-TODO — Which roles were there (admin, store manager, warehouse, operations, read-only)? How were permissions enforced in the UI: route guards, hiding or disabling actions by role?
+Confirmed 2026-11-12: role-based route guards decided which screens each user could open, and the APIs checked the role again on every request.
+
+TODO — Which roles were there (admin, store manager, warehouse, operations, read-only)? Were actions within a screen also hidden or disabled by role?
 
 </Draft>
 

@@ -1,8 +1,10 @@
-# DRAFT — solution and results restate my résumé (Chase Travel Site Manager
-# at JP Morgan Chase). Keep it to general terms: no internal figures or system
-# detail (see the portfolio-content skill's JP Morgan Chase section).
+# Chase Travel Site Manager at JP Morgan Chase. Bottlenecks, analysis tools,
+# challenge, lessons and OnPush scope (presentational components only)
+# confirmed by Niraj on 2026-11-12. Keep it to general
+# terms: no timings, monitoring figures or internal system detail (see the
+# portfolio-content skill's JP Morgan Chase section).
 title: An Angular admin dashboard that slowed down as it grew
-draft: true
+draft: false
 order: 2
 domain: performance
 context: JP Morgan Chase & Co. · Chase Travel Site Manager
@@ -10,17 +12,40 @@ problem: >-
   As Site Manager took on more settings, its dashboard pages rendered slowly
   and responded sluggishly for the business users who configure Chase Travel.
 challenge: >-
-  TODO: e.g. a large settings table, feature work continuing in parallel,
-  business users relying on the dashboard every day.
+  There was no single culprit: the slowdown built up gradually as settings
+  were added. And the screens render large lists of settings, so any
+  rendering work that wasn't needed was repeated across every row.
 analysis: >-
-  A performance audit using Dynatrace, Kibana and browser profiling.
-  TODO — what each of the three bottlenecks was, and how you found it.
+  I drove a performance audit using application monitoring, log analysis and
+  browser profiling.
+  Profiles from Chrome DevTools and the Angular DevTools profiler located three
+  rendering bottlenecks: the settings list rebuilt every row whenever new data
+  arrived, change detection checked every component on every async event, and
+  templates called formatting and filtering methods that re-ran on every
+  change-detection cycle. The audit also showed inefficient patterns in how API
+  calls were made.
 solution: >-
-  Rendering and change-detection fixes, lazy-loading improvements and
-  leaner API calls. TODO — the specific fix for each bottleneck.
-stack: [Angular, TypeScript, RxJS, Dynatrace, Kibana]
+  For the list, I added trackBy on each setting's ID, so Angular reuses the
+  rows it already has and only updates the ones that changed. I moved the
+  dashboard's presentational components to OnPush change detection, with
+  immutable inputs and the async pipe, so each component is checked only when
+  its inputs or its own observables change. I replaced the template method
+  calls with pure pipes and with view models computed once in RxJS streams, so
+  that work runs only when the data changes. On top of these fixes, I improved
+  lazy loading and made the API calls leaner.
+stack: [Angular, TypeScript, RxJS, Chrome DevTools, Angular DevTools]
 results:
   - Three rendering bottlenecks fixed.
   - The settings dashboard loads and responds noticeably faster.
 lessons:
-  - TODO
+  - Profile before optimising. The profiles showed where the time actually went.
+  - >-
+    Make the fast patterns the default from day one: OnPush, trackBy and no
+    method calls in templates, enforced in code review or lint rules, so a
+    slowdown can't build up quietly as features are added.
+  - >-
+    Guard against regressions with performance budgets or checks in CI, so
+    the same slowdown can't creep back.
+  - >-
+    Treat performance as something to watch continuously, not a one-off
+    audit, so a slowdown shows up early.

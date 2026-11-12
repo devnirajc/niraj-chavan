@@ -32,7 +32,7 @@ Niraj still works at JP Morgan Chase (JPMC) and has **not** asked for or receive
 
 - His title, dates, the teams he was on and when, and the public product. Frame his JPMC work around Chase Travel.
 - His own role and responsibilities in general terms: what he led, designed or built.
-- Technologies and engineering patterns he used, described generically (Angular, micro-frontends, role-based access, WCAG 2.1 AA). Listing a commercial tool as one of his skills is fine (Dynatrace, Kibana).
+- Technologies and engineering patterns he used, described generically (Angular, micro-frontends, role-based access, WCAG 2.1 AA). Listing a commercial tool as one of his general skills is fine (Dynatrace, Kibana in the résumé's Tooling line), but don't tie it to JPMC work: on JPMC pages, experience, skills context and résumé lines, say "application monitoring" and "log analysis" instead. Public developer tools (Chrome DevTools, Angular DevTools) are fine to name. Never list the firm's internal tools, such as LLM Suite, anywhere.
 - Qualitative outcomes ("settings changes take effect immediately", "three squads render promotions with one shared library").
 - Anything JPMC has itself announced publicly. Note the public source.
 
@@ -50,7 +50,7 @@ Niraj still works at JP Morgan Chase (JPMC) and has **not** asked for or receive
 **How to apply:**
 
 - Check content against these lists before writing or publishing anything that mentions JPMC, Chase, Chase Travel, Site Manager or his work there. When unsure, leave it out and ask.
-- Every JPMC project page ends with the own-views note: *This page describes my own work in general terms. The views are my own and are not endorsed by JP Morgan Chase & Co.*
+- Every JPMC project page and case study ends with the own-views note (problem pages whose `context` names JP Morgan Chase get it automatically from `src/pages/problems/[slug].astro`): *This page describes my own work in general terms. The views are my own and are not endorsed by JP Morgan Chase & Co.*
 - If Niraj offers a detail from the "never" list, say why it's risky and offer a general version instead of publishing it.
 
 ## Every content update also updates the Now page
