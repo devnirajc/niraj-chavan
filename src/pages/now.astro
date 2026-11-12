@@ -1,7 +1,8 @@
 ---
 /**
- * Now — a public changelog ("what I'm building now"), a small developer
- * dashboard of what is on this site, and the tech radar.
+ * Now — a hand-written "Right now" list (src/content/focus.yaml), a small
+ * developer dashboard of what is on this site, a changelog of new things a
+ * visitor can see, and the tech radar.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/ui/PageHeader.astro';
@@ -9,6 +10,8 @@ import Icon from '@/components/ui/Icon.astro';
 import DraftBadge from '@/components/ui/DraftBadge.astro';
 import ExternalLink from '@/components/ui/ExternalLink.astro';
 import TechRadar from '@/components/content/TechRadar.astro';
+import FocusList from '@/components/content/FocusList.astro';
+import { getFocus } from '@/lib/focus';
 import { render } from 'astro:content';
 import { published } from '@/lib/drafts';
 import { href, isExternal } from '@/lib/url';
@@ -21,6 +24,7 @@ const projects = await published('projects');
 const studies = await published('caseStudies');
 const problems = await published('problems');
 const radar = await published('radar');
+const { items: focus, updated } = await getFocus();
 
 /**
  * Changelog: hand-written entries plus every article, newest first. Entry
@@ -53,7 +57,6 @@ const feed = [
   })),
 ].sort((a, b) => +b.date - +a.date);
 
-const updated = feed[0]?.date;
 const stats = [
   { value: profile.years, label: 'Years of experience', href: '/experience/' },
   { value: projects.length, label: 'Projects', href: '/projects/' },
@@ -64,11 +67,11 @@ const stats = [
 const kindIcon = { shipped: 'check', building: 'code', learning: 'book-open', writing: 'file-text', milestone: 'flag' } as const;
 ---
 
-<BaseLayout title="Now" description="What I'm building, learning and writing right now — a public changelog and tech radar.">
+<BaseLayout title="Now" description="What I'm building, learning and writing right now, what I've added recently, and a radar of the technology I'm betting on.">
   <PageHeader
     eyebrow="Now"
     title="What I'm building now"
-    lede="A public changelog of what I'm shipping, learning and writing — and a radar of the technology I'm betting on."
+    lede="What I'm focused on this month, what I've added recently, and a radar of the technology I'm betting on."
   >
     {
       updated && (
@@ -81,6 +84,19 @@ const kindIcon = { shipped: 'check', building: 'code', learning: 'book-open', wr
   </PageHeader>
 
   <div class="container-page pt-12">
+    {
+      focus.length > 0 && (
+        <section aria-labelledby="right-now" class="mb-16">
+          <h2 id="right-now" class="text-heading font-semibold">
+            Right now
+          </h2>
+          <div class="mt-8">
+            <FocusList items={focus} />
+          </div>
+        </section>
+      )
+    }
+
     <section aria-labelledby="dashboard">
       <h2 id="dashboard" class="sr-only">Dashboard</h2>
       <ul class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line span-odd-last md:grid-flow-col md:auto-cols-fr md:grid-cols-none md:span-odd-last-none">
@@ -106,6 +122,7 @@ const kindIcon = { shipped: 'check', building: 'code', learning: 'book-open', wr
     <div class="mt-16 grid gap-14 lg:grid-cols-[1fr_20rem]">
       <section aria-labelledby="changelog">
         <h2 id="changelog" class="text-heading font-semibold">Changelog</h2>
+        <p class="mt-2 max-w-2xl text-fg-muted">New projects, write-ups, articles and milestones.</p>
         <ol class="relative mt-8 grid gap-8 border-l border-line pl-8">
           {
             feed.map(({ Body, ...item }) => (

@@ -10,9 +10,9 @@
  * those blocks are not rendered in production anyway.
  *
  * --report prints every draft and every TODO, published or not, as a
- * to-do list for finishing the site's content, and flags a "Now" changelog
- * with no entry for today (every content change should log one). It always
- * exits 0.
+ * to-do list for finishing the site's content, and flags a "Right now" list
+ * (src/content/focus.yaml) that hasn't been reviewed for over a month. It
+ * always exits 0.
  *
  * Runs before `astro build` (see package.json), alongside the contrast audit.
  */
@@ -27,7 +27,7 @@ const CONTENT = join(ROOT, 'src/content');
 const report = process.argv.includes('--report');
 
 /** Collections stored as one YAML array per file (Astro's file() loader). */
-const ARRAY_FILES = new Set(['experience.yaml', 'education.yaml', 'skills.yaml', 'radar.yaml', 'community.yaml']);
+const ARRAY_FILES = new Set(['experience.yaml', 'education.yaml', 'skills.yaml', 'radar.yaml', 'community.yaml', 'focus.yaml']);
 
 const walk = (dir) =>
   readdirSync(dir).flatMap((name) => {
@@ -40,8 +40,6 @@ const countTodos = (text) => (text.match(/\bTODO\b/g) ?? []).length;
 
 /** @type {{ file: string, label: string, draft: boolean, todos: number }[]} */
 const entries = [];
-/** Dates (YYYY-MM-DD) of published "Now" changelog entries. */
-const nowDates = [];
 
 for (const path of walk(CONTENT)) {
   const file = relative(ROOT, path).replaceAll('\\', '/');
@@ -52,9 +50,6 @@ for (const path of walk(CONTENT)) {
     if (!match) continue;
     const [, frontmatter, body] = match;
     const data = parse(frontmatter) ?? {};
-    if (file.startsWith('src/content/now/') && data.date && data.draft !== true) {
-      nowDates.push(data.date instanceof Date ? data.date.toISOString().slice(0, 10) : String(data.date));
-    }
     entries.push({
       file,
       label: data.title ?? file,
@@ -112,11 +107,18 @@ if (report) {
     for (const e of blocking) console.log(`  ${e.todos} TODO  ${e.file}`);
   }
 
-  const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
-  const lastNow = nowDates.sort().at(-1);
+  // "Right now" freshness: the newest `updated` in focus.yaml is the Now
+  // page's "Last updated" date, so flag it once it is over a month old.
+  const focus = parse(readFileSync(join(CONTENT, 'focus.yaml'), 'utf8')) ?? [];
+  const lastFocus = focus
+    .filter((item) => item.draft !== true && item.updated)
+    .map((item) => (item.updated instanceof Date ? item.updated : new Date(item.updated)))
+    .sort((a, b) => +a - +b)
+    .at(-1);
+  const age = lastFocus ? Math.floor((Date.now() - +lastFocus) / 86_400_000) : undefined;
   console.log(
-    `\nNow page: newest changelog entry ${lastNow ?? 'none'}` +
-      (lastNow === today ? ' (today)' : ' — if content changed today, log it in src/content/now/')
+    `\nNow page: "Right now" last reviewed ${lastFocus ? lastFocus.toISOString().slice(0, 10) : 'never'}` +
+      (age !== undefined && age <= 31 ? '' : ' — ask Niraj what he is working on and update src/content/focus.yaml')
   );
   console.log('');
   process.exit(0);

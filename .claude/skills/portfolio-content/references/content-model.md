@@ -159,7 +159,9 @@ A skill with no `context` and no visible evidence renders as a small chip in a c
 
 ## now and radar
 
-`src/content/now/*.md`: `date` (YYYY-MM-DD), `title`, `kind` (shipped | building | learning | writing | milestone), `link` (site path or URL, optional), body = 1–2 sentences. The newest date across these entries and Medium articles is the page's "Last updated", so every content change adds or extends today's entry. Keep links in `link`: body Markdown links in a `.md` entry get neither the base path nor the new-tab behaviour that MDX bodies have.
+`src/content/focus.yaml` ("Right now" on `/now/` and the home page): `id, kind (building | learning | writing), title, body, link?, updated (YYYY-MM-DD), order`. Two to four items. The newest `updated` is the "Last updated" date on both pages. Use `>-` for a body that contains a colon.
+
+`src/content/now/*.md` (the changelog): `date` (YYYY-MM-DD), `title`, `kind` (shipped | building | learning | writing | milestone), `link` (site path or URL, optional), body = 1–2 sentences. Only new things a visitor gains; never rewording, corrections or removals. Keep links in `link`: body Markdown links in a `.md` entry get neither the base path nor the new-tab behaviour that MDX bodies have.
 
 `src/content/radar.yaml`: `id, name, ring (adopt | trial | assess | hold), quadrant (languages-frameworks | tools | platforms | techniques), note`. Adopt/Trial notes should say where he uses it.
 

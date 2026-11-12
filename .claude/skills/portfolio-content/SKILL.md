@@ -53,13 +53,15 @@ Niraj still works at JP Morgan Chase (JPMC) and has **not** asked for or receive
 - Every JPMC project page and case study ends with the own-views note (problem pages whose `context` names JP Morgan Chase get it automatically from `src/pages/problems/[slug].astro`): *This page describes my own work in general terms. The views are my own and are not endorsed by JP Morgan Chase & Co.*
 - If Niraj offers a detail from the "never" list, say why it's risky and offer a general version instead of publishing it.
 
-## Every content update also updates the Now page
+## Keeping the Now page current
 
-Niraj's standing instruction: whenever any content on the site changes — a project, case study, problem, skill, experience entry, profile fact, page copy — update `/now/` in the same piece of work. Its header ("What I'm building now … Last updated <date>") shows the date of the newest changelog entry, so a content change without an entry leaves the page saying the site is older than it is.
+`/now/` and the home page's Now chapter have two parts, and they change for different reasons. (Niraj changed this on 2026-11-13: the old rule logged every content edit, which turned the page into a public edit log and announced which JPMC details had been removed.)
 
-1. **Changelog entry, dated today.** If `src/content/now/` already has an entry for today, extend its title and body to cover the new change; otherwise create one (see *Log something on the "Now" page* below). One entry per day keeps the changelog readable. Describe what a visitor can now see, in Niraj's voice, and set `link` to the main page it concerns. Small corrections (a typo, a broken link) get a clause in the day's entry, not an entry of their own.
-2. **"Currently" card.** If the change touches his job, title, focus or availability, check the card: company, role and availability come from `src/data/profile.ts`; the *Focus* line is hard-coded in `src/pages/now.astro`.
-3. **Tech radar.** If a technology was added to or dropped from skills or projects, check `src/content/radar.yaml` still agrees (Adopt/Trial notes name real work).
+1. **"Right now" (`src/content/focus.yaml`).** Two to four short items on what he is building, learning or writing this month. The newest `updated` date is the "Last updated" date on both pages. When something he is working on changes, or when he asks to refresh the page, update the items and set `updated` to today on each item he confirms still holds. Never write an item he hasn't confirmed.
+2. **Changelog (`src/content/now/`).** Log only **new things a visitor gains**: a project, case study, problem write-up, playbook, AI use case, certification, talk or a major site launch. One entry per new thing (or one per day if several land together). Describe it in Niraj's voice and set `link` to its page.
+3. **Never log** rewording, tone changes, corrections, résumé formatting, removals or reframings. Above all, never log that employer details were removed, generalised or "described in words instead of figures". That tells readers an earlier version had them, and the old text is still in the public repo history. Just make the edit.
+4. **"Currently" card.** If the change touches his job, title, focus or availability, check the card: company, role and availability come from `src/data/profile.ts`; the *Focus* line is hard-coded in `src/pages/now.astro`.
+5. **Tech radar.** If a technology was added to or dropped from skills or projects, check `src/content/radar.yaml` still agrees (Adopt/Trial notes name real work).
 
 The same never-invent rule applies: only log what was actually published. Drafts and `<Draft>` sections aren't visible to visitors, so don't announce them — log them when they go live. The dashboard counts (projects, case studies, problems, articles) are computed and need no edit.
 
@@ -94,7 +96,7 @@ One YAML file per problem in `src/content/problems/`, told in seven beats (probl
 
 ### Log something on the "Now" page
 
-Create `src/content/now/YYYY-MM-<slug>.md` with `date`, `title`, `kind` (shipped / building / learning / writing / milestone) and a one-or-two sentence body. Medium articles appear in the changelog automatically — don't duplicate them.
+For a new thing a visitor can see (see *Keeping the Now page current*), create `src/content/now/YYYY-MM-<slug>.md` with `date`, `title`, `kind` (shipped / building / learning / writing / milestone) and a one-or-two sentence body. Medium articles appear in the changelog automatically — don't duplicate them. For what he's working on this month, edit `src/content/focus.yaml` instead.
 
 Put site links in `link` (a path like `/projects/rxbit/` gets the `/niraj-chavan/` base added), not in the body: Markdown links in the body are printed as written, so a root-relative path there breaks on GitHub Pages.
 
@@ -134,7 +136,7 @@ Diagram, metric and decision objects are strict, so this mistake fails the build
 
 ## Before you finish
 
-Check that `src/content/now/` has an entry dated today covering this change (see *Every content update also updates the Now page*). Then run these and fix anything they report:
+If the work added something new a visitor can see, check `src/content/now/` has an entry for it; if it only reworded or removed content, check you did **not** add one (see *Keeping the Now page current*). Then run these and fix anything they report:
 
 ```bash
 npm run check:content      # published content has no TODO

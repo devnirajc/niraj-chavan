@@ -246,7 +246,29 @@ const skills = defineCollection({
   }),
 });
 
-/** "What I'm building now" changelog: /now/ */
+/**
+ * "Right now": the short, hand-written focus list at the top of /now/ and in
+ * the home page's Now chapter. The newest `updated` is the "Last updated" date
+ * both pages show, so reviewing the list (not editing site copy) moves it.
+ */
+const focus = defineCollection({
+  loader: file('src/content/focus.yaml'),
+  schema: z.object({
+    kind: z.enum(['building', 'learning', 'writing']),
+    title: z.string(),
+    body: z.string(),
+    link: z.string().optional(),
+    updated: z.coerce.date(),
+    order: z.number().default(0),
+    draft,
+  }),
+});
+
+/**
+ * Changelog on /now/: new things a visitor can see (a project, write-up,
+ * playbook, certification, launch). Rewording, corrections and removals are
+ * not logged.
+ */
 const now = defineCollection({
   loader: glob({ base: './src/content/now', pattern: '*.md' }),
   schema: z.object({
@@ -322,6 +344,7 @@ export const collections = {
   experience,
   education,
   skills,
+  focus,
   now,
   radar,
   testimonials,

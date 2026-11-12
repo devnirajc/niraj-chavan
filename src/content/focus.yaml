@@ -1,0 +1,39 @@
+# "Right now" on /now/ and the home page's Now chapter: what I'm working on
+# this month. Keep it to 2–4 items and review it about once a month. Set
+# `updated` to the day you last checked an item still holds; the newest
+# `updated` is the "Last updated" date on both pages.
+#
+# Block style only (a comma inside a one-line { … } mapping cuts the value
+# short), and `>-` for any body that contains a colon.
+
+- id: chase-travel-offers
+  kind: building
+  title: The front end of Chase Travel's promotions and offers platform
+  body: >-
+    As lead developer for the platform at JP Morgan Chase, I own its front-end
+    architecture, from personalised offer rendering to the shared Angular
+    library that squads use to render promotions.
+  link: /projects/chase-travel-booking/
+  updated: 2026-11-13
+  order: 1
+
+- id: problem-write-ups
+  kind: writing
+  title: Writing up the problems I've solved
+  body: >-
+    One page per problem, covering what was wrong, how I found the cause, what
+    I changed and what I'd do differently. The first is about an Angular
+    dashboard that slowed down as it grew.
+  link: /problems/
+  updated: 2026-11-13
+  order: 2
+
+- id: claude-code
+  kind: learning
+  title: Building with Claude Code skills and agents
+  body: >-
+    Two Claude Code skills maintain this site, and a scheduled agent files new
+    documents into my archive.
+  link: /ai/
+  updated: 2026-11-13
+  order: 3

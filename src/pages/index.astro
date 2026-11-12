@@ -5,7 +5,6 @@
  * nothing in draft leaves a gap or a dead link.
  */
 import { getImage } from 'astro:assets';
-import { render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/home/Hero.astro';
 import ChapterRail from '@/components/home/ChapterRail.astro';
@@ -18,6 +17,8 @@ import CaseStudyCard from '@/components/cards/CaseStudyCard.astro';
 import ProblemCard from '@/components/cards/ProblemCard.astro';
 import ArticleCard from '@/components/cards/ArticleCard.astro';
 import TestimonialCard from '@/components/cards/TestimonialCard.astro';
+import FocusList from '@/components/content/FocusList.astro';
+import { getFocus } from '@/lib/focus';
 import portrait from '@/assets/portrait.jpg';
 import { published } from '@/lib/drafts';
 import { href } from '@/lib/url';
@@ -35,13 +36,8 @@ const projects = (await published('projects')).filter((p) => p.data.featured).so
 const aiUseCases = (await published('aiUseCases')).sort(byOrder);
 const skills = (await published('skills')).sort(byOrder);
 const articles = (await published('articles')).sort((a, b) => +b.data.published - +a.data.published).slice(0, 3);
-const now = await Promise.all(
-  (await published('now'))
-    .sort((a, b) => +b.data.date - +a.data.date)
-    .slice(0, 3)
-    // Bodies are Markdown — render them rather than printing the source.
-    .map(async (entry) => ({ entry, Body: (await render(entry)).Content }))
-);
+// The hand-written "Right now" list, not the latest changelog entries.
+const { items: focus, updated: focusUpdated } = await getFocus();
 const testimonials = await published('testimonials');
 
 const candidates = [
@@ -53,7 +49,7 @@ const candidates = [
   { id: 'ai', label: 'AI', show: aiUseCases.length > 0 },
   { id: 'expertise', label: 'Expertise', show: skills.length > 0 },
   { id: 'writing', label: 'Writing', show: articles.length > 0 },
-  { id: 'now', label: 'Now', show: now.length > 0 },
+  { id: 'now', label: 'Now', show: focus.length > 0 },
   { id: 'kind-words', label: 'Kind words', show: testimonials.length > 0 },
   { id: 'contact', label: 'Contact', show: true },
 ];
@@ -289,26 +285,14 @@ const personLd = {
           title="What I'm building now"
           link={{ label: 'Changelog & tech radar', href: '/now/' }}
         />
-        <ol
-          class:list={[
-            'mt-10 grid gap-px overflow-hidden rounded-2xl border border-line bg-line',
-            now.length === 2 ? 'md:grid-cols-2' : now.length >= 3 && 'md:grid-cols-3',
-          ]}
-        >
-          {now.map(({ entry, Body }) => (
-            <li class="bg-surface p-5">
-              <p class="flex items-center gap-2 font-mono text-xs text-fg-subtle uppercase">
-                <span class="text-accent-fg">{entry.data.kind}</span>
-                <span aria-hidden="true">·</span>
-                <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
-              </p>
-              <h3 class="mt-2 font-semibold">{entry.data.title}</h3>
-              <div class="mt-1.5 text-sm leading-relaxed text-fg-muted [&_a]:text-accent-fg [&_a]:underline [&_strong]:text-fg">
-                <Body />
-              </div>
-            </li>
-          ))}
-        </ol>
+        <div class="mt-10">
+          <FocusList items={focus} />
+        </div>
+        {focusUpdated && (
+          <p class="mt-4 text-sm text-fg-subtle">
+            Last updated <time datetime={isoDate(focusUpdated)}>{formatDate(focusUpdated)}</time>
+          </p>
+        )}
       </section>
     )
   }

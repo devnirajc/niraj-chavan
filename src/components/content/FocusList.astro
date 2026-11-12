@@ -1,0 +1,52 @@
+---
+/**
+ * "Right now": the hand-written focus items from src/content/focus.yaml, in a
+ * hairline grid sized to the item count. Used on /now/ and the home page.
+ */
+import type { CollectionEntry } from 'astro:content';
+import Icon from '@/components/ui/Icon.astro';
+import DraftBadge from '@/components/ui/DraftBadge.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import { href, isExternal } from '@/lib/url';
+
+interface Props {
+  items: CollectionEntry<'focus'>[];
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { items, headingLevel: H = 'h3' } = Astro.props;
+const kindIcon = { building: 'code', learning: 'book-open', writing: 'file-text' } as const;
+---
+
+<ul
+  class:list={[
+    'grid gap-px overflow-hidden rounded-2xl border border-line bg-line',
+    items.length === 2 ? 'md:grid-cols-2' : items.length >= 3 && 'md:grid-cols-3',
+  ]}
+>
+  {
+    items.map(({ data }) => (
+      <li class="bg-surface p-5">
+        <p class="flex items-center gap-2 font-mono text-xs text-fg-subtle uppercase">
+          <Icon name={kindIcon[data.kind]} size={13} />
+          <span class="text-accent-fg">{data.kind}</span>
+          <DraftBadge draft={data.draft} />
+        </p>
+        <H class="mt-2 font-semibold">
+          {data.link && isExternal(data.link) ? (
+            <ExternalLink class="hover:text-accent-fg" href={data.link}>
+              {data.title}
+            </ExternalLink>
+          ) : data.link ? (
+            <a class="hover:text-accent-fg" href={href(data.link)}>
+              {data.title}
+            </a>
+          ) : (
+            data.title
+          )}
+        </H>
+        <p class="mt-1.5 text-sm leading-relaxed text-fg-muted">{data.body}</p>
+      </li>
+    ))
+  }
+</ul>
