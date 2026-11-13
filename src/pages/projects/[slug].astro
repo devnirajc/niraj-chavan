@@ -90,16 +90,23 @@ const statusLabel = { live: 'Live', archived: 'Archived', 'in-progress': 'In pro
           }
         </div>
       </div>
-      <div class="mt-10 overflow-hidden rounded-t-2xl border border-b-0 border-line bg-sunken shadow-lg">
-        <ThemeImage
-          light={data.cover}
-          dark={data.coverDark}
-          alt={data.coverAlt}
-          {...coverSizes.hero}
-          class="w-full"
-          priority
-        />
-      </div>
+      {/* Every cover is an abstract illustration, never a product screenshot. */}
+      <figure class="mt-10">
+        <figcaption class="mb-2 flex items-center gap-1.5 text-xs text-fg-subtle sm:justify-end">
+          <Icon name="info" size={14} class="shrink-0" />
+          Image for illustrative purposes only, not a screenshot of the product.
+        </figcaption>
+        <div class="overflow-hidden rounded-t-2xl border border-b-0 border-line bg-sunken shadow-lg">
+          <ThemeImage
+            light={data.cover}
+            dark={data.coverDark}
+            alt={data.coverAlt}
+            {...coverSizes.hero}
+            class="w-full"
+            priority
+          />
+        </div>
+      </figure>
     </div>
   </div>
 
