@@ -45,12 +45,12 @@ architecture:
       label: Renewal timer
       sublabel: before expiry
       layer: client
-      detail: Renews the token shortly before it expires, so a signed-in user is not sent back to the sign-in screen partway through a shift.
+      detail: Tokens are short-lived, lasting minutes rather than hours. The timer renews each one shortly before it expires, so a signed-in user is not sent back to the sign-in screen partway through a shift.
     - id: interceptor
       label: HTTP interceptor
-      sublabel: attaches the JWT
+      sublabel: adds JWT · retries on 401
       layer: client
-      detail: One place that adds the token to every API call, so no screen handles tokens itself.
+      detail: One place that adds the token to every API call, so no screen handles tokens itself. If a call comes back 401 because the token has expired, it starts one renewal and retries the call. Other calls that fail meanwhile wait for the same renewal instead of starting their own, then retry once with the new token. The user sees the sign-in screen only if renewal fails.
     - id: guards
       label: Role-based route guards
       layer: client
@@ -69,13 +69,14 @@ architecture:
       label: Revocation
       sublabel: sign-out everywhere
       layer: server
-      detail: Signing out, or revoking a token on the server, ends access everywhere the user is signed in, before the token would have expired.
+      detail: The server keeps a list of revoked tokens and checks it on every request, removing each entry once that token would have expired anyway, so the list stays small. Signing out, or revoking a token, ends access everywhere the user is signed in, before the token would have expired.
   edges:
     - { from: login, to: tokens, label: sign in }
     - { from: login, to: storage }
     - { from: storage, to: interceptor }
     - { from: timer, to: tokens, label: renew }
     - { from: interceptor, to: apis, label: JWT }
+    - { from: interceptor, to: tokens, label: renew on 401 }
     - { from: revoke, to: apis, label: refuse }
   steps:
     - title: Sign in
@@ -86,13 +87,13 @@ architecture:
       detail: One interceptor attaches the token to every call. The APIs check the token and the user's role on each request.
     - title: Before the token expires
       nodes: [timer, tokens, storage]
-      detail: A timer renews the token shortly before it runs out, so staff stay signed in through a shift.
+      detail: A timer renews the token shortly before it runs out, so staff stay signed in through a shift. If the timer misses its moment, for example while a laptop is asleep, the interceptor starts one renewal on the first 401. Every call that failed meanwhile waits for it, then retries with the new token.
     - title: Opening a screen
       nodes: [guards, apis]
       detail: Role-based route guards decide which screens each user can open. The APIs check the role again on every request.
     - title: Sign-out or revocation
       nodes: [revoke, apis]
-      detail: Signing out, or revoking a token on the server, ends access everywhere the user is signed in. A revoked token is refused even before it expires.
+      detail: Signing out, or revoking a token on the server, adds it to the revoked list, which every API checks. That ends access everywhere the user is signed in, even before the token expires.
 decisions:
   - title: How the app proves who is calling the APIs
     context: >-
@@ -106,10 +107,29 @@ decisions:
       - name: Server sessions (the existing approach)
         chosen: false
         reason: Their cookies didn't work cleanly between the app and the separate API domain.
+      - name: Move the APIs onto the app's domain
+        chosen: false
+        reason: Not possible. The APIs' domain was fixed, so sign-in had to work across the two domains.
     tradeoff: >-
       The token now lived in the browser, so theft had to be designed for:
       keep injected script off the page, and let the server revoke a token
       early.
+  - title: Where the browser keeps the token
+    context: >-
+      The token had to reach APIs on another domain on every call, and
+      survive a page reload.
+    options:
+      - name: localStorage, sent in a header by the interceptor
+        chosen: true
+        reason: The simpler option for APIs on another domain.
+      - name: An HttpOnly cookie
+        chosen: false
+        reason: Page script can't read it, but for APIs on another domain it was the less simple option.
+    tradeoff: >-
+      Any script on the page can read localStorage, so theft was covered
+      another way: Angular's built-in sanitising without bypassing it, HTTPS
+      only, a Content Security Policy, and a server-side list of revoked
+      tokens.
 lessons:
   - >-
     Today I'd use a standard identity provider with OpenID Connect instead of
@@ -121,7 +141,7 @@ relatedProjects: [scoperetail]
 
 <Draft note="What is confirmed and what is not">
 
-Confirmed by Niraj on 2026-11-12: everything in the frontmatter except the `TODO` lines. The goals, the diagram layout and the step wording are written from his answers, so check them before publishing. There are no metrics because he gave no figures. Don't add any.
+Confirmed by Niraj on 2026-11-12: everything in the frontmatter except the `TODO` lines. Confirmed on 2026-11-13: the APIs' domain was fixed; he weighed an HttpOnly cookie and chose localStorage as simpler for cross-domain APIs; the interceptor renews once and retries on a 401; revocation is a server-side revoked-token list. Confirmed on 2026-11-14: revoked entries are removed once the token would have expired; 401s arriving together share one renewal; tokens lasted minutes, not hours (no exact figure, so don't add one). The goals, the diagram layout and the step wording are written from his answers, so check them before publishing. There are no metrics because he gave no figures. Don't add any.
 
 </Draft>
 
@@ -135,7 +155,7 @@ At Xpanxion (now UST Global) I designed and built the full UI of Scope Retail's 
   label="Approach"
   steps={[
     { title: 'Stop relying on cookies', detail: 'Server-session cookies didn\'t work cleanly across the separate API domain, so every API call carries a JWT instead.' },
-    { title: 'Renew before expiry', detail: 'A timer renews the token shortly before it runs out, so nobody is signed out partway through a shift.' },
+    { title: 'Renew before expiry, and recover after it', detail: 'A timer renews the token shortly before it runs out. If calls still come back 401, they share one renewal and retry once, so nobody is signed out partway through a shift.' },
     { title: 'Check on the server, not only in the browser', detail: 'Route guards decide which screens a role can open, and every API checks the token and the role again. The server can revoke a token early.' },
     { title: 'Keep injected script off the page', detail: 'The token sits in localStorage, so the app relies on Angular\'s built-in sanitising without bypassing it, and is served only over HTTPS with a Content Security Policy.' },
   ]}
@@ -155,8 +175,6 @@ A JWT in localStorage survives a reload, but any script that runs on the page ca
 <Draft note="Still needed before publishing">
 
 TODO — How did you roll it out and test it? Who ran the security review, and did it change anything?
-
-TODO — How did revocation work on the server (for example a list of revoked tokens checked on each request)? How long did a token last before the timer renewed it?
 
 TODO — What went wrong or surprised you during the build?
 

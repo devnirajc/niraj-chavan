@@ -6,8 +6,17 @@
 # server-side token and role checks, server revocation; Angular sanitising,
 # HTTPS only and a CSP against theft. The four results and the OIDC lesson are
 # his; he gave no figures. The analysis is written from those answers.
+# Added 2026-11-13 (his answers): moving the APIs onto the app's domain was not
+# possible (their domain was fixed); he weighed an HttpOnly cookie and chose
+# localStorage with a header as simpler for cross-domain APIs, covering theft
+# with sanitising, CSP and revocation; the interceptor caught a 401, renewed
+# once and retried, and only a failed renewal showed the sign-in screen;
+# revocation was a server-side list of revoked tokens checked on every request.
+# 2026-11-14: revoked entries were removed once the token would have expired;
+# 401s arriving together shared one renewal, then retried once; tokens were
+# short-lived (minutes, not hours). The exact lifetime is unknown; don't add a
+# number.
 title: Sign-in that lasted the whole shift, and that the server could take back
-draft: true
 order: 1
 domain: auth-security
 context: Xpanxion · Scope Retail order management system
@@ -18,29 +27,41 @@ problem: >-
   app and the APIs it called.
 challenge: >-
   Move sign-in from server sessions to tokens without weakening security or
-  signing staff out partway through a shift. Different roles needed different
-  screens. The token would sit in localStorage, where any script that runs on
-  the page can read it, so the design had to defend against token theft.
+  signing staff out partway through a shift. The APIs' domain was fixed, so
+  moving them onto the app's domain wasn't an option: sign-in had to work
+  across the two domains. Different roles needed different screens, and a
+  token kept in the browser had to be defended against theft.
 analysis: >-
   The cookie trouble came from the domain split, so the fix was to stop
-  relying on cookies and send a token with every API call. Tokens brought
-  three risks of their own. A token that expired mid-task would sign someone
-  out, so it had to be renewed before it ran out. A token in localStorage is
-  only as safe as the page is from injected script, so the defence had to keep
-  script out. And a stolen token works until it expires unless the server can
-  refuse it, so token and role checks had to happen on the server, with a way
-  to revoke a token early.
+  relying on server-session cookies and send a token with every API call.
+  I weighed keeping the token in an HttpOnly cookie, which page script can't
+  read, against keeping it in localStorage and sending it in a header. For
+  APIs on another domain, the header was the simpler option, so I chose
+  localStorage and designed for its weakness: any script
+  on the page can read it. That left three risks. A token that expired
+  mid-task would sign someone out, and a renewal timer can miss its moment,
+  for example while a laptop is asleep. A token in localStorage is only as
+  safe as the page is from injected script. And a stolen token works until
+  it expires unless the server can refuse it.
 solution: >-
   I designed and built the JWT sign-in and session system end to end. I
   added token endpoints to the existing backend. Every API checked the token
-  and the user's role on each request, and the server could revoke a token
-  before it expired. In the Angular app, one HTTP interceptor attached the
-  token to every API call, a timer renewed it shortly before it ran out, and
-  role-based route guards decided which screens each user could open.
-  Signing out, or a revocation on the server, ended access everywhere the
-  user was signed in. Against theft, the app relied on Angular's built-in
-  sanitising without bypassing it, and was served only over HTTPS with a
-  Content Security Policy.
+  and the user's role on each request. The server kept a list of revoked
+  tokens and checked it on every request, removing each entry once that
+  token would have expired anyway, so the list stayed small. Signing out, or
+  revoking a token, ended access everywhere the user was signed in, before the token
+  would have expired. In the Angular app, one HTTP interceptor attached the
+  token to every API call. Tokens were short-lived, lasting minutes rather
+  than hours, and a timer renewed each one shortly before it ran out. If a
+  call still came back 401 because the token had expired, the interceptor
+  started one renewal and retried the call. Any other calls that failed
+  meanwhile waited for that same renewal instead of starting their own, then
+  retried once with the new token. The user saw the sign-in screen only if
+  renewal failed. Role-based route guards decided
+  which screens each user could open, and the APIs checked the role again.
+  Against theft, the app relied on Angular's built-in sanitising without
+  bypassing it, and was served only over HTTPS with a Content Security
+  Policy.
 stack:
   - Angular
   - TypeScript
