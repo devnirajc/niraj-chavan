@@ -135,6 +135,13 @@ lessons:
     Today I'd use a standard identity provider with OpenID Connect instead of
     custom token endpoints, and leave issuing, renewing and revoking tokens to
     a service built for that job.
+  - >-
+    Concurrent requests are the hard part of token renewal. When several
+    calls fail with 401 at once, each will try to renew unless one shared
+    renewal is designed in from the start.
+  - >-
+    Design revocation on day one. A token the server can't take back is a
+    security gap that only shows up at the moment you need to close it.
 relatedProjects: [scoperetail]
 ---
 

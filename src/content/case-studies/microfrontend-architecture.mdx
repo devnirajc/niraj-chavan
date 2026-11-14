@@ -58,6 +58,17 @@ decisions:
     tradeoff: >-
       A shared library is a product with consumers: changes need versioning
       and backward compatibility for every squad that depends on it.
+lessons:
+  - >-
+    Agree on what is shared, such as the framework version and the shared
+    library, before splitting the code. Most micro-frontend pain comes from
+    what is shared, not from what is split.
+  - >-
+    Treat a shared component library as a product from its first release,
+    with versioning and a changelog, not after its first breaking change.
+  - >-
+    Independent deployment doesn't remove dependencies between teams; it
+    makes them explicit. Plan the release order around them.
 relatedProjects: [chase-travel-booking]
 ---
 

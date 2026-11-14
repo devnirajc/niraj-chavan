@@ -36,6 +36,16 @@ metrics:
   - label: Upgrade downtime
     after: Zero
     note: Planned with QA and rolled out to production.
+lessons:
+  - >-
+    A trusted test suite is what turns a three-version framework upgrade
+    from a gamble into a routine release. Invest in the safety net first.
+  - >-
+    Run end-to-end tests on every merge, so a regression surfaces in minutes
+    instead of waiting for the next QA cycle.
+  - >-
+    Upgrade one major version at a time. It looks slower on paper, but each
+    step is small enough to test properly and to roll back.
 relatedProjects: [flm-field-logistics]
 ---
 

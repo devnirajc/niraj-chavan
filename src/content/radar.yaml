@@ -111,3 +111,20 @@
   ring: trial
   quadrant: platforms
   note: A Claude Cowork task files new documents into my archive and refreshes its search.
+
+- id: angular-signals-zoneless
+  name: Angular signals and zoneless change detection
+  ring: assess
+  quadrant: languages-frameworks
+  note: >-
+    Finer-grained updates without Zone.js. A natural next step after the
+    OnPush, trackBy and pure-pipe patterns I already use for fast Angular
+    dashboards.
+
+- id: protractor
+  name: Protractor
+  ring: hold
+  quadrant: tools
+  note: >-
+    Deprecated, so not for new end-to-end suites. Playwright or Cypress
+    instead.

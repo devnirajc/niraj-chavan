@@ -10,6 +10,17 @@ tools:
   - GPT
   - Claude Code
   - VS Code
+steps:
+  - title: Completions for the routine typing
+    detail: Inline completions and next edit suggestions for boilerplate, tests and renames that ripple through a file.
+  - title: Chat to understand before changing
+    detail: Ask about unfamiliar code, a long RxJS chain or an error before touching it.
+  - title: Agent mode for multi-file changes
+    detail: Claude Opus plans and makes a change across several files. I read the plan before it starts and the diff before I keep it.
+  - title: A second model for a second opinion
+    detail: When an answer matters, I ask GPT as well as Claude Opus and compare.
+  - title: Review every diff like a pull request
+    detail: AI-written code gets the same tests, lint and accessibility checks as code I write myself.
 ---
 
 I use GitHub Copilot in VS Code with Claude Opus and GPT models. This site is built and maintained with Claude Code, guided by the two skills below.
