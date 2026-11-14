@@ -45,28 +45,54 @@ const ROW_GAP = 22;
 const PAD = 20;
 const HEAD = 34;
 
+const LOOP_BULGE = 36; // control-point offset of a same-layer loop
+const LOOP_REACH = LOOP_BULGE * 0.75; // how far right of the column the curve actually reaches
+const LABEL_GAP = 6;
+const LABEL_CHAR_W = 6.2; // 10px monospace edge labels
+
 const columns = diagram.layers.map((layer) => diagram.nodes.filter((n) => n.layer === layer.id));
 const maxRows = Math.max(...columns.map((c) => c.length));
-const width = PAD * 2 + columns.length * NODE_W + (columns.length - 1) * COL_GAP;
-const height = PAD * 2 + HEAD + maxRows * NODE_H + (maxRows - 1) * ROW_GAP;
 
 const layerIndex = new Map(diagram.layers.map((l, i) => [l.id, i]));
+for (const node of diagram.nodes) {
+  if (!layerIndex.has(node.layer)) throw new Error(`Diagram "${diagram.title}": node ${node.id} has unknown layer ${node.layer}`);
+}
+const layerOf = new Map(diagram.nodes.map((n) => [n.id, layerIndex.get(n.layer)!]));
+
+// An edge between two nodes in the same layer loops out to the right of that
+// column, with its label beside the loop. Reserve room for both, or the last
+// column's loops run off the edge of the SVG and get clipped.
+const loopRoom = columns.map((_, col) =>
+  Math.max(
+    0,
+    ...diagram.edges
+      .filter((e) => layerOf.get(e.from) === col && layerOf.get(e.to) === col)
+      .map((e) => LOOP_REACH + (e.label ? LABEL_GAP + Math.ceil(e.label.length * LABEL_CHAR_W) : 4))
+  )
+);
+const colX: number[] = [];
+columns.forEach((_, col) => {
+  colX[col] = col === 0 ? PAD : colX[col - 1] + NODE_W + COL_GAP + loopRoom[col - 1];
+});
+const width = colX[columns.length - 1] + NODE_W + loopRoom[columns.length - 1] + PAD;
+// The narrowest the SVG may shrink before it scrolls sideways. Based on the
+// columns alone, so the loop room above doesn't push a phone-width diagram
+// into a scroll box with its loops hidden off to the right.
+const minWidth = Math.round((width - loopRoom.reduce((sum, r) => sum + r, 0)) * 0.72);
+const height = PAD * 2 + HEAD + maxRows * NODE_H + (maxRows - 1) * ROW_GAP;
+
 const position = new Map<string, { x: number; y: number; col: number }>();
 
 columns.forEach((nodes, col) => {
   const offset = ((maxRows - nodes.length) * (NODE_H + ROW_GAP)) / 2;
   nodes.forEach((node, row) => {
     position.set(node.id, {
-      x: PAD + col * (NODE_W + COL_GAP),
+      x: colX[col],
       y: PAD + HEAD + offset + row * (NODE_H + ROW_GAP),
       col,
     });
   });
 });
-
-for (const node of diagram.nodes) {
-  if (!layerIndex.has(node.layer)) throw new Error(`Diagram "${diagram.title}": node ${node.id} has unknown layer ${node.layer}`);
-}
 
 const edges = diagram.edges.map((edge, i) => {
   const a = position.get(edge.from);
@@ -74,14 +100,14 @@ const edges = diagram.edges.map((edge, i) => {
   if (!a || !b) throw new Error(`Diagram "${diagram.title}": edge ${edge.from} → ${edge.to} references a missing node`);
 
   let d: string;
-  let mid: { x: number; y: number };
+  let labelPos: { x: number; y: number; anchor: 'start' | 'middle' };
   if (a.col === b.col) {
-    // Same layer: loop out to the right of the column.
+    // Same layer: loop out to the right of the column, label beside the loop.
     const x = a.x + NODE_W;
     const y1 = a.y + NODE_H / 2;
     const y2 = b.y + NODE_H / 2;
-    d = `M ${x} ${y1} C ${x + 36} ${y1}, ${x + 36} ${y2}, ${x + 4} ${y2}`;
-    mid = { x: x + 30, y: (y1 + y2) / 2 };
+    d = `M ${x} ${y1} C ${x + LOOP_BULGE} ${y1}, ${x + LOOP_BULGE} ${y2}, ${x + 4} ${y2}`;
+    labelPos = { x: x + LOOP_REACH + LABEL_GAP, y: (y1 + y2) / 2 + 3.5, anchor: 'start' };
   } else {
     const forward = b.col > a.col;
     const x1 = forward ? a.x + NODE_W : a.x;
@@ -90,9 +116,9 @@ const edges = diagram.edges.map((edge, i) => {
     const y2 = b.y + NODE_H / 2;
     const dx = (x2 - x1) / 2;
     d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
-    mid = { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
+    labelPos = { x: (x1 + x2) / 2, y: (y1 + y2) / 2 - 6, anchor: 'middle' };
   }
-  return { ...edge, d, mid, key: `e${i}` };
+  return { ...edge, d, labelPos, key: `e${i}` };
 });
 
 const labelOf = new Map(diagram.nodes.map((n) => [n.id, n.label]));
@@ -149,7 +175,7 @@ const titleId = `${id}-title`;
         <svg
           viewBox={`0 0 ${width} ${height}`}
           width="100%"
-          style={`min-width:${Math.round(width * 0.72)}px;max-width:${width}px`}
+          style={`min-width:${minWidth}px;max-width:${width}px`}
           class="mx-auto block"
           role="group"
           aria-label={`${diagram.title}. Select a component to see what it does and what it connects to.`}
@@ -165,7 +191,7 @@ const titleId = `${id}-title`;
 
           {
             diagram.layers.map((layer, col) => (
-              <text x={PAD + col * (NODE_W + COL_GAP)} y={PAD + 12} class="dg-layer" aria-hidden="true">
+              <text x={colX[col]} y={PAD + 12} class="dg-layer" aria-hidden="true">
                 {layer.label.toUpperCase()}
               </text>
             ))
@@ -177,7 +203,7 @@ const titleId = `${id}-title`;
                 <g class="dg-edge" data-edge={edge.key}>
                   <path d={edge.d} class="dg-edge-line" marker-end={`url(#${id}-arrow)`} data-marker-on={`url(#${id}-arrow-on)`} data-marker-off={`url(#${id}-arrow)`} />
                   {edge.label && (
-                    <text x={edge.mid.x} y={edge.mid.y - 6} text-anchor="middle" class="dg-edge-label">
+                    <text x={edge.labelPos.x} y={edge.labelPos.y} text-anchor={edge.labelPos.anchor} class="dg-edge-label">
                       {edge.label}
                     </text>
                   )}
