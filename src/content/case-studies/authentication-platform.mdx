@@ -1,7 +1,6 @@
 ---
 title: Token sign-in for Scope Retail's order management system
 summary: Designing and building JWT sign-in and session management for Scope Retail's Angular order management system, replacing server sessions that didn't work across its separate API domain.
-draft: true
 featured: true
 order: 1
 role: Senior UI Engineer
@@ -21,7 +20,8 @@ goals:
   - Show each role only the screens it is allowed to use.
   - Let the server refuse or revoke a token before it expires.
 constraints:
-  - TODO — What couldn't change? For example the existing backend's API contracts, a deadline, or a security review before release.
+  - The APIs' domain was fixed, so moving them onto the app's domain was not an option. Sign-in had to work across two domains.
+  - The existing backend stayed in place. Token issuing and renewal were added to it as new endpoints rather than as a separate service.
 architecture:
   title: Token flow between the Angular app and the backend
   caption: >-
@@ -135,15 +135,9 @@ lessons:
     Today I'd use a standard identity provider with OpenID Connect instead of
     custom token endpoints, and leave issuing, renewing and revoking tokens to
     a service built for that job.
-  - TODO — What surprised you, or what else would you change?
 relatedProjects: [scoperetail]
 ---
 
-<Draft note="What is confirmed and what is not">
-
-Confirmed by Niraj on 2026-11-12: everything in the frontmatter except the `TODO` lines. Confirmed on 2026-11-13: the APIs' domain was fixed; he weighed an HttpOnly cookie and chose localStorage as simpler for cross-domain APIs; the interceptor renews once and retries on a 401; revocation is a server-side revoked-token list. Confirmed on 2026-11-14: revoked entries are removed once the token would have expired; 401s arriving together share one renewal; tokens lasted minutes, not hours (no exact figure, so don't add one). The goals, the diagram layout and the step wording are written from his answers, so check them before publishing. There are no metrics because he gave no figures. Don't add any.
-
-</Draft>
 
 ## Context
 
@@ -171,11 +165,3 @@ A JWT in localStorage survives a reload, but any script that runs on the page ca
 - The design passed security review.
 - Sign-in and role checks lived in one place, so new screens reused them instead of writing their own.
 - Fewer sign-in and access issues were reported.
-
-<Draft note="Still needed before publishing">
-
-TODO — How did you roll it out and test it? Who ran the security review, and did it change anything?
-
-TODO — What went wrong or surprised you during the build?
-
-</Draft>

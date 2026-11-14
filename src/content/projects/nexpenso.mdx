@@ -14,7 +14,7 @@ coverAlt: "Abstract illustration of a personal-finance app: a statement upload, 
 links:
   live: https://nexpenso.netlify.app/
   liveLabel: Open Nexpenso
-stack: [React, Redux, React Router, Vite, Chart.js, Node.js, Express, PostgreSQL, Docker, PWA]
+stack: [React, Redux, React Router, Vite, Chart.js, Node.js, Express, PostgreSQL, pg-boss, Redis, Python, FastAPI, LightGBM, Docker, PWA]
 features:
   - Import bank statements as CSV, XLSX, XLS or TXT
   - Imports run as background jobs that can be tracked and cancelled
@@ -166,14 +166,8 @@ Nexpenso turns bank statements into a picture of where the money goes. Upload a 
 It is my own side project: a React single-page app with a Node.js and Express API over PostgreSQL. I designed and built it.
 
 - **Who it's for:** people tracking money across accounts at several Indian banks. Duplicates are matched on UTR, UPI reference or cheque number
-- **Shape:** a React app on Netlify, calling a REST API on the same origin under `/api`; the API is deployed on Northflank, with CI/CD through GitHub Actions
+- **Shape:** a React app on Netlify, calling a REST API on the same origin under `/api`; Netlify proxies `/api` to the API, which runs in Docker on Northflank, and categorisation runs in a separate Python service
 - **My role:** designer and engineer: product, front end, API, data model and deployment
-
-<Draft note="Why you built it — only you know this">
-
-TODO — Why did you build Nexpenso: your own finances, frustration with existing apps, a way to go deeper on the back end? Does anyone besides you use it? How many statements or transactions has it handled? Real usage, even your own, is the most convincing thing this page could add.
-
-</Draft>
 
 ## The business problem
 
@@ -195,11 +189,7 @@ All network behaviour lives in **one API client**. Screens call functions such a
 
 The API is organised by resource: transactions and transfers, categories and categorisation rules, bills and their payments, goals, investments, analytics and preferences. One request can load the app's initial data together with its analytics.
 
-<Draft note="Back-end detail — not visible from outside">
-
-TODO — How is the API structured inside: Express routers per resource, a service layer, an ORM or query builder? How are upload jobs processed: in the request, in a worker, on a queue? Where does categorisation run, and which model or service does it call? How is `/api` routed to Northflank: a Netlify proxy rewrite?
-
-</Draft>
+Inside, the API follows routes, controllers and services: one Express router per resource, a service layer for the business logic, and SQL through node-postgres on PostgreSQL. Statement imports run as jobs on pg-boss, a job queue that lives in PostgreSQL itself, so there is no separate queue server to run. Netlify proxies `/api` to the API host, which keeps every call same-origin (see the decisions below).
 
 ## Key technical challenges
 
@@ -209,23 +199,13 @@ TODO — How is the API structured inside: Express routers per resource, a servi
 
 **Solution.** Before signing in, the client sends a liveness probe, up to three attempts with growing delays. The probe is shared by concurrent callers and skipped if one succeeded in the last 30 seconds. Gateway errors and network failures are retried up to three times with growing delays, only while the browser is online. Every failure that gets through becomes a specific, plain-language message: no internet connection, the request timed out, the server is starting up, the browser blocked the connection, or too many attempts with a wait time.
 
-<Draft note="Outcome">
-
-TODO — How long is a typical cold start? Did failed first sign-ins stop once the probe went in? Is the API on a plan that sleeps, and was that a cost decision?
-
-</Draft>
-
 ### Importing messy statements without double-counting
 
 **Challenge.** Statements from different banks overlap and arrive in different formats, and importing the same transaction twice corrupts every total built on it.
 
 **Solution.** Nexpenso accepts CSV, XLSX, XLS and TXT against a published column format, and matches duplicates on each transaction's own reference: UTR, UPI reference or cheque number. New transactions are checked for duplicates before they are kept. There is a full rescan of existing data, a way to mark a false positive as not a duplicate, and a backfill that adds references to older transactions. Imports are tracked as background jobs that can be checked and cancelled. Transfers between your own accounts are recorded as linked transactions, with a repair tool for links that break.
 
-<Draft note="Analysis and outcome">
-
-TODO — What did real statements throw at you: inconsistent date formats, merged cells, reference numbers missing on some rows? What happens to a transaction with no reference? How big an import does it handle, and how long does it take?
-
-</Draft>
+The import worker writes in chunks of 250 rows. When the database reports a transient error, it halves the chunk and retries, down to 25 rows, so a busy moment on the database doesn't fail a whole statement. It pauses briefly between write bursts so the app's own reads aren't starved on a small database, and checks duplicates and categorises in chunks of their own. Each job carries an idempotency key, so submitting the same import twice returns the existing job instead of starting a second one.
 
 ### Categorisation that improves with use
 
@@ -233,13 +213,10 @@ TODO — What did real statements throw at you: inconsistent date formats, merge
 
 **Solution.** AI-assisted categorisation, with endpoints for user feedback, retraining and statistics, alongside user-defined rules for future uploads. Rules can be reordered, exported and imported, and categories form a tree whose branches can be merged.
 
-<Draft note="How categorisation works">
+Categorisation runs in two layers:
 
-TODO — What is the categoriser: a model you train per user on their corrections, a hosted LLM, a mix with rules? What does "train" do, and how does feedback flow back? How accurate is it on your own data?
-
-</Draft>
-
-<Draft note="Reconstructed from the live app by Claude — confirm the reasoning was yours, then move these out of the Draft block">
+- **A per-user model.** A separate Python service (FastAPI, on Hugging Face Spaces) trains a model for each user on their own labelled transactions: character and word TF-IDF features from the description, plus amounts and dates, fed to a LightGBM classifier. Each prediction comes with a confidence score and the top three categories. Corrections the user makes are queued as feedback and merged into the training data on the next retrain.
+- **A fallback that never goes away.** The API also has its own TypeScript engine with rules, merchant recognition and pattern matching. A circuit breaker in the API's ML client opens after repeated server-side failures, so a cold or failing ML service falls back to that engine quickly instead of making every upload wait. A low-confidence "Uncategorised" or "Others" from the model never overwrites a category the user's own rule has set.
 
 ## Engineering decisions
 
@@ -252,39 +229,38 @@ TODO — What is the categoriser: a model you train per user on their correction
         { name: 'One API client with interceptors', chosen: true, reason: 'Tokens, CSRF, retries, timeouts and error messages are handled once, and every screen behaves the same way.' },
         { name: 'Handle errors in each screen or slice', chosen: false, reason: 'More control per call, but the same logic repeated and drifting apart across the app.' },
       ],
-      tradeoff: 'TODO — what the central client cost you, for example per-call opt-outs (_skipNetworkRetry) and longer timeouts for heavy endpoints.',
+      tradeoff: 'One client has to serve every kind of call, so it needs escape hatches: a per-call opt-out from retries, and longer timeouts for heavy endpoints such as bulk imports and duplicate scans.',
     },
     {
       title: 'Calling the API on the same origin',
-      context: 'The front end is on Netlify and the API is deployed separately.',
+      context: 'The front end is on Netlify and the API is deployed separately on Northflank. When the API was asleep, the hosting platform answered with a 503 that had no CORS headers, so the browser blocked the response and the app could not even tell the server was waking up.',
       options: [
-        { name: 'A relative /api path on the app origin', chosen: true, reason: 'No cross-origin requests for the browser to police, and cookies stay first-party.' },
+        { name: 'A relative /api path that Netlify proxies to the API', chosen: true, reason: 'Every call is same-origin, so CORS never applies, a cold-start 503 reaches the app as a readable response, and cookies stay first-party.' },
         { name: 'Calling the API host directly', chosen: false, reason: 'Simpler routing, but CORS configuration and third-party cookie rules to manage.' },
       ],
-      tradeoff: 'TODO — confirm how /api reaches the API, and what it costs (an extra hop, proxy timeouts).',
+      tradeoff: 'Every API call takes an extra hop through Netlify, and the limits of the proxy apply on top of those of the API.',
+    },
+    {
+      title: 'Making a retried import safe',
+      context: 'The API client retries failed requests on network errors and gateway responses. If the first attempt did reach the server, a retried import could start the same import twice.',
+      options: [
+        { name: 'An idempotency key on every import job', chosen: true, reason: 'A repeat submission with the same key returns the job that already exists. If the job row was saved but never dispatched to the queue, the retry dispatches it, so the second attempt recovers instead of failing.' },
+        { name: 'Rely on duplicate detection after the fact', chosen: false, reason: 'Duplicates would still be caught by reference number, but only after a second import had run and done all its work again.' },
+      ],
+      tradeoff: 'The client has to create and keep a key for each import, and the server keeps the key with each job.',
     },
   ]}
 />
 
-TODO — Retries: the client retries POST requests too on network errors and gateway responses. If the first attempt reached the server, can a retried bulk import create duplicates? Is the server idempotent there, or is server-side duplicate detection the safety net? Either way it's a strong decision to write up.
-
-</Draft>
-
 ## Security
 
-- **Tokens:** the bearer token is held in `sessionStorage`, so it is cleared when the tab closes.
+- **Sessions:** sign-in sets a signed JWT in a cookie that page scripts can't read (HttpOnly), Secure in production, with a seven-day lifetime that matches the token's. Because Netlify proxies `/api`, the cookie is first-party and the browser sends it with every request. The API also accepts the token as a bearer header, which the client keeps in `sessionStorage` as a fallback for browsers that block cookies.
 - **CSRF:** every state-changing request (POST, PUT, PATCH, DELETE) outside the sign-in, registration and password-reset endpoints carries a CSRF token. A rejected token is refreshed and the request retried once. A second failure asks the user to refresh.
 - **Abuse:** rate-limited responses (HTTP 429) are surfaced with how long to wait.
 - **Destructive actions:** deleting an account asks for the password again.
 - **Logs:** console output is filtered so passwords, tokens, API keys and card details are redacted, and logged request details show the `Authorization` header as redacted.
 
-<Draft note="Server side, and one thing to check">
-
-TODO — Server side: how are passwords hashed? How are tokens signed and how long do they live? Where are the rate limits set? How is uploaded statement data validated?
-
-TODO — The client checks `document.cookie` for an `authToken` cookie. That only works if the cookie isn't HttpOnly, which would make it readable by any script on the page. Worth checking. If it is HttpOnly, the check is dead code.
-
-</Draft>
+On the server, passwords are hashed with bcrypt, and the API reads the session cookie first and the bearer header second. CSRF tokens carry their own expiry. Rate limits use a sliding window in Redis, with an in-memory fallback, and HTTP security headers are set with Helmet.
 
 ## Performance
 
@@ -292,43 +268,15 @@ TODO — The client checks `document.cookie` for an `authToken` cookie. That onl
 - Initial data and analytics can arrive in one request rather than several.
 - Heavy calls get their own timeouts: up to 60 seconds for duplicate scans, 90 seconds for bulk imports and 120 seconds for reference backfills. Everyday requests stay at 30 seconds.
 
-<Draft note="Numbers">
-
-TODO — Lighthouse scores, bundle size, time to first dashboard? How does the dashboard perform with tens of thousands of transactions?
-
-</Draft>
-
 ## Automation and monitoring
 
 - **Background imports:** statements are processed as upload jobs the app can track and cancel.
 - **Recurring bills:** the API detects bills and subscriptions that recur.
 - **Import telemetry:** after an import, the client posts a summary to a telemetry endpoint. The call is fire-and-forget, with a five-second timeout and errors ignored, so instrumentation can never block or break an import.
-- **Delivery:** the API is deployed on Northflank with CI/CD through GitHub Actions.
-
-<Draft note="Fill in">
-
-TODO — What does the telemetry tell you, and where do you look at it? Is there alerting when the API is down? What does the GitHub Actions pipeline run: tests, lint, a Docker build?
-
-</Draft>
-
-<Draft note="Accessibility — fill in">
-
-## Accessibility
-
-TODO — Keyboard support, screen-reader labels for charts, contrast, testing with axe? How are charts made understandable without seeing them (data tables, text summaries)?
-
-</Draft>
-
-<Draft note="Lessons and roadmap — only you can write these">
-
-## Lessons learned and what's next
-
-TODO — What would you do differently? What did building a back end on your own teach you that front-end work at a bank didn't? What's next: budget alerts and month-over-month trends (your résumé mentions both), open banking instead of statements?
-
-</Draft>
+- **Delivery:** the API runs in a Docker container on Northflank, and the ML service in its own container on Hugging Face Spaces. The API has unit and integration tests in Vitest.
 
 ## Outcome summary
 
 - **What it is:** a working personal-finance product, from statement import to dashboards, bills, goals and investments, on a front end and API I built.
-- **Engineering depth:** server-side duplicate detection on payment references, background import jobs, and categorisation that takes feedback.
+- **Engineering depth:** duplicate detection on payment references, idempotent background import jobs on a PostgreSQL-backed queue, and a per-user categorisation model with a rules engine behind it.
 - **Production habits in a side project:** CSRF protection, retries with back-off, cold-start handling, redacted logs and fire-and-forget telemetry.

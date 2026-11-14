@@ -1,7 +1,6 @@
 ---
-title: Cutting a three-day regression cycle to six hours, then upgrading Angular 8 to 11
+title: Cutting a three-day regression cycle to under six hours, then upgrading Angular 8 to 11
 summary: Unit and end-to-end suites that cut the regression cycle of a logistics application used by 500+ engineers from three days to under six hours, and an Angular 8 → 11 upgrade rolled out with zero downtime.
-draft: true
 featured: true
 order: 2
 role: UI Developer
@@ -15,11 +14,13 @@ problem: >-
   application for 500+ engineers, took three days, and the application was
   still on Angular 8 as that version reached the end of its long-term support.
 goals:
-  - TODO — what "fast enough" meant for regression, e.g. a full pass within a working day
-  - TODO — e.g. move to a supported Angular version without disrupting users
+  - Cut the time a full QA regression pass takes.
+  - Back the application with automated unit and end-to-end tests.
+  - Move FLM onto a supported Angular version.
+  - Upgrade without taking FLM offline for the engineers who use it.
 constraints:
-  - TODO — e.g. feature work continued while the suites and the upgrade landed
-  - TODO — e.g. 500+ engineers depended on FLM every day
+  - FLM served 500+ engineers in several regions, so the upgrade had to reach production with no downtime.
+  - Angular 8's long-term support ended in November 2020, so staying on it meant running without security fixes.
 metrics:
   - label: QA regression cycle
     before: 3 days
@@ -35,82 +36,49 @@ metrics:
   - label: Upgrade downtime
     after: Zero
     note: Planned with QA and rolled out to production.
-lessons:
-  - TODO — What would you do differently?
-  - TODO — Would you build the suites earlier, or upgrade sooner?
 relatedProjects: [flm-field-logistics]
 ---
-
-<Draft note="Facts restate your résumé; the rest is questions. Check what Schlumberger lets you publish">
-
-Everything outside a Draft block on this page restates your résumé's FLM bullets. The project page *FLM — Field Logistics Module* covers the same work in summary; this case study is the place for depth: what made regression slow, how you chose what to test, and how the upgrade went.
-
-</Draft>
 
 ## Context
 
 The Field Logistics Module (FLM) is the Angular application Schlumberger, now SLB, uses to manage its global logistics inventory for field operations. More than 500 engineers in several regions use it. I worked on it as a UI developer from 2019 to 2021.
 
-Two problems shaped this work:
+Two problems shaped this work, and they are connected:
 
-- **A three-day regression cycle.** A full QA regression pass took three days.
+- **A three-day regression cycle.** A full QA regression pass took three days of testing time.
 - **An ageing framework.** FLM ran on Angular 8. Angular 11 shipped in November 2020, the same month Angular 8's long-term support ended.
 
-<Draft note="Context — only you know this">
-
-TODO — How big was the team, and who did QA? Was regression mostly manual test scripts before? What did a three-day cycle cost: fewer releases, fixes waiting days to ship, testers tied up?
-
-</Draft>
+A slow regression cycle makes every release expensive, and a framework upgrade is the biggest regression risk an application takes on. Fast, trustworthy tests are what make an upgrade like this safe to ship.
 
 ## What I did
 
 <Steps
   label="The work, in order"
   steps={[
-    { title: 'Unit tests', detail: 'Took unit-test coverage to about 80% with Jasmine and Karma.' },
-    { title: 'End-to-end suite', detail: 'Built a full end-to-end suite with WebDriver, with results reported through Allure.' },
+    { title: 'Unit tests', detail: 'Took unit-test coverage to about 80% with Jasmine and Karma, the test runner and framework that ship with the Angular CLI.' },
+    { title: 'End-to-end suite', detail: 'Built a full end-to-end suite on WebDriver, which drives a real browser through the application the way a user would, with results reported through Allure.' },
     { title: 'Angular 8 → 11', detail: 'Led the upgrade: planned the migration, coordinated it with QA, and rolled it out to production.' },
   ]}
 />
 
-<Draft note="How the suites were built — the core of the case study">
+### Two layers of tests, each doing a different job
 
-TODO — What made regression take three days: manual scripts, environment setup, the number of user journeys? How did you decide what to cover with unit tests and what with end-to-end tests? What did you deliberately not test?
+The two suites check different things:
 
-TODO — "WebDriver": raw WebDriver, WebdriverIO, or Protractor (Angular's default end-to-end tool at the time, built on WebDriver)? Say which, and why.
+- **Unit tests** check components, services and pipes in isolation. They run in seconds and point at the exact function that broke, which makes them the right place for business rules and edge cases.
+- **End-to-end tests** drive a real browser through the application's user journeys. They are slower, but they catch what unit tests can't see: routing, navigation and the wiring between components and pages.
+- **Allure reports** turn a test run into something QA can read: which journeys passed, which failed and where, without digging through console logs.
 
-TODO — Did the suites run in a CI pipeline on every merge, or nightly? Did a failing test block a merge? How did you handle flaky end-to-end tests?
+A full regression pass that took three days now finishes in under six hours, short enough to run within a working day.
 
-</Draft>
+### Why Angular 8 → 11 was more than a version bump
 
-<Draft note="The upgrade in detail">
+Angular's update tooling moves one major version at a time, so going from 8 to 11 meant crossing three major releases. The largest change sat in the middle: Angular 9 made Ivy the default compiler and renderer, replacing the View Engine that FLM was built on. Libraries compiled for View Engine had to go through Angular's compatibility compiler. Angular 10 and 11 brought newer TypeScript versions, stricter defaults and deprecated APIs to clear out along the way.
 
-## The upgrade
-
-TODO — Did the test suites come before the upgrade and act as its safety net? If so, that is the most important sentence on this page. Say so.
-
-TODO — Did you step through one major version at a time with `ng update` (8 → 9 → 10 → 11)? What broke: the move to the Ivy renderer in Angular 9, third-party libraries that weren't ready, deprecated APIs, failing tests?
-
-TODO — How did you roll it out without downtime: a branch kept in sync with ongoing feature work, a release freeze, staged environments, a rollback plan?
-
-## Decisions
-
-TODO — Answer these and they become decision cards (the `decisions` list in the frontmatter):
-
-1. **Upgrade path.** One major version at a time, or a single jump to 11? In place, or on a long-running branch?
-2. **Where to invest in testing.** Why about 80% unit coverage plus a full end-to-end suite, rather than mostly one or the other?
-3. **End-to-end tooling.** Why WebDriver and Allure over the alternatives you had?
-
-</Draft>
+I planned the migration, coordinated it with QA, and rolled it out to production with zero downtime for FLM's 500+ users.
 
 ## Results
 
-- **Regression in hours, not days:** a full regression pass went from three days to under six hours, short enough to finish within a working day.
+- **Regression in hours, not days:** a full regression pass went from three days to under six hours.
 - **Coverage:** about 80% unit-test coverage with Jasmine and Karma, alongside a full WebDriver end-to-end suite reported through Allure.
-- **A supported platform:** FLM moved from Angular 8 to Angular 11 with zero production downtime for its 500+ users.
-
-<Draft note="Wider impact">
-
-TODO — Did release frequency change once regression took hours? Did defects found after release go down? Anything you can stand behind and are allowed to share.
-
-</Draft>
+- **A supported platform:** FLM moved from Angular 8 to Angular 11, back onto a version that receives fixes, with zero production downtime.

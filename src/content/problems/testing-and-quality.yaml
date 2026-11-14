@@ -1,28 +1,39 @@
-# DRAFT — solution and results restate my résumé (Schlumberger, Field
-# Logistics Module). Problem, challenge, analysis and lessons need my words.
+# Facts restate the résumé (Schlumberger, Field Logistics Module): ~80% unit
+# coverage with Jasmine and Karma, a full WebDriver end-to-end suite reported
+# through Allure, regression cut from three days to under six hours, and the
+# Angular 8 → 11 upgrade with zero downtime. The analysis describes what each
+# test layer does; it doesn't claim how the split was decided.
+# Lessons are left out until Niraj gives his own.
 title: A three-day regression cycle cut to under six hours
-draft: true
 order: 6
 domain: quality-cicd
 context: Schlumberger · Field Logistics Module
 problem: >-
-  A full QA regression pass on FLM, an inventory application used by 500+
-  engineers, took three days.
-  TODO — what that cost: fewer releases, fixes waiting days to ship, testers tied up?
+  A full QA regression pass on FLM, the logistics-inventory application used
+  by 500+ engineers in several regions, took three days.
 challenge: >-
-  TODO: e.g. mostly manual test scripts, feature work continuing in parallel,
-  an Angular upgrade on the way.
+  Cut regression time without losing confidence in each release. FLM's
+  upgrade from Angular 8 to 11, a change that touches every screen, also had
+  to reach production without breaking anything for the engineers using it.
 analysis: >-
-  TODO: What made regression slow, and how you split coverage between unit
-  and end-to-end tests.
+  A regression pass has two kinds of question to answer. Does each piece of
+  logic do the right thing, including its edge cases? And do the user
+  journeys still work from start to finish? Unit tests answer the first
+  cheaply: they run in seconds and point at the exact function that broke.
+  Only a real browser answers the second, catching problems in routing and
+  in the wiring between components and pages that unit tests can't see. So
+  the work split into two layers, plus reporting that QA could read without
+  digging through logs.
 solution: >-
-  Unit-test coverage taken to about 80% with Jasmine and Karma, and a full
-  end-to-end suite in WebDriver with results reported through Allure.
+  I took unit-test coverage to about 80% with Jasmine and Karma. I built a
+  full end-to-end suite on WebDriver that drives a real browser through FLM's
+  user journeys, and reported its results through Allure, so each run shows
+  which journeys passed, which failed and where. I also led the Angular
+  8 → 11 upgrade: I planned the migration, coordinated it with QA, and
+  rolled it out to production.
 stack: [Angular, TypeScript, Jasmine, Karma, WebDriver, Allure]
 results:
   - QA regression cycle cut from three days to under six hours.
   - About 80% unit-test coverage, plus a full end-to-end suite.
-  - TODO — did the suites act as the safety net for the Angular 8 → 11 upgrade?
-lessons:
-  - TODO
+  - The Angular 8 → 11 upgrade reached production with zero downtime.
 caseStudy: flm-regression-and-upgrade

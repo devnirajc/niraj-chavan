@@ -38,6 +38,7 @@ metrics:
   - label: Junior engineers mentored
     after: "2"
     note: On Angular architecture, component composition and REST API integration.
+caseStudy: authentication-platform
 ---
 
 Scope Retail builds supply-chain software for large retailers. At Xpanxion I designed and built the UI of an order management system we built for them in Angular, from scratch. It is one admin application where retail teams manage orders, inventory and the product catalogue, control who can do what through users and roles, and follow the business on real-time dashboards and reports. This was client work, so there is no public demo or repository.
@@ -48,32 +49,12 @@ Scope Retail builds supply-chain software for large retailers. At Xpanxion I des
 - **My role:** Senior UI Engineer at Xpanxion. I designed and built the full UI for inventory oversight and order management, including its real-time dashboards, and mentored two junior engineers on the team
 - **When:** between 2017 and 2019, during my time at Xpanxion (now UST Global)
 
-<Draft note="Project scale and team — fill in from memory">
-
-TODO — How big was the team (front end, back end, QA), and who built the REST APIs? Roughly how many orders, stores or users did it handle?
-
-</Draft>
-
 ## The business problem
 
 Before this system, the operations team tracked inventory and orders in **manual spreadsheets**. That had two costs:
 
 - **Manual data entry produced errors.** Orders and stock were keyed in by hand, and errors crept in.
 - **No live picture.** A spreadsheet is a snapshot. Inventory and orders change all day, so the team's view was only as current as the last update.
-
-<Draft note="What it cost — only you know this">
-
-TODO — What did the spreadsheet errors cost: wrong stock levels, missed or duplicated orders, time spent reconciling? Who felt it most?
-
-</Draft>
-
-<Draft note="Discovery and requirements — whole section is unconfirmed">
-
-## Discovery and requirements
-
-TODO — How were requirements gathered: workshops with Scope Retail and its operations team, a product owner, specifications? Which spreadsheet workflows did you study first? What changed during the build, and how did you handle it with the client?
-
-</Draft>
 
 ## Architecture and design
 
@@ -82,17 +63,7 @@ The application is written in Angular and TypeScript, talks to REST APIs, and co
 - **Real-time dashboards.** Inventory and order monitoring dashboards, with charts built in Chart.js, give the operations team a live view instead of a spreadsheet snapshot.
 - **Role-based access.** User accounts with roles and permissions control who can see and change what.
 
-<Draft note="Architecture detail — needed for the interactive diagram">
-
-TODO — How was the app structured: one lazy-loaded feature module per area? A shared module of components? Which Angular version did you start on?
-
-TODO — How was client-side state handled: RxJS services, component state? How were dashboards kept "real time": polling, WebSockets?
-
-Confirmed 2026-11-12, ready to publish alongside the problem write-up: sign-in used the JWT authentication and session management Niraj designed and built (the authentication-platform case study). Every API checked the token and the user's role on each request, as well as the UI's role-based route guards.
-
-Answer these and I'll turn them into the interactive diagram (the `architecture:` block in the frontmatter).
-
-</Draft>
+Sign-in uses the JWT authentication and session management I designed and built for this system, described in the case study *Token sign-in for Scope Retail's order management system*. Role-based route guards decide which screens each user can open, and every API checks the token and the user's role again on each request.
 
 ## Key technical challenges
 
@@ -103,12 +74,6 @@ Answer these and I'll turn them into the interactive diagram (the `architecture:
 **Solution.** I designed and built the full UI for inventory oversight and order management, with real-time dashboards for inventory and order monitoring.
 
 **Outcome.** The operations team adopted the dashboards as their primary daily tool, replacing spreadsheet tracking. Manual data-entry errors fell by 50% over the three months after launch.
-
-<Draft note="Analysis — how the UI prevented errors">
-
-TODO — Which design choices cut data-entry errors: validation, dropdowns instead of free text, fewer fields re-keyed, defaults, confirmation steps? How were the errors counted before and after?
-
-</Draft>
 
 ## Engineering decisions
 
@@ -128,31 +93,11 @@ The decision below compares the approach I chose with the process it replaced.
   ]}
 />
 
-<Draft note="Other options you weighed">
-
-TODO — Which charting libraries did you compare with Chart.js (ngx-charts, Highcharts, D3)? Were there other decisions worth a card, such as how screens share orders and inventory data?
-
-</Draft>
-
 ## Users, roles and the admin experience
 
 Access to the system is controlled through user accounts with roles and permissions, so each person sees and changes only what their role allows.
 
-<Draft note="How permissions worked">
-
-Confirmed 2026-11-12: role-based route guards decided which screens each user could open, and the APIs checked the role again on every request.
-
-TODO — Which roles were there (admin, store manager, warehouse, operations, read-only)? Were actions within a screen also hidden or disabled by role?
-
-</Draft>
-
-<Draft note="Reporting, performance and accessibility — fill in or delete">
-
-## Reporting, performance and accessibility
-
-TODO — Was the CSV, Excel and PDF export from your Xpanxion record part of this app? Your Xpanxion record also mentions lazy loading, change-detection tuning, WCAG 2.0 compliance and REST integration with retry. Which of these were done here?
-
-</Draft>
+Role-based route guards decide which screens each user can open, and the APIs check the role again on every request, so hiding a screen is never the only protection.
 
 ## Business impact
 
@@ -162,20 +107,6 @@ TODO — Was the CSV, Excel and PDF export from your Xpanxion record part of thi
 ## Leadership and collaboration
 
 I designed and built the UI for the application's core workflows, inventory oversight and order management, and mentored two junior engineers on Angular architecture, component composition and REST API integration patterns.
-
-<Draft note="How you led">
-
-TODO — How did you work with Scope Retail's operations team and the back-end developers? Which standards did you set: shared components, code review, unit tests?
-
-</Draft>
-
-<Draft note="Lessons — only you can write these">
-
-## Lessons learned
-
-TODO — What would you do differently if you started again? What technical debt did you leave behind? Is the system still in use, as far as you know?
-
-</Draft>
 
 ## Outcome summary
 

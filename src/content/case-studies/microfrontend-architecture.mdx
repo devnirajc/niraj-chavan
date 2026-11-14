@@ -1,14 +1,13 @@
 ---
 title: Letting four squads ship Chase Travel independently
 summary: Micro-frontend boundaries with Webpack Module Federation and a shared promotion component library, so squads building Chase Travel deploy independently and stop rebuilding the same UI.
-draft: true
 order: 3
 role: Lead developer, promotions and offers
 company: JP Morgan Chase & Co.
 period: 2025 – present
 domains: [design-systems, scalability]
 industry: Banking · Travel (Chase Travel)
-stack: [Angular, TypeScript, Webpack Module Federation, Micro-frontends]
+stack: [Angular, TypeScript, Webpack Module Federation, Micro-frontends, Component libraries]
 problem: >-
   Several squads ship into Chase Travel's front end, JP Morgan Chase's
   travel-booking platform for Chase cardmembers. Releasing together meant
@@ -17,10 +16,10 @@ problem: >-
 goals:
   - Each squad deploys its part of Chase Travel without lining up every release with the others.
   - One implementation of promotion rendering that every squad builds on.
-  - TODO — any goal for consistency, quality or delivery speed you set up front?
+  - Customers still get one Chase Travel, however many squads build it.
 constraints:
-  - TODO — e.g. existing pages had to keep working during the migration
-  - TODO — e.g. one Angular version shared across remotes
+  - When one component depends on another, release order still matters, so the boundaries had to allow for dependencies between squads' code.
+  - Every micro-app stays on one Angular version, so Angular upgrades are coordinated across the squads.
 metrics:
   - label: Squads deploying independently
     after: "4"
@@ -28,42 +27,81 @@ metrics:
   - label: Promotion UI
     after: One shared library
     note: Three downstream squads stopped building their own promotion components and render promotions with the shared Angular library instead.
-lessons:
-  - TODO — What would you do differently?
-  - TODO — What did micro-frontends cost that you didn't expect?
+decisions:
+  - title: How squads ship into one front end
+    context: >-
+      Several squads work in Chase Travel's front end. Releasing together
+      meant coordinating across teams, and that coordination became a
+      bottleneck.
+    options:
+      - name: Micro-frontend boundaries with Webpack Module Federation
+        chosen: true
+        reason: Each squad builds and deploys its part independently, while customers still get one Chase Travel.
+      - name: One front end, released together (the existing model)
+        chosen: false
+        reason: Every release needed cross-team coordination, so one squad's timing held up the others.
+    tradeoff: >-
+      Independent deployment moves integration from build time to run time:
+      shared dependencies such as Angular and the component library have to
+      be versioned and shared deliberately across remotes.
+  - title: Who owns promotion UI
+    context: >-
+      Promotions appear on many squads' pages, and each squad was rendering
+      them its own way.
+    options:
+      - name: A shared Angular component library for promotion rendering
+        chosen: true
+        reason: One implementation of every promotion pattern. Three downstream squads adopted it instead of building their own.
+      - name: Each squad builds its own promotion UI (the existing model)
+        chosen: false
+        reason: Duplicated effort, and promotions that look and behave differently from page to page.
+    tradeoff: >-
+      A shared library is a product with consumers: changes need versioning
+      and backward compatibility for every squad that depends on it.
 relatedProjects: [chase-travel-booking]
 ---
 
-<Draft note="Facts confirmed from your résumé; the rest is scaffold. Keep it within the JP Morgan Chase no-approval rules">
-
-The metrics, problem and first two goals restate your résumé. Everything marked TODO needs you. You haven't sought the firm's approval, so answer in general terms only: patterns and outcomes, with no internal names, hosts, figures or architecture detail. See the JP Morgan Chase section of the portfolio-content skill. The project page *Chase Travel — Offers & Purchase Flow* already covers the same work in summary. This case study adds depth only as far as general patterns allow: how micro-frontends and a shared library work in principle, and what you learned.
-
-</Draft>
-
 ## Context
 
-I am the lead developer for Chase Travel's promotions and offers platform. Promotions appear on many squads' pages, so the way squads shared code and releases shaped everything we shipped.
+[Chase Travel](https://www.chase.com/travel) is JP Morgan Chase's travel platform, where Chase cardmembers book flights, hotels, car rentals, cruises and activities with Ultimate Rewards points. I joined its promotions and purchase flow team in January 2025, and I'm the lead developer for the promotions and offers platform, where I own the front-end architecture.
 
-<Draft note="Context">
+Promotions appear on many squads' pages, so the way squads shared code and releases shaped everything we shipped. Two problems came from the same root, several teams working in one front end:
 
-TODO — In general terms, how was the front end organised before, and what did shipping together cost the squads? No figures or internal names.
+- **Releases had to be lined up.** Squads shipping into the same front end coordinated their releases with each other, and that coordination became a bottleneck.
+- **The same UI was built several times.** Each squad rendered promotions in its own way.
 
-</Draft>
+## How I approached it
 
-<Draft note="Architecture — needed for the interactive diagram">
+Both problems are about ownership: who owns a release, and who owns a piece of UI. I made one structural change for each.
 
-## Architecture
+<Steps
+  label="Two structural changes"
+  steps={[
+    { title: 'Draw boundaries between squads\' code', detail: 'I introduced micro-frontend module boundaries with Webpack Module Federation. Each squad\'s part of the front end builds and deploys on its own and is loaded at run time, so customers still see one Chase Travel.' },
+    { title: 'Give promotion rendering one owner', detail: 'I architected a reusable Angular component library for promotion rendering, so squads build their features on one implementation instead of maintaining their own.' },
+    { title: 'Keep what must stay shared, shared', detail: 'Release order still matters when one component depends on another: the one it depends on goes out first. Angular upgrades are coordinated across the squads, so every micro-app stays on one Angular version.' },
+  ]}
+/>
 
-TODO — A generic diagram only, the textbook Module Federation pattern (a host, remotes, a shared library), not Chase Travel's actual topology, configuration or release flow. Skip it if even that feels too close.
+## How Module Federation changes the release model
 
-## Adoption
+In a single front end, every squad's code is built and released together, so one squad's timing holds up the others. Module Federation, a feature of Webpack, lets separately built applications load each other's code at run time. Each squad's micro-app becomes its own build with its own deployment, and the page brings them together in the browser.
 
-TODO — In general terms, how did squads move onto the boundaries and the library? Describe your own part (a proposal, a pilot, migration guides), not internal review processes.
+That moves integration from build time to run time. Two things follow from it, and both shaped the design:
 
-## Challenges
+- **Shared dependencies need deliberate versions.** Angular and the promotion library are used by every micro-app, so they have to be versioned and shared on purpose, not bundled differently by each squad. That is why Angular upgrades are coordinated across squads.
+- **Dependencies between squads still set an order.** Independent deployment doesn't remove dependencies. When one component depends on another, the one it depends on is released first.
 
-TODO — What went wrong: shared-dependency version clashes, runtime integration bugs, styling leaks between remotes, slower local development?
+<Callout kind="tradeoff">
+Independent deployment isn't free. It replaces "release together" with "agree on what's shared", and a shared component library becomes a product with consumers: every change needs versioning and backward compatibility for each squad that builds on it.
+</Callout>
 
-</Draft>
+## Results
+
+- **Independent teams:** four squads deploy independently instead of lining up every release across teams.
+- **Less duplicated work:** three downstream squads render promotions with one shared library instead of building their own.
+- **One product:** customers still get one Chase Travel, however many squads build it.
+
+The project page *Chase Travel — Offers & Purchase Flow* covers the rest of my work on the platform, including the purchase flow and accessibility.
 
 *This page describes my own work in general terms. The views are my own and are not endorsed by JP Morgan Chase & Co.*

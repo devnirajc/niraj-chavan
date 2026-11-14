@@ -13,13 +13,15 @@ coverAlt: "Abstract illustration of a nutrition tracker: calories against a dail
 links:
   live: https://shred-track-livid.vercel.app/
   liveLabel: Open ShredTrack
-stack: [Next.js, React, IndexedDB (Dexie), PWA]
+stack: [Next.js, React, TypeScript, IndexedDB (Dexie), Groq API, PWA]
 features:
   - Daily calories, protein, carbs and fat tracked against personal targets
   - Food log grouped by meal, with day-by-day navigation
+  - Starter food list with Indian staples such as paneer, dal, rajma and poha, plus custom foods
+  - Log a meal from a photo, with an AI vision model estimating what is on the plate
   - Macro rings and progress tracking over time
   - Workout logging
-  - An AI meal planner
+  - An AI meal planner and workout planner that know the day's targets and what has been logged
   - Contextual tips based on the day so far, such as how much protein is left to hit
   - Sign-in with email and password
   - Light and dark themes
@@ -33,83 +35,82 @@ It is my own side project, which I designed and built.
 - **Shape:** an installable Next.js app on Vercel, with sign-in and storage on the device
 - **My role:** designer and engineer
 
-<Draft note="Why you built it — only you know this">
-
-TODO — Why did you build ShredTrack: your own cut, frustration with existing trackers (what was wrong with them), a way to learn Next.js? Does anyone else use it? Have you used it through a whole cut, and what did it change?
-
-</Draft>
-
 ## The business problem
 
 A cut is won or lost on daily numbers: calories under target, protein at target, day after day. A tracker that only records what you ate leaves the question that matters to you: *what should I eat next?*
 
 ShredTrack answers that question. Its tips work from what is left for the day, and the AI meal planner works ahead.
 
-<Draft note="Confirm the framing">
-
-TODO — Is that how you would put it? What did you use before, and where did it fall short: food databases full of Western foods, no paneer or dal, too many taps to log a meal, no guidance?
-
-</Draft>
-
 ## Architecture and design
 
 ShredTrack is a Next.js application using the App Router, deployed on Vercel, with a web app manifest so it installs to a phone's home screen. Users sign in with an email and password, and the app uses IndexedDB, through Dexie, for storage on the device.
 
-<Draft note="Architecture detail">
+Two halves do different jobs:
 
-TODO — Where does the food data come from: your own database, an API such as USDA or Open Food Facts, entries the user adds?
-
-TODO — Which model powers the AI meal planner, and how are prompts built from the day's log and targets? Does it run in a Next.js route handler so the API key stays on the server?
-
-</Draft>
-
-<Draft note="Challenges — fill in two or three real ones">
+- **On the device:** the user's profile, targets, food log, workouts and custom foods live in IndexedDB through Dexie. The food list starts from a seeded set of 35+ foods, Indian staples among them, and grows with the user's own entries.
+- **On the server:** Next.js route handlers do the AI work: the meal planner, the workout planner, looking up and correcting foods, and estimating a meal from a photo. They call models on Groq's API, so the API key never reaches the browser. Each request sends a small summary of the day (targets, what has been eaten, recent workouts), and the handler builds the prompt from it.
 
 ## Key technical challenges
 
-TODO — Two or three real problems, each as: the challenge, how you found the cause, what you did, and what changed. Candidates:
+### AI models that disappear on short notice
 
-- **Logging fast enough to keep doing it:** how many taps to log a meal, and how you cut them.
-- **Tips that are actually useful:** how a tip is chosen from the day's remaining macros.
-- **AI meal plans that fit the numbers:** how you make the model respect calorie and protein targets, and what happens when it doesn't.
-- **Working offline:** what happens when you log a meal with no signal.
+**Challenge.** The hosted models behind the AI features can be retired with little warning. ShredTrack has had to swap models twice since launch: the vision model, and later the text model, ahead of its shutdown date.
 
-</Draft>
+**Analysis.** A model ID hard-coded in the app turns every retirement into an emergency code change. And reasoning settings differ between model families. Sending the wrong pair is rejected with an error, not ignored, so an override could fail every request at the moment it was needed most.
 
-<Draft note="Engineering decisions — answer these and they become decision cards">
+**Solution.** Model IDs live in one module and can be overridden by environment variables, so the next swap is a configuration change rather than a deploy. Reasoning settings are derived from the model family in use, and an unrecognised model gets a plain request any model will accept.
+
+### Reasoning that cost correctness
+
+**Challenge.** On a realistic five-item food prompt, one model spent 3,986 tokens reasoning, ran out of its 4,096-token budget, and returned JSON that couldn't be parsed.
+
+**Analysis.** Every AI call in the app is recall or formatting: look up a food, fill in its macros, write a short plan. A reasoning pass bought nothing for that work, and cost both speed and correctness.
+
+**Solution.** Reasoning is turned off for those calls. The same prompt then answered correctly in 244 tokens, in 754 ms instead of 8,100 ms. Responses cut off by the token budget are logged, so a truncation shows up instead of passing as a short answer.
+
+### Failures that looked like answers
+
+**Challenge.** The meal planner shows the model's reply as a chat message. If an upstream failure came back as an ordinary response, the app would show an error string as if it were coaching advice.
+
+**Solution.** Upstream failures are returned with error status codes (502, or 503 when the provider is busy), and an empty reply counts as a failure. The client can then show an error as an error. Each route also sets its own time limit, shorter than the client's, so the server's clear message arrives before a generic timeout.
 
 ## Engineering decisions
 
-TODO — For each, what you chose, what else you considered and what it cost:
+<Decisions
+  decisions={[
+    {
+      title: 'Where AI calls run',
+      context: 'The AI features need an API key for the model provider, and a key in the browser can be copied by anyone.',
+      options: [
+        { name: 'Next.js route handlers on the server', chosen: true, reason: 'The key stays on the server, and every call passes a session check, a rate limit and input validation first.' },
+        { name: 'Call the provider from the browser', chosen: false, reason: 'No server code, but the key would ship to every visitor.' },
+      ],
+    },
+    {
+      title: 'Where model choices live',
+      context: 'Hosted models are retired on short notice, and reasoning settings differ between model families.',
+      options: [
+        { name: 'Model IDs in one module, overridable by environment variables', chosen: true, reason: 'A retirement becomes a configuration change, and reasoning settings follow whichever model is configured.' },
+        { name: 'Model IDs hard-coded in each route', chosen: false, reason: 'Simpler at first, but every retirement means finding and changing code under time pressure.' },
+      ],
+    },
+  ]}
+/>
 
-1. **Next.js versus a React single-page app** (Nexpenso and Rxbit are Vite single-page apps; why Next.js here?)
-2. **Where data lives:** on the device in IndexedDB, on a server, or both with sync?
-3. **Which AI model and provider for the meal planner**, and how you keep its cost and latency in check.
+## Security
 
-</Draft>
+- **Passwords:** hashed with bcrypt, and only the hash is kept on the device.
+- **Sessions:** the server issues a signed session cookie that page scripts can't read (HttpOnly), sent only to the same site and only over HTTPS in production. It expires after seven days, and it is checked on every AI request with a constant-time signature comparison.
+- **Abuse:** AI requests are rate-limited per client: ten a minute for text and five for the more expensive photo analysis. Creating a session is limited too, and needs a custom header, so another site can't create one cross-origin.
+- **Input:** the day's summary is clamped to sensible ranges and trimmed before it goes into a prompt, and uploaded photos are checked for type and size.
+- **Fails closed:** in production, a missing session secret refuses every request instead of skipping the check.
 
-<Draft note="Performance, accessibility and security — fill in">
-
-## Performance, accessibility and security
-
-TODO — Performance: Lighthouse scores on mobile, time to log a meal, how the dashboard loads?
-
-TODO — Accessibility: the dashboard is chart-heavy. How are the macro rings exposed to screen readers (text values beside them, `aria` labels)? Keyboard support? Contrast in the dark theme?
-
-TODO — Security: how are passwords stored, how are sessions handled, and is the AI provider's key kept on the server?
-
-</Draft>
-
-<Draft note="Lessons and roadmap — only you can write these">
-
-## Lessons learned and what's next
-
-TODO — What would you do differently? What did building with Next.js teach you compared with Angular at work? What's next: barcode scanning, weekly reports, syncing between devices, sharing plans with a coach?
-
-</Draft>
+<Callout kind="tradeoff">
+The rate limiter keeps its counts in memory, so on serverless hosting each instance counts on its own and the limit is per instance, not global. That's fine for a side project, and the code says so; a shared store such as Redis would make it strict.
+</Callout>
 
 ## Outcome summary
 
 - **What it is:** a live, installable tracker for calories, macros, meals and workouts, with an AI meal planner.
 - **Product focus:** guidance as well as logging, with tips that start from what is left for the day.
-- **Technical approach:** Next.js on Vercel, with IndexedDB storage on the device.
+- **Technical approach:** Next.js on Vercel, with the user's data on the device and AI calls behind server route handlers that keep the provider key, rate limits and model choices on the server.

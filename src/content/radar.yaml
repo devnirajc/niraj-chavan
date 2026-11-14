@@ -111,17 +111,3 @@
   ring: trial
   quadrant: platforms
   note: A Claude Cowork task files new documents into my archive and refreshes its search.
-
-- id: assess-1
-  name: TODO
-  ring: assess
-  quadrant: techniques
-  note: TODO — something you are reading about or prototyping.
-  draft: true
-
-- id: hold-1
-  name: TODO
-  ring: hold
-  quadrant: tools
-  note: TODO — something you deliberately avoid for new work, and why.
-  draft: true

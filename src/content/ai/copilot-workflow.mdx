@@ -14,45 +14,8 @@ tools:
 
 I use GitHub Copilot in VS Code with Claude Opus and GPT models. This site is built and maintained with Claude Code, guided by the two skills below.
 
-<Draft note="Why this entry doesn't name an employer">
+{/* Kept employer-neutral on purpose: never add which company uses which AI tools or models, how they are set up there, or what they are used on. That is the company's information to disclose. */}
 
-TODO — Kept employer-neutral on purpose. Don't add which company uses which AI tools or models, how they are set up there, or what they are used on. That is the company's information to disclose, and doing so would need its approval.
-
-</Draft>
-
-<Draft note="Suggested by Claude, not yet confirmed: correct each step, then move the ones that are true into the steps of this entry">
-
-TODO — You asked me to suggest the best answer for which Copilot features you use and what the NVIDIA NIM provider is for. These are suggestions, not facts, so they stay hidden until you confirm or correct each one:
-
-<Steps
-  label="Suggested workflow"
-  steps={[
-    {
-      title: 'Completions for the routine typing',
-      detail:
-        'Inline completions and next edit suggestions for boilerplate, tests and renames that ripple through a file. Next edit suggestions are switched on in your VS Code.',
-    },
-    {
-      title: 'Chat to understand before changing',
-      detail: 'Ask about unfamiliar code, a long RxJS chain or an error before touching it.',
-    },
-    {
-      title: 'Agent mode for multi-file changes',
-      detail: 'Claude Opus plans and makes a change across several files; I read the plan before it starts and the diff before I keep it.',
-    },
-    {
-      title: 'A second model for a second opinion',
-      detail: 'When an answer matters, ask GPT as well as Claude Opus and compare.',
-    },
-    {
-      title: 'Review every diff like a pull request',
-      detail: 'Tests, lint and an accessibility check run before AI-written code is committed, the same as for code I wrote myself.',
-    },
-  ]}
-/>
-
-TODO — NVIDIA NIM: a suggested line is "On side projects, I try open-weight models served by NVIDIA NIM in Copilot Chat and compare them with the hosted models." Is that what you use it for, and which models?
-
-TODO — Which model do you pick for which job? Step 3 assumes Claude Opus for multi-file work and step 4 uses GPT as a second opinion. Correct both if that's not how you choose.
-
-</Draft>
+<Callout kind="lesson" title="AI-written code gets the same checks as mine">
+Nothing reaches this site without passing its deploy pipeline: a type check, a colour-contrast audit, a content check that fails if a published page still has an unfinished section, and the full build. Code from Claude Code goes through exactly the same gate as code I typed myself.
+</Callout>
