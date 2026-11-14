@@ -21,11 +21,11 @@
   kind: writing
   title: Writing up the problems I've solved
   body: >-
-    One page per problem, covering what was wrong, how I found the cause, what
-    I changed and what I'd do differently. The first is about an Angular
-    dashboard that slowed down as it grew.
+    Short write-ups of real problems from my projects. Each one covers what
+    broke, how I tracked down the cause, what I changed and what I'd do
+    differently next time.
   link: /problems/
-  updated: 2026-11-13
+  updated: 2026-11-15
   order: 2
 
 - id: claude-code
@@ -35,5 +35,5 @@
     Two Claude Code skills maintain this site, and a scheduled agent files new
     documents into my archive.
   link: /ai/
-  updated: 2026-11-13
+  updated: 2026-11-15
   order: 3
