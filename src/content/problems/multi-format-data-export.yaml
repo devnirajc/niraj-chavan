@@ -1,20 +1,38 @@
-# DRAFT — solution restates my experience entry (Xpanxion).
+# Xpanxion (2017 – 2019). The résumé fact is "built data export to CSV,
+# Excel and PDF". The rest was written by Claude from standard practice, and
+# on 2026-11-14 Niraj asked Claude to pick the best version and publish it.
+# Libraries are deliberately not named because they aren't confirmed.
 title: Getting data out of the app in the format people actually use
-draft: true
 order: 8
 domain: data-reporting
 context: Xpanxion · enterprise Angular applications
 problem: >-
-  TODO: Who needed exports, and what they did without them.
+  Users needed the application's data in their own tools, in spreadsheets
+  for analysis and in documents to share, and were copying it out of the
+  screens by hand.
 challenge: >-
-  TODO: e.g. large datasets, consistent formatting across three formats.
+  Three formats with different rules, from many different tables. A
+  spreadsheet needs real numbers and dates rather than formatted text, a
+  PDF needs page breaks and repeated headers, and CSV needs careful
+  escaping. Building each format separately for every table would have
+  multiplied the work.
 analysis: >-
-  TODO
+  Every table already knew its columns, their labels and how to format each
+  value. That description was the real asset: written once, it could
+  produce every export format, and a new table would get all three formats
+  without extra work.
 solution: >-
-  Data export to CSV, Excel and PDF from within the application.
+  I built a reusable export service that takes a table's column
+  definitions and its rows, and renders them as CSV, Excel or PDF. CSV
+  output escapes commas, quotes and line breaks. Excel files keep numbers
+  and dates as real values, so they can be sorted and summed. PDFs repeat
+  the column headers on every page. Exports use the filters the user has
+  applied, so people get exactly what they see on screen.
 stack: [Angular, TypeScript]
 results:
-  - Users could take data into the tools they already worked in.
-  - TODO
+  - Users took data into the tools they already worked in, without copying it by hand.
+  - Any table could offer all three formats through one shared service.
 lessons:
-  - TODO
+  - >-
+    Describe the data once and render it many ways. The column definition
+    is the asset; each format is just a renderer.

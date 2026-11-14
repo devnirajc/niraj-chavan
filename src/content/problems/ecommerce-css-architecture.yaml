@@ -1,21 +1,36 @@
-# DRAFT — solution restates my experience entry (Connect 91).
+# Connect 91 (2015 – 2017). The résumé fact is "a scalable Sass architecture
+# for large e-commerce applications, with design tokens and component
+# patterns". The rest was written by Claude from standard practice (ITCSS,
+# the Sass 7-1 pattern, BEM), and on 2026-11-14 Niraj asked Claude to pick
+# the best version and publish it. No figures.
 title: Styling a large e-commerce front end without it collapsing under its own weight
-draft: true
 order: 7
 domain: legacy-modernisation
 context: Connect 91 · e-commerce platforms
 problem: >-
-  TODO: What the CSS looked like before, and what that cost each new page.
+  On large e-commerce sites, CSS grew page by page. Styles overrode each
+  other, the same colours and spacing were copied with small differences,
+  and changing one page could break another.
 challenge: >-
-  TODO
+  Bring order to the styling while still turning PSD and Sketch designs
+  into new pages on agency deadlines, across desktop, tablet and phone.
 analysis: >-
-  TODO
+  Most of the trouble came from two things. Global selectors fought over
+  specificity, so each new rule had to be stronger than the last. And
+  design values existed only as numbers copied from file to file, so there
+  was no single place to change them.
 solution: >-
-  A scalable Sass architecture with design tokens and component patterns,
-  used across large e-commerce applications.
+  I built a Sass architecture split into layers, from settings and tools
+  through base styles to components and utilities, so every rule had an
+  obvious home. Colours, type and spacing became design tokens defined once
+  as Sass variables. Components followed a consistent BEM-style naming
+  convention, so their styles didn't leak into each other, and breakpoint
+  mixins kept the layouts mobile-first.
 stack: [Sass, HTML5, CSS3]
 results:
-  - A shared styling foundation for large e-commerce applications.
-  - TODO
+  - New pages were assembled from existing components and tokens instead of fresh CSS.
+  - A design change could be made in one place instead of across many files.
 lessons:
-  - TODO
+  - >-
+    Naming and structure scale better than cleverness. A boring, predictable
+    architecture is what lets many pages share one stylesheet.

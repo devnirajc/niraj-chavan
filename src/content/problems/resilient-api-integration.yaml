@@ -1,22 +1,41 @@
-# DRAFT — solution restates my experience entry (Xpanxion: REST integration
-# with optimised fetching, error handling and retry). Fill in the rest.
+# Xpanxion (2017 – 2019). The résumé fact is "REST integration with optimised
+# fetching, error handling and retry". The rest was written by Claude from
+# standard Angular and RxJS practice, and on 2026-11-14 Niraj asked Claude
+# to pick the best version and publish it. No figures.
 title: Interfaces that kept working when the API did not
-draft: true
 order: 5
 domain: api-integration
 context: Xpanxion · enterprise Angular applications
 problem: >-
-  TODO: Which integrations were unreliable, and what users saw when they failed.
+  When an API was slow or briefly unavailable, screens showed spinners that
+  never ended, blank data or raw error messages, and users had to reload
+  the page to recover.
 challenge: >-
-  TODO
+  Make every screen handle failure the same way without rewriting each one,
+  and retry only the requests that are safe to repeat.
 analysis: >-
-  TODO
+  Most failures were short-lived: timeouts, gateway errors and dropped
+  connections that would have succeeded a moment later. Each screen handled
+  errors in its own way, or not at all. And not every request can be
+  retried: repeating a read is safe, but repeating a write can create
+  duplicates, and a client error such as 400 or 401 will fail again however
+  often it is sent.
 solution: >-
-  REST integrations with optimised data-fetching strategies, consistent
-  error handling and retry, so transient failures did not reach users.
+  I moved the shared behaviour into one Angular HTTP interceptor: a
+  timeout, retries with growing delays for safe requests on network and
+  gateway errors only, and plain-language error messages. Data services
+  shared responses with RxJS instead of fetching the same data twice, and
+  cancelled requests that a newer one had replaced, so screens didn't race
+  each other. Every screen got a loading state, an error state with a way
+  to try again, and an empty state.
 stack: [Angular, RxJS, REST APIs]
 results:
-  - More reliable integrations.
-  - TODO — error-rate or support-ticket change.
+  - Short-lived API failures stopped reaching users.
+  - Every screen behaved the same way when something went wrong, from one interceptor instead of per-screen code.
 lessons:
-  - TODO
+  - >-
+    Decide what is safe to retry before writing the retry. Retrying a
+    request that can't be repeated turns a brief outage into duplicate data.
+  - >-
+    Error handling belongs in one place. Once it lives in an interceptor,
+    every new screen gets it for free.
