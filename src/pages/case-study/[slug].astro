@@ -38,6 +38,11 @@ const { study, next } = Astro.props;
 const { data } = study;
 const { Content, headings } = await render(study);
 const related = await visibleRefs(data.relatedProjects);
+// Problem write-ups that link here (their `caseStudy` field), shown as the
+// short version of this page so the two read as a pair.
+const shortVersions = (await published('problems'))
+  .filter((p) => p.data.caseStudy?.id === study.id)
+  .sort((a, b) => a.data.order - b.data.order);
 
 const toc = [
   data.metrics.length && { id: 'outcomes', label: 'Outcomes' },
@@ -104,6 +109,16 @@ const articleLd = {
         <div>
           <h2 id="problem" class="text-heading font-semibold">The problem</h2>
           <p class="mt-4 text-lg leading-relaxed text-fg-muted">{data.problem}</p>
+          {
+            shortVersions.map((p) => (
+              <p class="mt-5 text-sm text-fg-muted">
+                Short version:{' '}
+                <a href={href(`/problems/${p.id}/`)} class="link font-medium">
+                  {p.data.title}
+                </a>
+              </p>
+            ))
+          }
         </div>
         <div class="grid gap-6">
           {
