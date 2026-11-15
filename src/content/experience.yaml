@@ -16,7 +16,7 @@
     to confirmation, and led Site Manager, the self-service tool its business
     teams use to configure travel products.
   achievements:
-    - Lead developer for Chase Travel's promotions and offers platform. Delivered personalised offer rendering across the platform.
+    - Lead developer for Chase Travel's promotions and offers platform, which shows each cardmember personalised offers across Chase Travel.
     - Worked on Chase Travel's purchase flow, from trip cart and traveller information through payment and review to booking confirmation.
     - Architected a reusable Angular component library for promotion rendering, adopted by three downstream squads, so they render promotions with one shared library instead of building their own.
     - Introduced micro-frontend boundaries with Webpack Module Federation, so four squads deploy independently instead of lining up every release across teams.
