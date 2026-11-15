@@ -1,0 +1,54 @@
+---
+title: A children's learning app built with Claude Code, behind gates it can't skip
+summary: Varnoo is a privacy-first learning app for young children in English, Hindi and Marathi. I build it with Claude Code. A CLAUDE.md file sets the rules, and every change, mine or Claude's, passes the same release gates before it goes live.
+order: 2
+kind: workflow
+context: Personal · Varnoo, a learning app for young children
+tools:
+  - Claude Code
+  - Claude Opus
+  - React
+  - TypeScript
+  - PWA
+  - Vitest
+  - GitHub Actions
+  - Netlify
+steps:
+  - title: Write the rules down for any author
+    detail: >-
+      CLAUDE.md is written for "anyone, human or AI" changing the repo. A push
+      to main is a production release, so every change goes on a branch and
+      through a pull request. Never skip the pre-push hook or loosen a gate to
+      make a check pass.
+  - title: One command, checked at every layer
+    detail: >-
+      npm run verify runs lint with zero warnings, the unit tests, a strict
+      type check, the build and a release gate. The pre-push hook, GitHub
+      Actions and the Netlify build all run it, and a failed build is never
+      published.
+  - title: Gates written for children's privacy
+    detail: >-
+      The release gate fails the build if the bundle reaches a host that isn't
+      on the allowlist, contains a secret, weakens the Content Security Policy,
+      or goes over its size budgets. Changing a budget or the allowlist needs a
+      reason in the pull request.
+  - title: Review every diff, fix every finding
+    detail: >-
+      Each pull request gets a Claude Code /code-review, and a /security-review
+      when it touches storage, sign-in, cloud backup or hosting config. Every
+      finding is fixed or answered, and a bug fix comes with a test that failed
+      before it.
+  - title: A person signs off what code can't check
+    detail: >-
+      I try each change on a phone from the deploy preview, offline too, and
+      check child-facing text and the Hindi and Marathi before it ships. The
+      docs are updated in the same pull request as the change.
+---
+
+Varnoo teaches pre-writing patterns, letters, numbers, words, rhymes and stories in English, Hindi and Marathi, following a playgroup syllabus. It is an installable web app that works offline. A child's data stays on the device unless a parent turns on backup, and there are no ads, analytics or third-party scripts, in line with India's DPDP Act 2023. It is in a family pilot for now.
+
+The planned AI features, a story generator and a voice tutor, wait for a privacy review, and they will only use India-region providers that don't train on children's data. Claude Code is how the app gets built.
+
+<Callout kind="lesson" title="Review catches what the tests didn't">
+Reviewing four merged pull requests together showed that finished number lessons never recorded progress: no star, no tick. The cause was a speech call that cancelled the one before it. The fix shipped with regression tests, so the same bug fails the build if it comes back.
+</Callout>

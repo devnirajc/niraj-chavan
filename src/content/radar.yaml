@@ -98,7 +98,7 @@
   name: Claude Code
   ring: adopt
   quadrant: tools
-  note: Builds and maintains this site, guided by two project skills.
+  note: Builds and maintains this site and Varnoo, a learning app for young children.
 
 - id: agent-skills
   name: Agent Skills
